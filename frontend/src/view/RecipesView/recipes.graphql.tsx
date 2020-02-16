@@ -21,10 +21,11 @@ export const RECIPE_CREATE = gql`
     $image: String!
     $time: Int!
     $difficulty: Difficulty!
-    $tag: [TagInput]
-    $ingredient: [Ingredient]
+    $tag: [TagInput!]
+    $ingredient: [IngredientInput!]!
+    $userID: Int!
   ) {
-    CreateRecipe(
+    createRecipe(
       name: $name
       description: $description
       image: $image
@@ -32,8 +33,9 @@ export const RECIPE_CREATE = gql`
       difficulty: $difficulty
       tag: $tag
       ingredient: $ingredient
+      userID: $userID
     ) {
-      id
+      _id
     }
   }
 `;

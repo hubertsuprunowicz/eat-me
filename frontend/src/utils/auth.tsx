@@ -2,9 +2,15 @@ import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 import { LOGIN_VIEW } from 'view/Route/constants.route';
 
-type Action = { type: 'login'; token: string } | { type: 'logout' };
+type Action =
+  | { type: 'login'; token: string; userID: string | undefined }
+  | { type: 'logout' };
 type Dispatch = (action: Action) => void;
-type State = { login: boolean };
+type State = {
+  login: boolean;
+  token: string | undefined;
+  userID: string | undefined;
+};
 type AuthProviderProps = { children: React.ReactNode };
 
 const AuthStateContext = React.createContext<State | undefined>(undefined);
@@ -12,15 +18,21 @@ const AuthDispatchContext = React.createContext<Dispatch | undefined>(
   undefined
 );
 
-function authReducer(state: State, action: Action) {
+function authReducer(_: State, action: Action) {
   switch (action.type) {
     case 'login': {
-      sessionStorage.setItem('token', action.token);
-      return { login: state.login = true };
+      return {
+        login: true,
+        token: action.token,
+        userID: action.userID,
+      };
     }
     case 'logout': {
-      sessionStorage.removeItem('token');
-      return { login: state.login = false };
+      return {
+        login: false,
+        token: undefined,
+        userID: undefined,
+      };
     }
     default: {
       throw new Error(`Unhandled action: ${action}`);
@@ -29,7 +41,12 @@ function authReducer(state: State, action: Action) {
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
-  const [state, dispatch] = React.useReducer(authReducer, { login: false });
+  const [state, dispatch] = React.useReducer(authReducer, {
+    login: false,
+    token: undefined,
+    userID: undefined,
+  });
+
   return (
     <AuthStateContext.Provider value={state}>
       <AuthDispatchContext.Provider value={dispatch}>
@@ -47,10 +64,8 @@ function useAuthState() {
   return context;
 }
 
-function useAuthDispatch(token?: string) {
+function useAuthDispatch() {
   const context = React.useContext(AuthDispatchContext);
-
-  if (token) sessionStorage.setItem('token', token);
 
   if (context === undefined) {
     throw new Error('useAuthDispatch must be used within a AuthProvider');
@@ -59,9 +74,9 @@ function useAuthDispatch(token?: string) {
 }
 
 const Authorization: React.FC = ({ children }) => {
-  const authState = useAuthState();
+  const { login } = useAuthState();
 
-  if (authState.login) return <>{children}</>;
+  if (login) return <>{children}</>;
 
   return <Redirect to={LOGIN_VIEW} />;
 };

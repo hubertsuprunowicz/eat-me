@@ -20,6 +20,7 @@ import { FormContext, useFormContext } from 'react-hook-form';
 import { Input } from './recipes.view.style';
 import { toast } from 'react-toastify';
 import AddRecipeForm from './AddRecipeForm';
+import { useAuthState } from 'utils/auth';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 

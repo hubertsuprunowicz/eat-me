@@ -34,13 +34,11 @@ const LoginView: React.FC = () => {
 
   const [createUser] = useMutation(CREATE_USER, {
     onError: error => {
-      console.log(errors.mutationError);
       setError(
         'mutationError',
         'mutationError',
         error.graphQLErrors[0].message
       );
-      console.log(errors.mutationError);
     },
     onCompleted: () => {
       toast.success('Registration successfully completed', {
@@ -65,7 +63,11 @@ const LoginView: React.FC = () => {
   });
 
   if (data && data.login) {
-    authDispatch({ type: 'login', token: data.login.token });
+    authDispatch({
+      type: 'login',
+      token: data.login.token,
+      userID: data.login.userID,
+    });
     return <Redirect to={RECIPES_VIEW} />;
   }
 

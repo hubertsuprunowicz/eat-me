@@ -26,6 +26,7 @@ type Mutation {
     time: Int!
     tag: [TagInput!]
     ingredient: [IngredientInput!]!
+    userID: Int!
   ): Recipe
   login(name: String!, password: String!): Token!
 }
@@ -75,7 +76,7 @@ type Tag {
 }
 
 type Recipe {
-  _id: ID
+  id: ID
   name: String!
   description: String!
   difficulty: Difficulty!
@@ -99,7 +100,6 @@ type Rating @isAuthenticated {
 }
 
 type Token {
-  id: ID
   token: String!
   userID: String!
 }

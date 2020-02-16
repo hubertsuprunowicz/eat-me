@@ -40,11 +40,11 @@ const resolvers = {
       }
 
       const token = sign({ userID: userParams.id }, process.env.JWT_SECRET);
-      const userID = userParams.id;
+      const userID = user[0].get(0).identity.low;
 
       return {
-        token,
-        userID
+        token: token,
+        userID: userID
       };
     },
 
@@ -62,14 +62,14 @@ const resolvers = {
       const token = sign({ userId: userID }, process.env.JWT_SECRET);
 
       return {
-        token,
-        userID
+        token: token,
+        userID: userID
       };
     },
 
     async createRecipe(_, args, context) {
       const session = await context.driver.session();
-      const userID = 171;
+      const { userID } = args;
 
       const userQuery = `MATCH (n:User) where ID(n) = ${userID} return n`;
 
@@ -131,7 +131,7 @@ const resolvers = {
       await session.run(ingredientgQuery);
 
       return {
-        recipeID
+        _id: recipeID
       };
     }
   }

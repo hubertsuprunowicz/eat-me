@@ -8,12 +8,17 @@ import Form from 'component/Form/Form';
 import { useMutation } from '@apollo/react-hooks';
 import { RECIPE_CREATE } from './recipes.graphql';
 import { toast } from 'react-toastify';
+import { useAuthState } from 'utils/auth';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 type Ingredient = {
   name: string;
   amount: string;
+};
+
+type Tag = {
+  name: string;
 };
 
 const Ingredient: React.FC<Ingredient & {
@@ -50,8 +55,8 @@ type RecipeForm = {
   image: string;
   time: number;
   difficulty: Difficulty;
-  tag: string;
-  tags?: string[];
+  tag: Tag;
+  tags?: Tag[];
   ingredient: Ingredient;
   ingredients?: Ingredient[];
 };
@@ -72,13 +77,16 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     reset,
     setValue,
   } = useForm<RecipeForm>();
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const { userID } = useAuthState();
 
   const handleTags = () => {
     if (!watch('tag')) return;
 
-    if (watch('tag').length < 4) {
+    console.log(watch('tag'));
+
+    if (watch('tag').name.length < 4) {
       setError(
         'tags',
         'tooShort',
@@ -89,7 +97,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     } else {
       clearError('tags');
       setTags([...tags, watch('tag')]);
-      setValue('tag', '');
+      setValue('tag', { name: '' });
     }
   };
 
@@ -111,7 +119,9 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
 
   const [createRecipe] = useMutation(RECIPE_CREATE, {
     onError: error => {
-      console.log(error);
+      toast.error('Something has failed', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
     },
     onCompleted: () => {
       toast.success('Recipe has been added', {
@@ -120,17 +130,38 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     },
   });
 
-  const onSubmit = ({ description, image, title, time }: RecipeForm) => {
+  const onSubmit = ({
+    description,
+    image,
+    title,
+    time,
+    difficulty,
+  }: RecipeForm) => {
+    console.log({
+      title: title,
+      description: description,
+      image: image,
+      time: time,
+      tag: tags,
+      ingredient: ingredients,
+      difficulty: difficulty,
+      userID: userID,
+    });
     createRecipe({
       variables: {
-        title: title,
+        name: title,
         description: description,
         image: image,
-        time: time,
-        tag: getValues().tags,
-        ingredient: getValues().ingredients,
+        time: parseInt(time.toString()),
+        tag: tags,
+        ingredient: ingredients,
+        difficulty: difficulty,
+        userID: userID ? parseInt(userID.toString()) : 0,
       },
-    }).then(() => reset());
+    }).then(() => {
+      reset();
+      setIsOpen(false);
+    });
   };
 
   const removeIngredient = (index: number) => {
@@ -197,7 +228,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             type="text"
             width={210}
             placeholder="Enter tag"
-            name="tag"
+            name="tag.name"
             ref={register}
             minLength={4}
             maxLength={20}
@@ -213,14 +244,14 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         </Box>
         <Box mt={4} mb={2} display="flex" flexWrap={'wrap'} maxWidth={'33vw'}>
           {tags &&
-            tags.map((tag: string, index) => (
+            tags.map((tag: Tag, index) => (
               <Tag
                 bg={'primary.300'}
-                key={tag + Math.random() * tag.length}
+                key={tag.name + Math.random() * tag.name.length}
                 cursor={'pointer'}
                 onClick={() => removeTag(index)}
               >
-                {tag} <FontAwesomeIcon icon={faTimes} />
+                {tag.name} <FontAwesomeIcon icon={faTimes} />
               </Tag>
             ))}
         </Box>
@@ -242,9 +273,9 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
               required: true,
             })}
           >
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
           </select>
         </Box>
         <label htmlFor="description">
