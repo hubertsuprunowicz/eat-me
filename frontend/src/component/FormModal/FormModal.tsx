@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { FormModalStyle, modalStyle, CloseButton } from './form.modal.style';
-import { Box, IconButton, Button } from 'style';
+import { Box, IconButton, Button, Text } from 'style';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -28,7 +28,12 @@ const FormModal: React.FC<Props> = ({
     >
       <FormModalStyle pl={6} pr={6}>
         <Box pl={6} pr={6} display="flex" justifyContent="space-between">
-          <h3>{title}</h3>
+          <Box>
+            <h3>{title}</h3>
+            <Text color={'grey.500'} fontSize={0}>
+              * All fields are required
+            </Text>
+          </Box>
           <CloseButton
             mt={6}
             onClick={closeModal}

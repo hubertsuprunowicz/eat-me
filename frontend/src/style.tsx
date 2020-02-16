@@ -67,18 +67,10 @@ export const Main = styled.main`
   height: 100vh;
   margin: 0;
   padding: 0;
-
-  /* display: flex;
-  justify-content: center; */
-
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
 
   * {
     font-family: 'Raleway', sans-serif;
-    /* font-family: 'Open Sans', cursive; */
-    /* font-family: 'Karla', sans-serif; */
-    /* font-family: 'Barlow', sans-serif; */
     font-weight: 500;
   }
 `;
@@ -212,7 +204,7 @@ type Props = ColorProps &
   WidthProps &
   MarginProps &
   FlexWrapProps &
-  TextAlignProps;
+  TextAlignProps & { cursor?: 'pointer' | 'none' };
 
 export const Box = styled.div<Props>`
   ${flexWrap}
@@ -237,6 +229,7 @@ export const Box = styled.div<Props>`
   ${borderRadius}
   ${boxShadow}
   ${width}
+  cursor: ${props => props.cursor}
 `;
 
 type TagProps = WidthProps &
@@ -246,7 +239,7 @@ type TagProps = WidthProps &
   Variant &
   BorderRadiusProps &
   SpaceProps &
-  BoxShadowProps;
+  BoxShadowProps & { cursor?: 'pointer' | 'none' };
 
 export const Tag = styled('div')<TagProps>`
 ${color}
@@ -255,6 +248,7 @@ ${height}
 ${space}
 ${boxShadow}
 ${borderRadius}
+cursor: ${props => props.cursor};
 border-radius: 20px;
 margin: 3px 5px 3px 5px;
 padding: 8px;
@@ -283,6 +277,15 @@ ${variant({
     },
   },
 })}
+`;
+
+type TextProps = TextAlignProps & FontSizeProps & FontWeightProps & ColorProps;
+
+export const Text = styled('span')<TextProps>`
+${color}
+${textAlign}
+${fontSize}
+${fontWeight}
 `;
 
 // (
