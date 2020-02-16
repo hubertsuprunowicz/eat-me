@@ -1,0 +1,105 @@
+type Query {
+  users: [User!]!
+  ingredients: [Ingredient!]!
+  recipes: [Recipe!]!
+  tags: [Tag!]
+  comments: [Comment!]!
+  ratings: [Rating!]!
+
+  user(_id: ID!): User
+  ingredient(name: String!): Ingredient
+  recipe(name: String!): Recipe
+  tag(name: String!): Tag
+  comment(_id: ID!): Comment
+  rating(_id: ID!): Rating
+
+  recipeSearch(_id: ID!): Recipe
+}
+
+type Mutation {
+  createUser(name: String!, password: String!): Token!
+  createRecipe(
+    name: String!
+    description: String!
+    difficulty: Difficulty!
+    image: String!
+    time: Int!
+    tag: [TagInput!]
+    ingredient: [IngredientInput!]!
+  ): Recipe
+  login(name: String!, password: String!): Token!
+}
+
+type User {
+  id: ID
+  name: String!
+  password: String!
+  friends: [User] @relation(name: "WATCHES", direction: "OUT")
+  recipe: [Recipe]
+    @relation(name: "POSTS", direction: "OUT")
+    @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
+}
+
+type Ingredient @isAuthenticated {
+  name: String!
+  amount: String
+}
+
+enum Difficulty {
+  EASY
+  NORMAL
+  HARD
+}
+
+input IngredientInput {
+  name: String!
+  amount: String
+}
+
+input TagInput {
+  name: String!
+}
+
+input RatingInput {
+  rate: Int!
+}
+
+input CommentInput {
+  rating: RatingInput!
+  description: String!
+}
+
+type Tag {
+  name: String!
+  recipes: [Recipe] @relation(name: "HAS_TAG", direction: "IN")
+}
+
+type Recipe {
+  _id: ID
+  name: String!
+  description: String!
+  difficulty: Difficulty!
+  image: String!
+  time: Int!
+  tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
+  user: User
+    @relation(name: "POSTS", direction: "IN")
+    @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
+  ingredient: [Ingredient] @relation(name: "HAS_INGREDIENT", direction: "OUT")
+  comment: [Comment] @relation(name: "POSTS", direction: "OUT")
+}
+
+type Comment @isAuthenticated @relation(name: "POSTS") {
+  rating: Rating! @relation(name: "HAS_RATING", direction: "OUT")
+  description: String!
+}
+
+type Rating @isAuthenticated {
+  rate: Int! @relation(name: "HAS_RATING", direction: "IN")
+}
+
+type Token {
+  id: ID
+  token: String!
+  userID: String!
+}
