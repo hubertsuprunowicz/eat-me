@@ -5,9 +5,19 @@ export const LIMIT = 6;
 export const RECIPES = gql`
   query Recipes($offset: Int!){
   recipes(first: ${LIMIT}, offset: $offset) {
+    _id
     name
     difficulty
-		user {
+    time
+    image
+    tag {
+      name
+    }
+    ingredient {
+      name
+      amount
+    }
+    user {
       name
     }
   }

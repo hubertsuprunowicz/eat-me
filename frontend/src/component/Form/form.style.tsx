@@ -13,6 +13,19 @@ export const FormDefault = styled.form`
     outline: none;
   }
 
+  input,
+  textarea,
+  select {
+    background-color: ${themeGet('colors.grey.100')};
+    box-shadow: ${themeGet('shadows.insetNeo')};
+    height: 35px;
+    border: 1px solid darkgray;
+    border: white;
+    border-radius: ${themeGet('radii.0')}px;
+    padding: 5px 8px;
+    margin-bottom: 5px;
+  }
+
   & label {
     font-weight: 500 !important;
     padding: 5px 0;
@@ -20,41 +33,18 @@ export const FormDefault = styled.form`
   }
 
   & input {
-    background-color: ${themeGet('colors.grey.100')};
-    box-shadow: ${themeGet('shadows.insetNeo')};
     width: 250px;
-    height: 35px;
-    border: 1px solid darkgray;
-    border: white;
-    border-radius: ${themeGet('radii.0')}px;
-    padding: 5px 8px;
-    margin-bottom: 5px;
   }
 
   & textarea {
-    background-color: ${themeGet('colors.grey.100')};
-    box-shadow: ${themeGet('shadows.insetNeo')};
     width: 250px;
     max-height: 360px;
-    height: 35px;
-    border: 1px solid darkgray;
-    border: white;
-    border-radius: ${themeGet('radii.0')}px;
-    padding: 5px 8px;
-    margin-bottom: 5px;
     resize: vertical;
   }
 
   & select {
     width: 270px;
-    height: 35px;
-    background-color: ${themeGet('colors.grey.100')};
-    box-shadow: ${themeGet('shadows.insetNeo')};
-    border: 1px solid darkgray;
-    border: white;
-    border-radius: ${themeGet('radii.0')}px;
-    padding: 5px 8px;
-    margin-bottom: 5px;
+
     > option {
       margin: 20px;
     }

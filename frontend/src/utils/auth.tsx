@@ -21,6 +21,7 @@ const AuthDispatchContext = React.createContext<Dispatch | undefined>(
 function authReducer(_: State, action: Action) {
   switch (action.type) {
     case 'login': {
+      sessionStorage.setItem('token', action.token);
       return {
         login: true,
         token: action.token,

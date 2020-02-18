@@ -12,12 +12,12 @@ import { useAuthState } from 'utils/auth';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
-type Ingredient = {
+export type Ingredient = {
   name: string;
   amount: string;
 };
 
-type Tag = {
+export type Tag = {
   name: string;
 };
 

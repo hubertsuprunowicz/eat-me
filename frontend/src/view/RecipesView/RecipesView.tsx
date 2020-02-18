@@ -1,44 +1,27 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import User from '../../model/user';
-import { Box, Button, Tag, IconButton } from '../../style';
-import { RECIPES, LIMIT, RECIPE_CREATE } from './recipes.graphql';
+import { Box, Button } from '../../style';
+import { RECIPES, LIMIT } from './recipes.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFilter,
-  faPlusCircle,
-  faTemperatureHigh,
-  faPlus,
-} from '@fortawesome/free-solid-svg-icons';
-import Form from 'component/Form/Form';
+import { faFilter, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import FormModal from 'component/FormModal/FormModal';
-import useForm from 'react-hook-form';
-import { FormContext, useFormContext } from 'react-hook-form';
-import { Input } from './recipes.view.style';
-import { toast } from 'react-toastify';
-import AddRecipeForm from './AddRecipeForm';
-import { useAuthState } from 'utils/auth';
+import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
-
-type Ingredient = {
+export type Recipe = {
+  _id: string;
   name: string;
-  amount: string;
-};
-
-type RecipeForm = {
-  title: string;
-  description: string;
-  image: string;
-  time: number;
   difficulty: Difficulty;
-  tag: string;
-  tags?: string[];
-  ingredient: Ingredient;
-  ingredients?: Ingredient[];
+  description?: string;
+  totalCost?: number;
+  time: number;
+  image: string;
+  tag: Tag[];
+  ingredient: Ingredient[];
+  user: User;
 };
 
 const RecipesView: React.FC = () => {
@@ -90,8 +73,8 @@ const RecipesView: React.FC = () => {
         onChangeIndex={cardNumber => paginationHandler(cardNumber + 1)}
         enableMouseEvents
       >
-        {recipes.map((recipe: User) => (
-          <RecipeCard key={recipe._id} id={recipe._id} />
+        {recipes.map((recipe: Recipe) => (
+          <RecipeCard key={recipe._id} id={recipe._id} recipe={recipe} />
         ))}
       </SwipeableViews>
       <FormModal

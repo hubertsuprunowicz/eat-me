@@ -81,6 +81,7 @@ type Recipe {
   description: String!
   difficulty: Difficulty!
   image: String!
+  totalCost: Int
   time: Int!
   tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
   user: User

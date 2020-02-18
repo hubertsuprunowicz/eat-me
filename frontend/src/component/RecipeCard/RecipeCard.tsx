@@ -1,13 +1,4 @@
-import React, { CSSProperties } from 'react';
-import {
-  FaSymbol,
-  FlipProp,
-  PullProp,
-  RotateProp,
-  SizeProp,
-  Transform,
-} from '@fortawesome/fontawesome-svg-core';
-import User from '../../model/user';
+import React from 'react';
 import { Box, IconButton, Tag } from '../../style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -20,37 +11,27 @@ import {
   faMoneyBill,
 } from '@fortawesome/free-solid-svg-icons';
 import { Card, CardDetails, TagWrapper } from './recipe.card.style';
+import { Recipe } from 'view/RecipesView/RecipesView';
 
 export type Props = ItemCardProps;
 
 export interface ItemCardProps {
   id: string;
-  author?: User;
-  title?: string;
+  recipe: Recipe;
   color?: string;
-  listItem?: boolean;
-  flip?: FlipProp;
-  size?: SizeProp;
-  pull?: PullProp;
-  rotation?: RotateProp;
-  transform?: string | Transform;
-  symbol?: FaSymbol;
-  style?: CSSProperties;
 }
 
-const RecipeCard: React.FC<Props> = ({ id }) => {
+const RecipeCard: React.FC<Props> = ({ id, recipe }) => {
+  const { name, image, difficulty, time, tag, ingredient, user } = recipe;
   return (
     <Card key={id} cursor="pointer" height={'70vh'}>
-      <img
-        src="https://www.dietaeliminacyjna.pl/wp-content/uploads/2017/02/tofucznica.jpg"
-        alt="food"
-      />
+      <img src={image} alt={name} />
       <CardDetails>
         <Tag bg={'secondary.600'} pr={4} pl={4}>
-          Username{id}
+          {user.name}
         </Tag>
 
-        <h3>Tatar wołowy z majonezem truflowym, oliwą i i pikl</h3>
+        <h3>{name}</h3>
         <TagWrapper>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faStar} />
@@ -58,17 +39,21 @@ const RecipeCard: React.FC<Props> = ({ id }) => {
           </Tag>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faClock} />
-            120min
+            {time}min
           </Tag>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faFlag} />
-            Medium
+            {difficulty}
           </Tag>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faMoneyBill} />
             $20.50
           </Tag>
-          <Tag bg={'primary.400'}>Kuchnia Staropolska</Tag>
+          {tag.map((it: any) => (
+            <Tag key={Math.random + it.name} bg={'primary.400'}>
+              #{it.name}
+            </Tag>
+          ))}
         </TagWrapper>
         <Box>
           <IconButton

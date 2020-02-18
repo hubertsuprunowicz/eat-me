@@ -28,9 +28,9 @@ toast.configure();
 const loginView = <LoginView />;
 
 const recipesCardView = (
-  // <Authorization>
-  <RecipesView />
-  // </Authorization>
+  <Authorization>
+    <RecipesView />
+  </Authorization>
 );
 const profileView = (
   <Authorization>
