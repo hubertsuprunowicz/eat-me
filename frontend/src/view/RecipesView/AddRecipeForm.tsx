@@ -1,5 +1,5 @@
-import React, { useState, useMemo, memo } from 'react';
-import useForm, { useFormContext, FormContext } from 'react-hook-form';
+import React, { useState, memo } from 'react';
+import useForm from 'react-hook-form';
 import { Box, IconButton, Tag, Button } from 'style';
 import { Input } from './recipes.view.style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -84,8 +84,6 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
   const handleTags = () => {
     if (!watch('tag')) return;
 
-    console.log(watch('tag'));
-
     if (watch('tag').name.length < 4) {
       setError(
         'tags',
@@ -137,16 +135,6 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     time,
     difficulty,
   }: RecipeForm) => {
-    console.log({
-      title: title,
-      description: description,
-      image: image,
-      time: time,
-      tag: tags,
-      ingredient: ingredients,
-      difficulty: difficulty,
-      userID: userID,
-    });
     createRecipe({
       variables: {
         name: title,

@@ -12,7 +12,7 @@ import {
   PROFILE_VIEW,
   RECIPES_VIEW,
   WATCHES_VIEW,
-  CHAT_VIEW,
+  MESSAGE_VIEW,
 } from 'view/Route/constants.route';
 
 const Navigate: React.FC = ({ children }) => {
@@ -40,10 +40,10 @@ const Navigate: React.FC = ({ children }) => {
           </NavItem>
           <hr />
           <NavItem>
-            <Link to={CHAT_VIEW}>
+            <Link to={MESSAGE_VIEW}>
               <NavButton color={'grey.800'}>
                 <FontAwesomeIcon size={'sm'} icon={faCommentAlt} />
-                <span>CHAT</span>
+                <span>MESSAGE</span>
               </NavButton>
             </Link>
           </NavItem>

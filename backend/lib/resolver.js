@@ -48,6 +48,32 @@ const resolvers = {
       };
     },
 
+    async createMessage(_, args, context) {
+      const session = await context.driver.session();
+
+      const addresseeID = args.addresseeID;
+      const senderID = args.senderID;
+
+      const messageQuery = `
+          MATCH (a:User), (b:User) WHERE ID(a) = ${addresseeID} AND ID(b) = ${senderID}
+          CREATE (b)<-[:SENT_FROM]-(c:Message{title: $title, message: $message, timestamp: $timestamp})
+          -[:SENT_TO]->(a)
+          RETURN ID(c)
+          `;
+
+      const messageID = await session
+        .run(messageQuery, {
+          title: args.title,
+          message: args.message,
+          timestamp: args.timestamp
+        })
+        .then(results => results.records[0].get(0).low);
+
+      return {
+        _id: messageID
+      };
+    },
+
     async createUser(_, args, context) {
       const session = await context.driver.session();
       const password = await hash(args.password, 10);

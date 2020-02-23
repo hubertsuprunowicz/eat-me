@@ -10,13 +10,13 @@ import {
   RECIPES_VIEW,
   PROFILE_VIEW,
   WATCHES_VIEW,
-  CHAT_VIEW,
+  MESSAGE_VIEW,
   ERROR_VIEW,
 } from 'view/Route/constants.route';
 import ProfileView from 'view/ProfileView/ProfileView';
 import { theme } from 'utils/theme';
 import WatchesView from 'view/WachesView/WatchesView';
-import ChatView from 'view/ChatView/ChatView';
+import MessageView from 'view/MessageView/MessageView';
 import ErrorView from 'component/ErrorRedirect/errorView';
 import { Authorization, AuthProvider } from 'utils/auth';
 import { toast } from 'react-toastify';
@@ -42,9 +42,9 @@ const watchesView = (
     <WatchesView />
   </Authorization>
 );
-const chatView = (
+const messageView = (
   <Authorization>
-    <ChatView />
+    <MessageView />
   </Authorization>
 );
 const errorView = <ErrorView />;
@@ -64,7 +64,7 @@ const App: React.FC = () => {
                 <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
                 <Route path={PROFILE_VIEW}>{profileView}</Route>
                 <Route path={WATCHES_VIEW}>{watchesView}</Route>
-                <Route path={CHAT_VIEW}>{chatView}</Route>
+                <Route path={MESSAGE_VIEW}>{messageView}</Route>
                 <Route path={ERROR_VIEW}>{errorView}</Route>
               </Switch>
             </Navigate>

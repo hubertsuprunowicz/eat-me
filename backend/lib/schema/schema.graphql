@@ -3,13 +3,15 @@ type Query {
   ingredients: [Ingredient!]!
   recipes: [Recipe!]!
   tags: [Tag!]
+  messages: [Message!]
   comments: [Comment!]!
   ratings: [Rating!]!
 
-  user(_id: ID!): User
+  user(name: String!): User
   ingredient(name: String!): Ingredient
   recipe(name: String!): Recipe
   tag(name: String!): Tag
+  message(_id: ID!): Message
   comment(_id: ID!): Comment
   rating(_id: ID!): Rating
 
@@ -17,6 +19,13 @@ type Query {
 }
 
 type Mutation {
+  createMessage(
+    addresseeID: Int!
+    senderID: Int!
+    title: String!
+    message: String!
+    timestamp: Long!
+  ): Message
   createUser(name: String!, password: String!): Token!
   createRecipe(
     name: String!
@@ -31,6 +40,14 @@ type Mutation {
   login(name: String!, password: String!): Token!
 }
 
+enum Difficulty {
+  EASY
+  NORMAL
+  HARD
+}
+
+scalar Long
+
 type User {
   id: ID
   name: String!
@@ -41,15 +58,18 @@ type User {
     @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
 }
 
+type Message {
+  id: ID
+  addressee: User! @relation(name: "SENT_TO", direction: "IN")
+  sender: User!
+  title: String!
+  message: String!
+  timestamp: Long!
+}
+
 type Ingredient @isAuthenticated {
   name: String!
   amount: String
-}
-
-enum Difficulty {
-  EASY
-  NORMAL
-  HARD
 }
 
 input IngredientInput {
