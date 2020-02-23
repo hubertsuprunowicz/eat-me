@@ -7,13 +7,13 @@ type Query {
   comments: [Comment!]!
   ratings: [Rating!]!
 
-  user(name: String!): User
-  ingredient(name: String!): Ingredient
-  recipe(name: String!): Recipe
-  tag(name: String!): Tag
-  message(_id: ID!): Message
-  comment(_id: ID!): Comment
-  rating(_id: ID!): Rating
+  user(name: String): User
+  ingredient(name: String): Ingredient
+  recipe(name: String): Recipe
+  tag(name: String): Tag
+  message(name: String): Message
+  comment(_id: ID): Comment
+  rating(_id: ID): Rating
 
   recipeSearch(_id: ID!): Recipe
 }
@@ -26,7 +26,6 @@ type Mutation {
     message: String!
     timestamp: Long!
   ): Message
-  createUser(name: String!, password: String!): Token!
   createRecipe(
     name: String!
     description: String!
@@ -37,7 +36,8 @@ type Mutation {
     ingredient: [IngredientInput!]!
     userID: Int!
   ): Recipe
-  login(name: String!, password: String!): Token!
+  createUser(name: String!, password: String!): Credentials!
+  login(name: String!, password: String!): Credentials!
 }
 
 enum Difficulty {
@@ -51,7 +51,6 @@ scalar Long
 type User {
   id: ID
   name: String!
-  password: String!
   friends: [User] @relation(name: "WATCHES", direction: "OUT")
   recipe: [Recipe]
     @relation(name: "POSTS", direction: "OUT")
@@ -60,8 +59,8 @@ type User {
 
 type Message {
   id: ID
-  addressee: User! @relation(name: "SENT_TO", direction: "IN")
-  sender: User!
+  addressee: User! @relation(name: "SENT_TO", direction: "OUT")
+  sender: User! @relation(name: "SENT_FROM", direction: "OUT")
   title: String!
   message: String!
   timestamp: Long!
@@ -70,6 +69,11 @@ type Message {
 type Ingredient @isAuthenticated {
   name: String!
   amount: String
+}
+
+type Credentials {
+  token: String!
+  user: User!
 }
 
 input IngredientInput {
@@ -122,5 +126,4 @@ type Rating @isAuthenticated {
 
 type Token {
   token: String!
-  userID: String!
 }

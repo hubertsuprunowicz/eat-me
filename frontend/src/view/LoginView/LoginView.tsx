@@ -66,7 +66,7 @@ const LoginView: React.FC = () => {
     authDispatch({
       type: 'login',
       token: data.login.token,
-      userID: data.login.userID,
+      user: data.login.user,
     });
     return <Redirect to={RECIPES_VIEW} />;
   }

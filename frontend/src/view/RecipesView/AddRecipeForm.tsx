@@ -79,7 +79,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
   } = useForm<RecipeForm>();
   const [tags, setTags] = useState<Tag[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const { userID } = useAuthState();
+  const { user } = useAuthState();
 
   const handleTags = () => {
     if (!watch('tag')) return;
@@ -135,6 +135,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     time,
     difficulty,
   }: RecipeForm) => {
+    if (!user) throw new Error('Not authorized exception');
     createRecipe({
       variables: {
         name: title,
@@ -144,7 +145,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         tag: tags,
         ingredient: ingredients,
         difficulty: difficulty,
-        userID: userID ? parseInt(userID.toString()) : 0,
+        userID: user._id,
       },
     }).then(() => {
       reset();

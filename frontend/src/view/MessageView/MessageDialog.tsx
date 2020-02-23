@@ -22,7 +22,7 @@ function isEmpty(obj: Object) {
 type Props = { setIsOpen: (arg: boolean) => void };
 
 const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
-  const { userID } = useAuthState();
+  const { user } = useAuthState();
   const {
     getValues,
     register,
@@ -39,7 +39,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
       });
     },
     onCompleted: data => {
-      if (!userID) throw new Error('Not authorized exception');
+      if (!user) throw new Error('Not authorized exception');
 
       const { title, message } = getValues();
 
@@ -50,7 +50,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
 
       sendMessage({
         variables: {
-          senderID: parseInt(userID),
+          senderID: parseInt(user._id.toString()),
           addresseeID: parseInt(data.user._id),
           title: title,
           message: message,

@@ -2,14 +2,19 @@ import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 import { LOGIN_VIEW } from 'view/Route/constants.route';
 
+type User = {
+  _id: number;
+  name: string;
+};
+
 type Action =
-  | { type: 'login'; token: string; userID: string | undefined }
+  | { type: 'login'; token: string; user: User | undefined }
   | { type: 'logout' };
 type Dispatch = (action: Action) => void;
 type State = {
   login: boolean;
   token: string | undefined;
-  userID: string | undefined;
+  user: User | undefined;
 };
 type AuthProviderProps = { children: React.ReactNode };
 
@@ -25,14 +30,14 @@ function authReducer(_: State, action: Action) {
       return {
         login: true,
         token: action.token,
-        userID: action.userID,
+        user: action.user,
       };
     }
     case 'logout': {
       return {
         login: false,
         token: undefined,
-        userID: undefined,
+        user: undefined,
       };
     }
     default: {
@@ -45,7 +50,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = React.useReducer(authReducer, {
     login: false,
     token: undefined,
-    userID: undefined,
+    user: undefined,
   });
 
   return (

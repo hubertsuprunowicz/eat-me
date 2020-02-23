@@ -41,10 +41,14 @@ const resolvers = {
 
       const token = sign({ userID: userParams.id }, process.env.JWT_SECRET);
       const userID = user[0].get(0).identity.low;
+      const userName = user[0].get(0).properties.name;
 
       return {
         token: token,
-        userID: userID
+        user: {
+          _id: userID,
+          name: userName
+        }
       };
     },
 
@@ -81,15 +85,20 @@ const resolvers = {
       const query =
         "CREATE (n:User{name:$name, password:$password}) RETURN ID(n)";
 
-      const userID = await session
+      const user = await session
         .run(query, { name: args.name, password })
-        .then(results => results.records[0].get(0).low);
+        .then(results => {
+          return {
+            _id: results.records[0].get(0).low,
+            name: results.records[0].get(0).properties.name
+          };
+        });
 
       const token = sign({ userId: userID }, process.env.JWT_SECRET);
 
       return {
         token: token,
-        userID: userID
+        user: user
       };
     },
 
