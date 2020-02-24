@@ -1,5 +1,8 @@
 # eat-me
 
+### global
+- [ ] add default avatar
+
 ### profile
 - [ ] add avatar
 - [ ] edit profile modal
