@@ -1,5 +1,12 @@
 # eat-me
 
+### test
+- [ ] register: unique username
+
+### global
+- [ ] add default avatar
+- [ ] loading: spinner
+
 ### profile
 - [ ] add avatar
 - [ ] edit profile modal
