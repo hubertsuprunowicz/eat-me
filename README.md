@@ -5,6 +5,7 @@
 
 ### global
 - [ ] add default avatar
+- [ ] loading: spinner
 
 ### profile
 - [ ] add avatar
