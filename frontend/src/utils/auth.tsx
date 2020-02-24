@@ -83,6 +83,7 @@ const Authorization: React.FC = ({ children }) => {
   const { login } = useAuthState();
 
   if (login) return <>{children}</>;
+  // return <>{children}</>;
 
   return <Redirect to={LOGIN_VIEW} />;
 };

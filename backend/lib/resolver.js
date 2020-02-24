@@ -2,24 +2,6 @@ const { sign } = require("jsonwebtoken");
 const { compare, hash } = require("bcryptjs");
 
 const resolvers = {
-  Query: {
-    recipeSearch: (_, args, context) => {
-      const session = context.driver.session();
-
-      const query = `
-                MATCH(n:Recipe)
-                WHERE (n.name) CONTAINS $recipeName
-                RETURN n
-            `;
-
-      return session
-        .run(query, args)
-        .then(result =>
-          result.records.map(record => record.get("recipe").properties)
-        );
-    }
-  },
-
   Mutation: {
     async login(_, args, context) {
       const session = await context.driver.session();
@@ -102,11 +84,49 @@ const resolvers = {
       };
     },
 
+    async editUser(_, { user }, context) {
+      const session = await context.driver.session();
+
+      let password;
+      if (user.password) password = await hash(user.password, 10);
+
+      let setter = "";
+      if (user.name) setter += "name: $name,";
+      if (user.email) setter += "email: $email,";
+      if (user.password) setter += "password: $password,";
+      if (user.avatar) setter += "avatar: $avatar,";
+      if (user.description) setter += "description: $description,";
+      setter = setter.slice(0, -1);
+
+      const query = `MATCH (a:User) WHERE a.name = '${user.oldName}' SET a += {${setter}} RETURN a`;
+
+      const userData = await session
+        .run(query, {
+          name: user.name,
+          email: user.email,
+          password: password,
+          avatar: user.avatar,
+          description: user.description
+        })
+        .then(results => {
+          return {
+            _id: results.records[0].get(0).low,
+            name: results.records[0].get(0).properties.name
+          };
+        });
+
+      console.log("edited");
+
+      return {
+        user: userData
+      };
+    },
+
     async createRecipe(_, args, context) {
       const session = await context.driver.session();
       const { userID } = args;
 
-      const userQuery = `MATCH (n:User) where ID(n) = ${userID} return n`;
+      const userQuery = `MATCH (n:User) WHERE ID(n) = ${userID} RETURN n`;
 
       const user = await session
         .run(userQuery, { id: userID })

@@ -64,7 +64,7 @@ type RecipeForm = {
 type Props = { setIsOpen: (arg: boolean) => void };
 
 const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
-  let [, resetComponent] = useState();
+  const [, resetComponent] = useState();
   const [paginationForm, setPaginationForm] = useState<boolean>(true);
   const {
     handleSubmit,
@@ -116,7 +116,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
   };
 
   const [createRecipe] = useMutation(RECIPE_CREATE, {
-    onError: error => {
+    onError: _ => {
       toast.error('Something has failed', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
@@ -231,7 +231,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </IconButton>
         </Box>
-        <Box mt={4} mb={2} display="flex" flexWrap={'wrap'} maxWidth={'33vw'}>
+        <Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
           {tags &&
             tags.map((tag: Tag, index) => (
               <Tag

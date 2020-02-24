@@ -1,3 +1,12 @@
+scalar Long
+scalar EmailAddress
+
+enum Difficulty {
+  EASY
+  NORMAL
+  HARD
+}
+
 type Query {
   users: [User!]!
   ingredients: [Ingredient!]!
@@ -26,6 +35,7 @@ type Mutation {
     message: String!
     timestamp: Long!
   ): Message
+
   createRecipe(
     name: String!
     description: String!
@@ -36,21 +46,28 @@ type Mutation {
     ingredient: [IngredientInput!]!
     userID: Int!
   ): Recipe
+
   createUser(name: String!, password: String!): Credentials!
+  editUser(user: EditUserInput): Credentials!
   login(name: String!, password: String!): Credentials!
 }
 
-enum Difficulty {
-  EASY
-  NORMAL
-  HARD
+input EditUserInput {
+  oldName: String!
+  name: String
+  email: EmailAddress
+  password: String
+  avatar: String
+  description: String
 }
-
-scalar Long
 
 type User {
   id: ID
   name: String!
+  email: EmailAddress
+  password: String!
+  avatar: String
+  description: String
   friends: [User] @relation(name: "WATCHES", direction: "OUT")
   recipe: [Recipe]
     @relation(name: "POSTS", direction: "OUT")

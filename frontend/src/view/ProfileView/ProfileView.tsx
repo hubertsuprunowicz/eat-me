@@ -1,16 +1,40 @@
-import React from 'react';
-import { BackgroundImage, TagWrapper } from './profile.view.style';
+import React, { useState } from 'react';
+import { BackgroundImage, TagWrapper, EditButton } from './profile.view.style';
 import { Box, Tag, Button } from 'style';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { useAuthState } from 'utils/auth';
+import { useParams } from 'react-router-dom';
+import { USER } from './profile.graphql';
+import { useQuery } from '@apollo/react-hooks';
+import EditUserDialog from './EditUserDialog';
+import FormModal from 'component/FormModal/FormModal';
 
-type Props = {
-  id?: string;
-  name?: string;
-  image?: string;
-};
+const ProfileView: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { slug } = useParams();
+  const { user } = useAuthState();
 
-// TODO: if not logged - redirect to login view
-// if (error) return <ErrorRedirect error={error}>
-const ProfileView: React.FC<Props> = ({ id, name, image }) => {
+  const username = 'pass';
+
+  const getName = () => {
+    if (slug && slug !== '') return slug;
+    if (user) return user.name;
+
+    return undefined;
+  };
+
+  const { loading, error, data } = useQuery(USER, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      name: getName(),
+    },
+  });
+
+  if (loading) return <>loading...</>;
+
+  const { name, email, avatar, description } = data.user;
+
   return (
     <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
       <BackgroundImage src="https://www.gdansk.pl/download/2019-09/135042.jpg" />
@@ -28,7 +52,19 @@ const ProfileView: React.FC<Props> = ({ id, name, image }) => {
         alignContent={'space-around'}
         alignItems={'center'}
         boxShadow={'spread'}
+        position={'relative'}
       >
+        {user && username === user.name && (
+          <EditButton
+            mt={4}
+            mr={4}
+            borderRadius={0}
+            boxShadow="insetNeo"
+            onClick={() => setIsOpen(true)}
+          >
+            <FontAwesomeIcon size={'lg'} icon={faEdit} />
+          </EditButton>
+        )}
         <span>Hubert Suprunowicz</span>
         <Box
           display={'flex'}
@@ -58,6 +94,16 @@ const ProfileView: React.FC<Props> = ({ id, name, image }) => {
           Recipes
         </Button>
       </Box>
+      {data && (
+        <FormModal
+          title="Edit User"
+          isOpen={isOpen}
+          closeModal={() => setIsOpen(false)}
+          allRequired={false}
+        >
+          <EditUserDialog user={data.user} setIsOpen={setIsOpen} />
+        </FormModal>
+      )}
     </Box>
   );
 };

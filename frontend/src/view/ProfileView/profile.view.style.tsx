@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from 'style';
 
 export const ProfileImage = styled.img`
   object-fit: contain;
@@ -11,9 +12,19 @@ export const BackgroundImage = styled.img<{ src: string }>`
   height: 60%;
 `;
 
+export const EditButton = styled(Button)`
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
 export const TagWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+`;
+
+export const Textarea = styled.textarea`
+  min-height: 130px !important;
 `;

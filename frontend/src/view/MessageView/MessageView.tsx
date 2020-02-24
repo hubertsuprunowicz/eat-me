@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Button } from 'style';
+import { Box, Button } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faEllipsisV,
-  faPlusCircle,
-  faFilter,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { MessageList } from './message.view.style';
 import FormModal from 'component/FormModal/FormModal';
 import MessageDialog from './MessageDialog';
@@ -18,15 +14,14 @@ type Props = {};
 const MessageView: React.FC<Props> = () => {
   const { user } = useAuthState();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { loading, error, data } = useQuery(YOUR_MESSAGES, {
+  const { loading, data } = useQuery(YOUR_MESSAGES, {
+    fetchPolicy: 'cache-and-network',
     variables: {
       name: user ? user.name : undefined,
     },
-    fetchPolicy: 'cache-and-network',
   });
 
   if (loading) return <>loading...</>;
-  console.log(data);
 
   return (
     <Box p={6}>

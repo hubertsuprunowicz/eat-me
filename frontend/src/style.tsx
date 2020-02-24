@@ -52,6 +52,8 @@ import {
   FontWeightProps,
   flexWrap,
   FlexWrapProps,
+  PositionProps,
+  position,
 } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
 
@@ -202,6 +204,7 @@ type Props = ColorProps &
   BorderRadiusProps &
   BoxShadowProps &
   WidthProps &
+  PositionProps &
   MarginProps &
   FlexWrapProps &
   TextAlignProps & { cursor?: 'pointer' | 'none' };
@@ -209,6 +212,7 @@ type Props = ColorProps &
 export const Box = styled.div<Props>`
   ${flexWrap}
   ${textAlign}
+  ${position}
   ${margin}
   ${alignContent}
   ${justifyContent}

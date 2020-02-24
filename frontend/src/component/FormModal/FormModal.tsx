@@ -4,12 +4,14 @@ import { FormModalStyle, modalStyle, CloseButton } from './form.modal.style';
 import { Box, IconButton, Button, Text } from 'style';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { BooleanValueNode } from 'graphql';
 
 type Props = {
   title: string;
   isOpen: boolean;
   closeModal: () => void;
   submitData?: ({}: any) => Promise<void>;
+  allRequired?: boolean;
 };
 
 const FormModal: React.FC<Props> = ({
@@ -18,6 +20,7 @@ const FormModal: React.FC<Props> = ({
   isOpen,
   closeModal,
   submitData,
+  allRequired = true,
 }) => {
   return (
     <Modal
@@ -30,9 +33,11 @@ const FormModal: React.FC<Props> = ({
         <Box pl={6} pr={6} display="flex" justifyContent="space-between">
           <Box>
             <h3>{title}</h3>
-            <Text color={'grey.500'} fontSize={0}>
-              * All fields are required
-            </Text>
+            {allRequired && (
+              <Text color={'grey.500'} fontSize={0}>
+                * All fields are required
+              </Text>
+            )}
           </Box>
           <CloseButton
             mt={6}
