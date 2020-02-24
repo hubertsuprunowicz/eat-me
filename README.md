@@ -1,5 +1,8 @@
 # eat-me
 
+### test
+- [ ] register: unique username
+
 ### global
 - [ ] add default avatar
 
