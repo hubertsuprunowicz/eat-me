@@ -26,20 +26,23 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
   const {
     handleSubmit,
     getValues,
+    formState,
     setValue,
     register,
     setError,
     errors,
     triggerValidation,
     reset,
-  } = useForm<EditUserForm>();
-
-  useEffect(() => {
-    setValue('name', user.name);
-    setValue('email', user.email);
-    setValue('avatar', user.avatar);
-    setValue('description', user.description);
-  }, []);
+  } = useForm<EditUserForm>({
+    defaultValues: {
+      name: user.name || '',
+      email: user.email || '',
+      avatar: user.avatar || '',
+      description: user.description || '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
   const [editUser] = useMutation(EDIT_USER, {
     onError: _ => {
@@ -54,6 +57,35 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
     },
   });
 
+  const lengthValidator = (field: string, value: string) => {
+    if (value === '') return false;
+    if (value.length < 4) {
+      setError(
+        field as
+          | 'name'
+          | 'email'
+          | 'avatar'
+          | 'description'
+          | 'password'
+          | 'confirmPassword',
+        'length',
+        `${field} need to be at least 4 characters long`
+      );
+      return true;
+    }
+
+    return false;
+  };
+
+  const emailIsNotValid = (email: string) => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('email', 'notValid', `email is not valid`);
+      return true;
+    }
+
+    return false;
+  };
+
   const onSubmit = ({
     name,
     password,
@@ -62,8 +94,37 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
     avatar,
     description,
   }: EditUserForm) => {
-    console.log('EDIT USER');
-    console.log(name, password, confirmPassword, email, avatar, description);
+    if (!user) throw new Error('Not authorized exception');
+    if (password !== confirmPassword) {
+      setError(
+        'confirmPassword',
+        'notMatch',
+        "password confirmation doesn't match password"
+      );
+    }
+
+    lengthValidator('name', name);
+    lengthValidator('password', password);
+    lengthValidator('email', email);
+    lengthValidator('avatar', avatar);
+    lengthValidator('description', description);
+    emailIsNotValid(email);
+
+    if (!formState.isValid) return;
+
+    editUser({
+      variables: {
+        oldName: user.name,
+        name: name,
+        password: password,
+        email: email,
+        avatar: avatar,
+        description: description,
+      },
+    }).then(() => {
+      reset();
+      setIsOpen(false);
+    });
   };
 
   return (
@@ -83,33 +144,36 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           name="name"
           ref={register}
         />
+        {errors.name && errors.name.message}
         <label htmlFor="password">
           <span>Password</span>
         </label>
         <input
-          type="text"
+          type="password"
           placeholder="Enter Password"
           name="password"
           ref={register}
         />
+        {errors.password && errors.password.message}
         <label htmlFor="confirmPassword">
           <input
-            type="text"
+            type="password"
             placeholder="Enter Confirm Password"
             name="confirmPassword"
             ref={register}
           />
+          {errors.confirmPassword && errors.confirmPassword.message}
         </label>
-
         <label htmlFor="email">
           <span>Email</span>
         </label>
         <input
-          type="text"
+          type="email"
           placeholder="Enter Email"
           name="email"
           ref={register}
         />
+        {errors.email && errors.email.message}
       </Box>
       <Box
         display={paginationForm ? 'none' : 'flex'}
@@ -126,6 +190,7 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           name="avatar"
           ref={register}
         />
+        {errors.avatar && errors.avatar.message}
         <label htmlFor="description">
           <span>Description</span>
         </label>
@@ -137,6 +202,7 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           name="description"
           ref={register}
         />
+        {errors.description && errors.description.message}
       </Box>
       <Box mb={6} width="100%" display="flex" justifyContent="space-between">
         <Box display="flex" justifyContent="flex-start">
@@ -169,7 +235,6 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
             mr={5}
             onClick={e => {
               e.preventDefault();
-              triggerValidation();
               onSubmit(getValues());
             }}
           >

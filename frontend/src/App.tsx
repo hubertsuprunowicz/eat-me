@@ -66,6 +66,7 @@ const App: React.FC = () => {
                 <Route path={WATCHES_VIEW}>{watchesView}</Route>
                 <Route path={MESSAGE_VIEW}>{messageView}</Route>
                 <Route path={ERROR_VIEW}>{errorView}</Route>
+                <Route path={''}>{recipesCardView}</Route>
               </Switch>
             </Navigate>
           </AuthProvider>

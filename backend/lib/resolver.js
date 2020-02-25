@@ -85,6 +85,7 @@ const resolvers = {
     },
 
     async editUser(_, { user }, context) {
+      console.log(user);
       const session = await context.driver.session();
 
       let password;
@@ -99,6 +100,8 @@ const resolvers = {
       setter = setter.slice(0, -1);
 
       const query = `MATCH (a:User) WHERE a.name = '${user.oldName}' SET a += {${setter}} RETURN a`;
+
+      console.log(query);
 
       const userData = await session
         .run(query, {

@@ -10,6 +10,7 @@ export const BackgroundImage = styled.img<{ src: string }>`
   object-fit: cover;
   width: 100%;
   height: 60%;
+  max-height: 400px;
 `;
 
 export const EditButton = styled(Button)`

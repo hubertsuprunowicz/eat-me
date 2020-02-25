@@ -15,7 +15,9 @@ const ProfileView: React.FC = () => {
   const { slug } = useParams();
   const { user } = useAuthState();
 
-  const username = 'pass';
+  const username = 'user';
+
+  console.log(user);
 
   const getName = () => {
     if (slug && slug !== '') return slug;
@@ -33,11 +35,12 @@ const ProfileView: React.FC = () => {
 
   if (loading) return <>loading...</>;
 
+  const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
   const { name, email, avatar, description } = data.user;
 
   return (
     <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
-      <BackgroundImage src="https://www.gdansk.pl/download/2019-09/135042.jpg" />
+      <BackgroundImage src={avatar || defaultAvatar} />
       <Box
         mt={-130}
         p={4}
@@ -87,10 +90,19 @@ const ProfileView: React.FC = () => {
         </Box>
       </Box>
       <Box mt={5}>
-        <Button bg={'secondary.800'} borderRadius={'5px'} mr={4}>
+        <Button
+          color={'secondary.600'}
+          borderRadius={'5px'}
+          mr={4}
+          boxShadow={'neumorphism'}
+        >
           Send Message
         </Button>
-        <Button bg={'warn.600'} borderRadius={'5px'}>
+        <Button
+          color={'warn.600'}
+          borderRadius={'5px'}
+          boxShadow={'neumorphism'}
+        >
           Recipes
         </Button>
       </Box>
