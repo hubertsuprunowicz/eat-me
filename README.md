@@ -6,6 +6,8 @@
 ### global
 - [ ] add default avatar
 - [ ] loading: spinner
+- [ ] _id -> id
+- [ ] active link
 
 ### profile
 - [ ] add avatar
