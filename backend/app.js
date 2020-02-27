@@ -1,8 +1,8 @@
+const http = require("http");
 const { ApolloServer } = require("apollo-server-express");
 const express = require("express");
 const neo4j = require("neo4j-driver");
 const dotenv = require("dotenv");
-const { makeExecutableSchema } = require("apollo-server");
 const {
   makeAugmentedSchema,
   augmentSchema,
@@ -62,11 +62,25 @@ const server = new ApolloServer({
   schema: schema,
   introspection: true,
   playground: true,
-  context: ({ req }) => {
-    return {
-      headers: req.headers,
-      driver
-    };
+  context: async ({ req, connection }) => {
+    if (connection) {
+      return connection.context;
+    } else {
+      return {
+        headers: req.headers,
+        driver
+      };
+    }
+  },
+  onConnect: connectionParams => {
+    if (connectionParams.Authorization) {
+      return true;
+    }
+    throw new Error("Missing auth token!");
+  },
+  subscriptions: {
+    onConnect: (connectionParams, webSocket, context) => {},
+    onDisconnect: (webSocket, context) => {}
   }
 });
 
@@ -75,14 +89,12 @@ const path = "/graphql";
 
 server.applyMiddleware({ app, path });
 
-let arr = [];
-for (let i = 0; i < 100; i++) {
-  arr.push({ id: i, name: "name - " + i, timestamp: "18 18 18: 2020" });
-}
-app.post("/test", (req, res) => {
-  return res.send(arr.slice(req.body.offset, req.body.limit + req.body.offset));
-});
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
-app.listen({ port, path }, () => {
-  console.log(`GraphQL server ready at http://localhost:${port}${path}`);
+httpServer.listen({ port }, () => {
+  console.log(`🚀 GraphQL server ready at http://localhost:${port}${path}`);
+  console.log(
+    `🚀 Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`
+  );
 });

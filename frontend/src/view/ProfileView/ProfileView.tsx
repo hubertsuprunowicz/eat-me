@@ -17,8 +17,6 @@ const ProfileView: React.FC = () => {
 
   const username = 'user';
 
-  console.log(user);
-
   const getName = () => {
     if (slug && slug !== '') return slug;
     if (user) return user.name;

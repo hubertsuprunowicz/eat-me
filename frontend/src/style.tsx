@@ -58,15 +58,17 @@ import {
 import { themeGet } from '@styled-system/theme-get';
 
 export const Main = styled.main`
-  background: rgb(247, 247, 247);
-  background: linear-gradient(
+  background: white;
+  /* background: rgb(247, 247, 247); */
+  /* background: linear-gradient(
     180deg,
     rgba(247, 247, 247, 1) 1%,
     rgba(240, 240, 240, 1) 52%,
     rgba(232, 232, 232, 1) 100%
-  );
+  ); */
 
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;

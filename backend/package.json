@@ -34,9 +34,11 @@
     "express": "^4.17.1",
     "graphql-auth-directives": "^2.1.0",
     "graphql-scalars": "^1.0.6",
+    "graphql-subscriptions": "^1.1.0",
     "graphql-yoga": "^1.18.0",
     "neo4j-driver": "^4.0.1",
     "prisma": "^1.34.10",
+    "subscriptions-transport-ws": "^0.9.16",
     "wait-on": "^4.0.0"
   },
   "devDependencies": {

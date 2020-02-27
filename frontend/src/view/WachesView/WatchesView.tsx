@@ -9,7 +9,7 @@ type Props = {};
 
 const WatchesView: React.FC<Props> = () => {
   return (
-    <Box p={5} width={'100%'}>
+    <Box p={5} style={{ paddingBottom: '80px' }}>
       <Box display={'flex'} justifyContent={'space-between'}>
         <span>Watches</span>
         <IconButton bg="transparent">

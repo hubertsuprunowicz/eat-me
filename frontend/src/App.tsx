@@ -57,18 +57,17 @@ const App: React.FC = () => {
       <Main>
         <Router>
           <AuthProvider>
-            <Navigate>
-              <Switch>
-                <Route path={'/test'}>{testView}</Route>
-                <Route path={LOGIN_VIEW}>{loginView}</Route>
-                <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
-                <Route path={PROFILE_VIEW}>{profileView}</Route>
-                <Route path={WATCHES_VIEW}>{watchesView}</Route>
-                <Route path={MESSAGE_VIEW}>{messageView}</Route>
-                <Route path={ERROR_VIEW}>{errorView}</Route>
-                <Route path={''}>{recipesCardView}</Route>
-              </Switch>
-            </Navigate>
+            <Switch>
+              <Route path={'/test'}>{testView}</Route>
+              <Route path={LOGIN_VIEW}>{loginView}</Route>
+              <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
+              <Route path={PROFILE_VIEW}>{profileView}</Route>
+              <Route path={WATCHES_VIEW}>{watchesView}</Route>
+              <Route path={MESSAGE_VIEW}>{messageView}</Route>
+              <Route path={ERROR_VIEW}>{errorView}</Route>
+              <Route path={''}>{recipesCardView}</Route>
+            </Switch>
+            <Navigate />
           </AuthProvider>
         </Router>
       </Main>

@@ -1,7 +1,21 @@
 const { sign } = require("jsonwebtoken");
 const { compare, hash } = require("bcryptjs");
+const { PubSub, withFilter } = require("apollo-server");
+
+const pubsub = new PubSub();
+pubsub.ee.setMaxListeners(30);
 
 const resolvers = {
+  Subscription: {
+    messageRecived: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator("messageRecived"),
+        (payload, variables) => {
+          return payload.messageRecived.addresseeID.toString() === variables.id;
+        }
+      )
+    }
+  },
   Mutation: {
     async login(_, args, context) {
       const session = await context.driver.session();
@@ -44,19 +58,31 @@ const resolvers = {
           MATCH (a:User), (b:User) WHERE ID(a) = ${addresseeID} AND ID(b) = ${senderID}
           CREATE (b)<-[:SENT_FROM]-(c:Message{title: $title, message: $message, timestamp: $timestamp})
           -[:SENT_TO]->(a)
-          RETURN ID(c)
+          RETURN ID(c), b
           `;
 
-      const messageID = await session
+      const message = await session
         .run(messageQuery, {
           title: args.title,
           message: args.message,
           timestamp: args.timestamp
         })
-        .then(results => results.records[0].get(0).low);
+        .then(results => {
+          return {
+            id: results.records[0].get(0).low,
+            properties: results.records[0].get(1).properties
+          };
+        });
 
+      pubsub.publish("messageRecived", {
+        messageRecived: {
+          _id: message.id,
+          ...args,
+          sender: { name: message.properties.name }
+        }
+      });
       return {
-        _id: messageID
+        _id: message.id
       };
     },
 
@@ -85,7 +111,6 @@ const resolvers = {
     },
 
     async editUser(_, { user }, context) {
-      console.log(user);
       const session = await context.driver.session();
 
       let password;
@@ -101,8 +126,6 @@ const resolvers = {
 
       const query = `MATCH (a:User) WHERE a.name = '${user.oldName}' SET a += {${setter}} RETURN a`;
 
-      console.log(query);
-
       const userData = await session
         .run(query, {
           name: user.name,
@@ -117,8 +140,6 @@ const resolvers = {
             name: results.records[0].get(0).properties.name
           };
         });
-
-      console.log("edited");
 
       return {
         user: userData

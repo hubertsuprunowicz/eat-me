@@ -4,9 +4,10 @@ import { LOGIN_VIEW, ERROR_VIEW } from 'view/Route/constants.route';
 import { ApolloError } from 'apollo-client';
 
 type Props = {
-  error: ApolloError;
+  error: ApolloError | string;
 };
 
+// TODO: more generic. fe. error could be only string
 function checkIfNotAuthorized(error: ApolloError): boolean {
   return (
     error.graphQLErrors &&
@@ -16,6 +17,10 @@ function checkIfNotAuthorized(error: ApolloError): boolean {
 }
 
 const ErrorRedirect: React.FC<Props> = ({ error }) => {
+  if (typeof error === 'string') {
+    return <Redirect to={ERROR_VIEW} />;
+  }
+
   return checkIfNotAuthorized(error) ? (
     <Redirect to={LOGIN_VIEW} />
   ) : (

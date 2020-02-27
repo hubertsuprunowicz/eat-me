@@ -30,12 +30,26 @@ export const GET_USER = gql`
 
 export const YOUR_MESSAGES = gql`
   query YourMessages($name: String!) {
-    messages(filter: { sender: { name: $name } }) {
+    messages(filter: { addressee: { name: $name } }) {
       _id
       title
       message
       timestamp
-      addressee {
+      sender {
+        name
+      }
+    }
+  }
+`;
+
+export const MESSAGE_RECIVED = gql`
+  subscription onMessageRecived($id: ID!) {
+    messageRecived(id: $id) {
+      _id
+      title
+      message
+      timestamp
+      sender {
         name
       }
     }
