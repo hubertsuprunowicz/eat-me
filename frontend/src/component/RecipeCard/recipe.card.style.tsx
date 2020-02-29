@@ -26,6 +26,10 @@ export const Card = styled.div<Props>`
   padding: ${CARD_PADDING};
   margin: ${CARD_MARGIN};
 
+  & button {
+    padding: 0;
+  }
+
   > img {
     width: 100%;
     height: 60%;

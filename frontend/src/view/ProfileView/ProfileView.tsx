@@ -4,24 +4,23 @@ import { Box, Tag, Button } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { USER } from './profile.graphql';
 import { useQuery } from '@apollo/react-hooks';
 import EditUserDialog from './EditUserDialog';
 import FormModal from 'component/FormModal/FormModal';
+import { RECIPES_VIEW } from 'view/Route/constants.route';
 
 const ProfileView: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { slug } = useParams();
+  const { username } = useParams();
   const { user } = useAuthState();
 
-  const username = 'user';
-
   const getName = () => {
-    if (slug && slug !== '') return slug;
+    if (username && username !== '') return username;
     if (user) return user.name;
 
-    return undefined;
+    throw new Error('Something went wrong. Plese come back later.');
   };
 
   const { loading, error, data } = useQuery(USER, {
@@ -55,7 +54,7 @@ const ProfileView: React.FC = () => {
         boxShadow={'spread'}
         position={'relative'}
       >
-        {user && username === user.name && (
+        {user && 'user' === user.name && (
           <EditButton
             mt={4}
             mr={4}
@@ -101,7 +100,7 @@ const ProfileView: React.FC = () => {
           borderRadius={'5px'}
           boxShadow={'neumorphism'}
         >
-          Recipes
+          <Link to={RECIPES_VIEW + `/${getName()}`}>Recipes</Link>
         </Button>
       </Box>
       {data && (

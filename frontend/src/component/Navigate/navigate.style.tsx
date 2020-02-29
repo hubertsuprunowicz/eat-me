@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Button } from '../../style';
 import { themeGet } from '@styled-system/theme-get';
+import { Link } from 'react-router-dom';
 
 export const NavList = styled.ul`
   display: flex;

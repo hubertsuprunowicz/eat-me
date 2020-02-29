@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SwipeableViews from 'react-swipeable-views';
+import { virtualize } from 'react-swipeable-views-utils';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
 import { useQuery } from '@apollo/react-hooks';
 import User from '../../model/user';
@@ -10,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import FormModal from 'component/FormModal/FormModal';
 import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
+import { useParams } from 'react-router-dom';
 
 export type Recipe = {
   _id: string;
@@ -26,10 +28,14 @@ export type Recipe = {
 
 const RecipesView: React.FC = () => {
   const [page, setPage] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { username } = useParams();
   const { loading, error, data } = useQuery(RECIPES, {
     variables: {
       offset: page,
+      onlyPerson: username ? !!username : false,
+      personName: username,
     },
     fetchPolicy: 'cache-and-network',
   });
@@ -43,7 +49,7 @@ const RecipesView: React.FC = () => {
   if (loading) return <>Loading data...</>;
   if (error) return <ErrorRedirect error={error} />;
 
-  const { recipes } = data;
+  const recipes = data[Object.keys(data)[0]];
 
   return (
     <Box>
@@ -70,11 +76,20 @@ const RecipesView: React.FC = () => {
         </div>
       </Box>
       <SwipeableViews
-        onChangeIndex={cardNumber => paginationHandler(cardNumber + 1)}
+        onChangeIndex={(cardNumber: number) =>
+          paginationHandler(cardNumber + 1)
+        }
         enableMouseEvents
+        index={currentIndex}
       >
-        {recipes.map((recipe: Recipe) => (
-          <RecipeCard key={recipe._id} id={recipe._id} recipe={recipe} />
+        {recipes.map((recipe: Recipe, index: any) => (
+          <RecipeCard
+            key={recipe._id}
+            id={recipe._id}
+            recipe={recipe}
+            index={index}
+            setCurrentIndex={setCurrentIndex}
+          />
         ))}
       </SwipeableViews>
       <FormModal

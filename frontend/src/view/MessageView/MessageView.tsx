@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Button } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,7 @@ import { useAuthState } from 'utils/auth';
 import { useQuery } from '@apollo/react-hooks';
 import { YOUR_MESSAGES, MESSAGE_RECIVED } from './message.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
+import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 
 type Props = {};
 
@@ -19,7 +20,7 @@ const MessageView: React.FC<Props> = () => {
   const { data, loading, subscribeToMore } = useQuery(YOUR_MESSAGES, {
     fetchPolicy: 'cache-and-network',
     variables: {
-      name: user ? user.name : undefined,
+      name: user!.name,
     },
   });
 
@@ -52,8 +53,8 @@ const MessageView: React.FC<Props> = () => {
   if (loading) return <>loading...</>;
 
   return (
-    <Box p={6} style={{ paddingBottom: '80px' }}>
-      <Box display={'flex'} justifyContent={'space-between'}>
+    <Box pt={6} style={{ paddingBottom: '80px' }}>
+      <Box pl={6} pr={6} display={'flex'} justifyContent={'space-between'}>
         <span>Message</span>
         <div>
           <Button
@@ -83,10 +84,16 @@ const MessageView: React.FC<Props> = () => {
                   flexDirection="column"
                   justifyContent="space-between"
                   ml={5}
+                  width={'100%'}
                 >
-                  <b style={{ fontSize: '14px' }}>{title}</b>
+                  <Box display="flex" justifyContent="space-between">
+                    <b style={{ fontSize: '14px' }}>{sender.name}</b>
+                    <span style={{ fontSize: '10px' }}>
+                      {formatDistance(timestamp, new Date())}
+                    </span>
+                  </Box>
                   <span style={{ fontSize: '10px', color: 'grey' }}>
-                    {message} + {sender.name}
+                    {message}
                   </span>
                 </Box>
               </li>

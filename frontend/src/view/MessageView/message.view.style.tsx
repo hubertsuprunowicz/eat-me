@@ -4,16 +4,29 @@ export const MessageList = styled.ul`
   text-decoration: none;
   padding: 0;
   overflow-y: auto;
-  li {
+  padding-bottom: 40px;
+
+  & li {
     display: flex;
     align-content: space-around;
     background-color: transparent;
-    margin-bottom: 20px;
+    margin: 0;
+    padding: 20px 15px;
+    height: 45px;
+  }
+
+  & li:hover {
+    background-color: #fdfdfdfd;
+    box-shadow: 9px 9px 16px rgb(163, 177, 198, 0.6),
+      -9px -9px 16px rgba(255, 255, 255, 0.5);
   }
 
   img {
+    margin-right: 10px;
     object-fit: cover;
     border-radius: 50%;
+    box-shadow: 9px 9px 16px rgb(163, 177, 198, 0.6),
+      -9px -9px 16px rgba(255, 255, 255, 0.5);
 
     width: 45px;
     max-width: 45px;

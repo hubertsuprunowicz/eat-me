@@ -3,24 +3,43 @@ import gql from 'graphql-tag';
 export const LIMIT = 6;
 
 export const RECIPES = gql`
-  query Recipes($offset: Int!){
-  recipes(first: ${LIMIT}, offset: $offset) {
-    _id
-    name
-    difficulty
-    time
-    image
-    tag {
+  query Recipes($offset: Int!, $onlyPerson: Boolean = false, $personName: String) {
+
+    recipes(first: ${LIMIT}, offset: $offset) @skip(if: $onlyPerson) {
+      _id
       name
+      difficulty
+      time
+      image
+      tag {
+        name
+      }
+      ingredient {
+        name
+        amount
+      }
+      user {
+        name
+      }
     }
-    ingredient {
+
+    Recipe(filter: {user: {name: $personName}}) @include(if: $onlyPerson) {
+      _id
       name
-      amount
+      difficulty
+      time
+      image
+      tag {
+        name
+      }
+      ingredient {
+        name
+        amount
+      }
+      user {
+        name
+      }
     }
-    user {
-      name
-    }
-  }
   }
 `;
 

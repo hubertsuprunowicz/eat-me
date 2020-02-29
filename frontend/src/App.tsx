@@ -49,8 +49,6 @@ const messageView = (
 );
 const errorView = <ErrorView />;
 
-const testView = <TestView />;
-
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -58,10 +56,13 @@ const App: React.FC = () => {
         <Router>
           <AuthProvider>
             <Switch>
-              <Route path={'/test'}>{testView}</Route>
               <Route path={LOGIN_VIEW}>{loginView}</Route>
-              <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
+              <Route path={PROFILE_VIEW + '/:username'}>{profileView}</Route>
               <Route path={PROFILE_VIEW}>{profileView}</Route>
+              <Route path={RECIPES_VIEW + '/:username'}>
+                {recipesCardView}
+              </Route>
+              <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
               <Route path={WATCHES_VIEW}>{watchesView}</Route>
               <Route path={MESSAGE_VIEW}>{messageView}</Route>
               <Route path={ERROR_VIEW}>{errorView}</Route>

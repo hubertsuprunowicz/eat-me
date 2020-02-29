@@ -8,6 +8,7 @@ import { useAuthState } from 'utils/auth';
 import { EDIT_USER } from './profile.graphql';
 import User from 'model/user';
 import { Textarea } from './profile.view.style';
+import { isEmpty } from 'view/MessageView/MessageDialog';
 
 type EditUserForm = {
   name: string;
@@ -110,7 +111,7 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
     lengthValidator('description', description);
     emailIsNotValid(email);
 
-    if (!formState.isValid) return;
+    if (!isEmpty(errors)) return;
 
     editUser({
       variables: {

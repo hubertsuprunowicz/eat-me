@@ -11,6 +11,7 @@ export const BackgroundImage = styled.img<{ src: string }>`
   width: 100%;
   height: 60%;
   max-height: 400px;
+  min-height: 350px;
 `;
 
 export const EditButton = styled(Button)`

@@ -27,8 +27,6 @@ type Query {
   message(name: String): Message
   comment(_id: ID): Comment
   rating(_id: ID): Rating
-
-  recipeSearch(_id: ID!): Recipe
 }
 
 type Mutation {
@@ -73,9 +71,8 @@ type User {
   avatar: String
   description: String
   friends: [User] @relation(name: "WATCHES", direction: "OUT")
-  recipe: [Recipe]
-    @relation(name: "POSTS", direction: "OUT")
-    @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
+  recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
+  # @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
 }
 
 type Message {
@@ -129,9 +126,8 @@ type Recipe {
   totalCost: Int
   time: Int!
   tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
-  user: User
-    @relation(name: "POSTS", direction: "IN")
-    @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
+  user: User @relation(name: "POSTS", direction: "IN")
+  # @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
   ingredient: [Ingredient] @relation(name: "HAS_INGREDIENT", direction: "OUT")
   comment: [Comment] @relation(name: "POSTS", direction: "OUT")
 }

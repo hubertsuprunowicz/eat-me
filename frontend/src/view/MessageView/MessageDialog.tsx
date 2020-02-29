@@ -15,7 +15,7 @@ type MessageForm = {
   timestamp: number;
 };
 
-function isEmpty(obj: Object) {
+export function isEmpty(obj: Object) {
   return Object.entries(obj).length === 0 && obj.constructor === Object;
 }
 
