@@ -9,6 +9,7 @@
 - [ ] _id -> id
 - [ ] active link
 - [ ] Button Link/ /Button -> Link/
+- [ ] eg: Recipe -> recipe / recipes
 
 ### profile
 - [ ] add avatar
