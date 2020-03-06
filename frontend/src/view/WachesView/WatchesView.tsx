@@ -20,7 +20,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSRW-6kkUVv1JWapToUlIq_3xoAfiSssBvyptHJhBUbPeoiR9fZ"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
@@ -38,7 +38,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTH554DH7o2j2D4yHITgUX7ADnFF-3unX2AOLmRMwH9EnjtOFG-"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
@@ -56,7 +56,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRGb7lDEd5Q6foBfeZGU-SBBFuCei9vy_4z2H3iaLAhEkdpE9Qv"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
@@ -74,7 +74,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSmVLcEkcHmbDfmachF6prNvSIvny2iCzW11Kj7NbCDgoyfxiYx"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
@@ -92,7 +92,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRCBx28acYlpUdfYPOqB4_mlpIjtUkASTbRADpECTW78vVlVEzf"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
@@ -110,7 +110,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS_bplhWkKldrNAwNLeyUhGCQXQW7zdvlgPRqXXKt4VdFqAKGXF"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
@@ -128,7 +128,7 @@ const WatchesView: React.FC<Props> = () => {
         <li>
           <Link to="/profile">
             <img
-              src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTxUfSevDDou209NwNJlJV0nHhi_5LpNgOIQOnLaMzSHHnyEDfr"
               alt=""
             />
             <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
