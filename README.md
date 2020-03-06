@@ -23,6 +23,7 @@
 - [ ] edit profile modal
 
 ### message
+- [ ] delete
 - [ ] change messages styling
 - [ ] filter: only sent to you
 - [ ] display data on right corner
