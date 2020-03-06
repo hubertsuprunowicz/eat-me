@@ -6,7 +6,7 @@ import {
   faEye,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { Footer, NavButton, NavItem, NavList } from './navigate.style';
+import { Footer, NavButton, NavList } from './navigate.style';
 import { Link } from 'react-router-dom';
 import {
   PROFILE_VIEW,
@@ -21,41 +21,29 @@ const Navigate: React.FC = ({ children }) => {
       {children}
       <Footer>
         <NavList>
-          <NavItem>
-            <Link to={RECIPES_VIEW}>
-              <NavButton color={'grey.800'}>
-                <FontAwesomeIcon size={'sm'} icon={faUtensils} />
-                <span>RECIPES</span>
-              </NavButton>
-            </Link>
-          </NavItem>
-          <hr />
-          <NavItem>
-            <Link to={WATCHES_VIEW}>
-              <NavButton color={'grey.800'}>
-                <FontAwesomeIcon size={'sm'} icon={faEye} />
-                <span>WATCHES</span>
-              </NavButton>
-            </Link>
-          </NavItem>
-          <hr />
-          <NavItem>
-            <Link to={MESSAGE_VIEW}>
-              <NavButton color={'grey.800'}>
-                <FontAwesomeIcon size={'sm'} icon={faCommentAlt} />
-                <span>MESSAGE</span>
-              </NavButton>
-            </Link>
-          </NavItem>
-          <hr />
-          <NavItem>
-            <Link to={PROFILE_VIEW}>
-              <NavButton color={'grey.800'}>
-                <FontAwesomeIcon size={'sm'} icon={faUser} />
-                <span>PROFILE</span>
-              </NavButton>
-            </Link>
-          </NavItem>
+          <Link to={RECIPES_VIEW}>
+            <NavButton color={'grey.800'}>
+              <FontAwesomeIcon size={'lg'} icon={faUtensils} />
+            </NavButton>
+          </Link>
+
+          <Link to={WATCHES_VIEW}>
+            <NavButton color={'grey.800'}>
+              <FontAwesomeIcon size={'lg'} icon={faEye} />
+            </NavButton>
+          </Link>
+
+          <Link to={MESSAGE_VIEW}>
+            <NavButton color={'grey.800'}>
+              <FontAwesomeIcon size={'lg'} icon={faCommentAlt} />
+            </NavButton>
+          </Link>
+
+          <Link to={PROFILE_VIEW}>
+            <NavButton color={'grey.800'}>
+              <FontAwesomeIcon size={'lg'} icon={faUser} />
+            </NavButton>
+          </Link>
         </NavList>
       </Footer>
     </>
