@@ -56,6 +56,7 @@ import {
   position,
 } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
+import { Link } from 'react-router-dom';
 
 export const Main = styled.main`
   background: white;
@@ -76,6 +77,16 @@ export const Main = styled.main`
   * {
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
+    outline: none !important;
+  }
+
+  *:focus {
+    outline: none !important;
+  }
+
+  a,
+  button {
+    font-size: 13px;
   }
 `;
 
@@ -149,6 +160,59 @@ export const Button = styled('button')<ButtonProps>`
   })}
 `;
 
+export const LinkButton = styled(Link)<ButtonProps>`
+cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 700;
+  color: ${themeGet('colors.grey.700')};
+  background-color: white;
+  border-radius: ${themeGet('radii.0')}px;
+  padding: 8px;
+  letter-spacing: 1px;
+  /* text-shadow: 4px 4px 8px rgb(163,177,198,1), -4px -4px 8px rgba(255,255,255, 1); */
+
+  & svg {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+
+  :hover {
+    /* TODO: hover background color via variant */
+  };
+
+  :focus {
+    /* box-shadow: ${themeGet('shadows.insetNeo')}; */
+  };
+  ${fontWeight}
+  ${boxShadow}
+  ${color}
+  ${fontSize}
+  ${width}
+  ${height}
+  ${space}
+  ${border}
+  ${borderWidth}
+  ${borderColor}
+  ${borderRadius}
+  ${variant({
+    prop: 'variant',
+    scale: 'buttons',
+    variants: {
+      primary: {
+        color: 'white',
+        bg: 'white',
+      },
+      secondary: {
+        color: 'white',
+        bg: 'white',
+      },
+    },
+  })}
+`;
+
 type IconButtonProps = WidthProps &
   HeightProps &
   ColorProps &
@@ -159,6 +223,34 @@ type IconButtonProps = WidthProps &
   BoxShadowProps;
 
 export const IconButton = styled(Button)<IconButtonProps>(
+  {
+    border: 'none',
+    backgroundColor: 'white',
+    cursor: 'pointer',
+  },
+  color,
+  width,
+  height,
+  space,
+  boxShadow,
+  borderRadius,
+  variant({
+    prop: 'variant',
+    scale: 'buttons',
+    variants: {
+      primary: {
+        color: 'white',
+        bg: 'white',
+      },
+      secondary: {
+        color: 'white',
+        bg: 'white',
+      },
+    },
+  })
+);
+
+export const LinkIconButton = styled(LinkButton)<IconButtonProps>(
   {
     border: 'none',
     backgroundColor: 'white',
@@ -255,11 +347,13 @@ ${space}
 ${boxShadow}
 ${borderRadius}
 cursor: ${props => props.cursor};
-border-radius: 20px;
+border-radius: 10px;
 margin: 3px 5px 3px 5px;
 padding: 8px;
 color: white;
 font-size: 0.75em;
+letter-spacing: 1px;
+font-weight: 600;
 /* border: 4px solid #eee; */
 /* box-shadow: inset 3px 3px 3px rgba(0,0,0,0.2), inset -3px -4px 4px rgba(255,255,255,0.4); */
 box-shadow: inset 3px 3px 3px rgba(0,0,0,0.2);

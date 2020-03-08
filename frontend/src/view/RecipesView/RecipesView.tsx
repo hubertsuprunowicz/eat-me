@@ -75,6 +75,7 @@ const RecipesView: React.FC = () => {
           </Button>
         </div>
       </Box>
+      {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
       <SwipeableViews
         onChangeIndex={(cardNumber: number) =>
           paginationHandler(cardNumber + 1)

@@ -12,6 +12,7 @@ import {
   WATCHES_VIEW,
   MESSAGE_VIEW,
   ERROR_VIEW,
+  RECIPE_VIEW,
 } from 'view/Route/constants.route';
 import ProfileView from 'view/ProfileView/ProfileView';
 import { theme } from 'utils/theme';
@@ -22,6 +23,7 @@ import { Authorization, AuthProvider } from 'utils/auth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TestView from 'view/test/TestView';
+import RecipeView from 'view/RecipeView/RecipeView';
 
 toast.configure();
 
@@ -47,6 +49,9 @@ const messageView = (
     <MessageView />
   </Authorization>
 );
+
+const recipeView = <RecipeView />;
+
 const errorView = <ErrorView />;
 
 const App: React.FC = () => {
@@ -57,6 +62,7 @@ const App: React.FC = () => {
           <AuthProvider>
             <Switch>
               <Route path={LOGIN_VIEW}>{loginView}</Route>
+              <Route path={RECIPE_VIEW + '/:id'}>{recipeView}</Route>
               <Route path={PROFILE_VIEW + '/:username'}>{profileView}</Route>
               <Route path={PROFILE_VIEW}>{profileView}</Route>
               <Route path={RECIPES_VIEW + '/:username'}>

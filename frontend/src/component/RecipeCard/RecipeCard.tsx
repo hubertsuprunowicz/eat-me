@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton, Tag } from '../../style';
+import { Box, IconButton, Tag, LinkIconButton } from '../../style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHeart,
@@ -9,11 +9,13 @@ import {
   faClock,
   faFlag,
   faMoneyBill,
+  faSign,
+  faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { Card, CardDetails, TagWrapper } from './recipe.card.style';
 import { Recipe } from 'view/RecipesView/RecipesView';
 import { Redirect, Link, useParams } from 'react-router-dom';
-import { PROFILE_VIEW } from 'view/Route/constants.route';
+import { PROFILE_VIEW, RECIPE_VIEW } from 'view/Route/constants.route';
 
 export type Props = ItemCardProps;
 
@@ -76,17 +78,18 @@ const RecipeCard: React.FC<Props> = ({
           ))}
         </TagWrapper>
         <Box>
-          <IconButton
+          <LinkIconButton
+            to={`${RECIPE_VIEW}/${id}`}
             boxShadow="neumorphism"
-            color="warn.600"
-            width="28px"
-            height="28px"
+            color="black"
+            width="38px"
+            height="38px"
             borderRadius="50%"
             ml={4}
             mr={4}
           >
-            <FontAwesomeIcon size={'xs'} icon={faStar} />
-          </IconButton>
+            <FontAwesomeIcon size={'sm'} icon={faSignInAlt} />
+          </LinkIconButton>
           <IconButton
             boxShadow="neumorphism"
             onClick={loveItHandle}
@@ -111,19 +114,18 @@ const RecipeCard: React.FC<Props> = ({
           >
             <FontAwesomeIcon size={'lg'} icon={faTimes} />
           </IconButton>
-          <IconButton
+          <LinkIconButton
+            to={`${PROFILE_VIEW}/${user.name}`}
             boxShadow="neumorphism"
-            width="28px"
-            height="28px"
+            width="38px"
+            height="38px"
             color="grey.800"
             borderRadius="50%"
             ml={4}
             mr={4}
           >
-            <Link to={PROFILE_VIEW + `/${user.name}`}>
-              <FontAwesomeIcon size={'xs'} icon={faUser} />
-            </Link>
-          </IconButton>
+            <FontAwesomeIcon size={'sm'} icon={faUser} />
+          </LinkIconButton>
         </Box>
       </CardDetails>
     </Card>

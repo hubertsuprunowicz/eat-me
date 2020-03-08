@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BackgroundImage, TagWrapper, EditButton } from './profile.view.style';
-import { Box, Tag, Button } from 'style';
+import { Box, Tag, Button, LinkButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
@@ -54,7 +54,7 @@ const ProfileView: React.FC = () => {
         boxShadow={'spread'}
         position={'relative'}
       >
-        {user && 'user' === user.name && (
+        {user && username === user.name && (
           <EditButton
             mt={4}
             mr={4}
@@ -95,13 +95,14 @@ const ProfileView: React.FC = () => {
         >
           Send Message
         </Button>
-        <Button
+        <LinkButton
+          to={`${RECIPES_VIEW}/${getName()}`}
           color={'warn.600'}
           borderRadius={'5px'}
           boxShadow={'neumorphism'}
         >
-          <Link to={RECIPES_VIEW + `/${getName()}`}>Recipes</Link>
-        </Button>
+          Recipes
+        </LinkButton>
       </Box>
       {data && (
         <FormModal

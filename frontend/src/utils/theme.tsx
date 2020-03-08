@@ -78,9 +78,12 @@ const others = {
     minimal: '2px 2px 9px -2px rgba(0,0,0,0.13)',
     spread: '3px 4px 25px -4px rgba(0, 0, 0, 0.36)',
     neumorphism:
-      '9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5)',
+      'inset 0 0 15px rgba(55, 84, 170,0), inset 0 0 20px rgba(255, 255, 255,0), 7px 7px 15px rgba(55, 84, 170,.15), -7px -7px 20px rgba(255, 255, 255,1), inset 0px 0px 4px rgba(255, 255, 255,.2)',
+    // '9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5)',
     insetNeo:
       'inset 3px 3px 3px rgba(0,0,0,0.2), inset -3px -4px 4px rgba(255,255,255,0.4)',
+    // insetNeo:
+    //   'inset 7px 7px 15px rgba(55, 84, 170,.15), inset -7px -7px 20px rgba(255, 255, 255,1), 0px 0px 4px rgba(255, 255, 255,.2)',
   },
   radii: [10, 10],
 };

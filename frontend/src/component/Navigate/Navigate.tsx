@@ -6,8 +6,7 @@ import {
   faEye,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { Footer, NavButton, NavList } from './navigate.style';
-import { Link } from 'react-router-dom';
+import { Footer, StyledNavLink, NavList } from './navigate.style';
 import {
   PROFILE_VIEW,
   RECIPES_VIEW,
@@ -21,29 +20,21 @@ const Navigate: React.FC = ({ children }) => {
       {children}
       <Footer>
         <NavList>
-          <Link to={RECIPES_VIEW}>
-            <NavButton color={'grey.800'}>
-              <FontAwesomeIcon size={'lg'} icon={faUtensils} />
-            </NavButton>
-          </Link>
+          <StyledNavLink to={RECIPES_VIEW} activeClassName="is-active">
+            <FontAwesomeIcon size={'lg'} icon={faUtensils} />
+          </StyledNavLink>
 
-          <Link to={WATCHES_VIEW}>
-            <NavButton color={'grey.800'}>
-              <FontAwesomeIcon size={'lg'} icon={faEye} />
-            </NavButton>
-          </Link>
+          <StyledNavLink to={WATCHES_VIEW} activeClassName="is-active">
+            <FontAwesomeIcon size={'lg'} icon={faEye} />
+          </StyledNavLink>
 
-          <Link to={MESSAGE_VIEW}>
-            <NavButton color={'grey.800'}>
-              <FontAwesomeIcon size={'lg'} icon={faCommentAlt} />
-            </NavButton>
-          </Link>
+          <StyledNavLink to={MESSAGE_VIEW} activeClassName="is-active">
+            <FontAwesomeIcon size={'lg'} icon={faCommentAlt} />
+          </StyledNavLink>
 
-          <Link to={PROFILE_VIEW}>
-            <NavButton color={'grey.800'}>
-              <FontAwesomeIcon size={'lg'} icon={faUser} />
-            </NavButton>
-          </Link>
+          <StyledNavLink to={PROFILE_VIEW} activeClassName="is-active">
+            <FontAwesomeIcon size={'lg'} icon={faUser} />
+          </StyledNavLink>
         </NavList>
       </Footer>
     </>

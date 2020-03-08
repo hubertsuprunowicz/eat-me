@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Button } from '../../style';
+import { Button, LinkIconButton } from '../../style';
 import { themeGet } from '@styled-system/theme-get';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export const NavList = styled.ul`
   display: flex;
@@ -21,8 +21,10 @@ export const NavList = styled.ul`
     -9px -9px 16px rgba(255, 255, 255, 0.5);
 `;
 
-export const NavButton = styled(Button)`
-  display: inline-block;
+export const StyledNavLink = styled(NavLink)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
   height: 40px;
   background-color: white;
@@ -32,18 +34,35 @@ export const NavButton = styled(Button)`
   margin: 0 10px;
   box-shadow: ${themeGet('shadows.neumorphism')};
 
-  :focus {
-    color: #55efc4;
-    box-shadow: ${themeGet('shadows.neumorphism')};
-  }
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  text-align: center;
+  color: ${themeGet('colors.grey.800')};
 
-  :active {
-    box-shadow: ${themeGet('shadows.neumorphism')};
+
+  &.is-active {
+    color: ${themeGet('colors.primary.500')};
+    background-color: white;
+
+    transition: box-shadow 399ms ease-in-out;
+    box-shadow: 
+      inset 7px 7px 15px rgba(55, 84, 170,.15),
+      inset -7px -7px 20px rgba(255, 255, 255,1),
+      0px 0px 4px rgba(255, 255, 255,.2);
   }
 
   :hover {
-    color: #55efc4;
-    box-shadow: ${themeGet('shadows.neumorphism')};
+    transition: box-shadow 399ms ease-in-out;
+    color: ${themeGet('colors.primary.500')};
+    /* box-shadow: ${themeGet('shadows.neumorphism')}; */
+    /* box-shadow: ${themeGet('shadows.insetNeo')}; */
+
+    box-shadow: 
+      inset 7px 7px 15px rgba(55, 84, 170,.15),
+      inset -7px -7px 20px rgba(255, 255, 255,1),
+      0px 0px 4px rgba(255, 255, 255,.2);
   }
 
   & span {
