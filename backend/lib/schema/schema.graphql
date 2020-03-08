@@ -108,6 +108,7 @@ input RatingInput {
 }
 
 input CommentInput {
+  timestamp: Long!
   rating: RatingInput!
   description: String!
 }
@@ -133,6 +134,7 @@ type Recipe {
 }
 
 type Comment @isAuthenticated @relation(name: "POSTS") {
+  timestamp: Long!
   rating: Rating! @relation(name: "HAS_RATING", direction: "OUT")
   description: String!
 }
