@@ -5,6 +5,8 @@ import {
   EditButton,
   IngredientsList,
   AuthorImage,
+  StyledRating,
+  Textarea,
 } from './recipe.view.style';
 import { Box, Tag, Button, LinkButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,9 +19,15 @@ import { RECIPES_VIEW, PROFILE_VIEW } from 'view/Route/constants.route';
 import EditRecipeDialog from './EditRecipeDialog';
 import { RECIPE } from './recipe.graphql';
 import Comment from 'component/Comment/Comment';
+import CommentDialog from './CommentDialog';
+import { register } from 'serviceWorker';
+import useForm from 'react-hook-form';
 
 const RecipeView: React.FC = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState<boolean>(false);
+  const [isCommentDialogOpen, setIsCommentDialogOpen] = useState<boolean>(
+    false
+  );
   const { id } = useParams();
   const { user } = useAuthState();
 
@@ -39,7 +47,7 @@ const RecipeView: React.FC = () => {
 
   if (loading) return <>loading...</>;
 
-  console.log(user, data);
+  console.log({ user, data });
 
   const [{ name, image, description, time, tag, ingredient }] = data.Recipe;
 
@@ -67,13 +75,13 @@ const RecipeView: React.FC = () => {
         boxShadow={'neumorphism'}
         position={'relative'}
       >
-        {user && 'user' === user.name && (
+        {user && data.Recipe[0].user.name === user.name && (
           <EditButton
             mt={4}
             mr={4}
             borderRadius={0}
             boxShadow="insetNeo"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsRecipeDialogOpen(true)}
           >
             <FontAwesomeIcon size={'lg'} icon={faEdit} />
           </EditButton>
@@ -248,6 +256,7 @@ const RecipeView: React.FC = () => {
           p={5}
           boxShadow={'neumorphism'}
           style={{ fontSize: '1.3rem' }}
+          onClick={() => setIsCommentDialogOpen(true)}
         >
           here!
         </Button>
@@ -265,6 +274,18 @@ const RecipeView: React.FC = () => {
         <Comment />
         <Comment />
       </Box>
+
+      <FormModal
+        title="Add Comment"
+        allRequired={false}
+        isOpen={isCommentDialogOpen}
+        closeModal={() => setIsCommentDialogOpen(false)}
+      >
+        <CommentDialog
+          recipe={data.Recipe[0]}
+          setIsOpen={setIsCommentDialogOpen}
+        />
+      </FormModal>
     </Box>
   );
 };

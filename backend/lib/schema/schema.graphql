@@ -52,6 +52,7 @@ type Mutation {
   createUser(name: String!, password: String!): Credentials!
   editUser(user: EditUserInput): Credentials!
   login(name: String!, password: String!): Credentials!
+  createComment(input: CommentInput!): Comment
 }
 
 input EditUserInput {
@@ -70,6 +71,7 @@ type User {
   password: String!
   avatar: String
   description: String
+  comment: [Comment] @relation(name: "COMMENTS", direction: "OUT")
   friends: [User] @relation(name: "WATCHES", direction: "OUT")
   recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
   # @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
@@ -108,6 +110,8 @@ input RatingInput {
 }
 
 input CommentInput {
+  userID: ID!
+  recipeID: ID!
   timestamp: Long!
   rating: RatingInput!
   description: String!
@@ -130,13 +134,17 @@ type Recipe {
   user: User @relation(name: "POSTS", direction: "IN")
   # @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
   ingredient: [Ingredient] @relation(name: "HAS_INGREDIENT", direction: "OUT")
-  comment: [Comment] @relation(name: "POSTS", direction: "OUT")
+  comment: [Comment] @relation(name: "HAS_COMMENT", direction: "IN")
+  # @cypher(statement: "MATCH (this)<-[:HAS]-(u:User) RETURN u")
 }
 
-type Comment @isAuthenticated @relation(name: "POSTS") {
+type Comment @isAuthenticated {
   timestamp: Long!
-  rating: Rating! @relation(name: "HAS_RATING", direction: "OUT")
-  description: String!
+  rating: Int!
+  # rating: Rating! @relation(name: "HAS_RATING", direction: "OUT")
+  description: String
+  user: User @relation(name: "COMMENTS", direction: "IN")
+  recipe: Recipe @relation(name: "HAS_COMMENT", direction: "OUT")
 }
 
 type Rating @isAuthenticated {

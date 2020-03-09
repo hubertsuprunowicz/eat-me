@@ -22,7 +22,6 @@ import ErrorView from 'component/ErrorRedirect/errorView';
 import { Authorization, AuthProvider } from 'utils/auth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import TestView from 'view/test/TestView';
 import RecipeView from 'view/RecipeView/RecipeView';
 
 toast.configure();

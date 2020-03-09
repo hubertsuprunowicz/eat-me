@@ -74,6 +74,13 @@ export const Main = styled.main`
   padding: 0;
   overflow: hidden;
 
+  > * {
+    ::-webkit-input-placeholder {
+      font-family: 'Raleway', sans-serif;
+      color: red !important;
+    }
+  }
+
   * {
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
