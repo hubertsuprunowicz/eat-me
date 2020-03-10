@@ -11,7 +11,8 @@
 - [ ] _id -> id
 - [ ] active link
 - [ ] Button Link/ /Button -> Link/
-- [ ] eg: Recipe -> recipe / recipes
+- [ ] eg (query): recipe / recipes -> Recipe
+- [ ] smaller toast
 
 ### recipe
 - [ ] overall design
