@@ -4,6 +4,7 @@
 - [ ] register: unique username
 
 ### global
+- [ ] query recipes/comments/messages etc NOT YOURS
 - [ ] stars and comments for recipes
 - [ ] add default avatar
 - [ ] loading: spinner
