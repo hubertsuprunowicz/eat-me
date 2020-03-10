@@ -74,7 +74,12 @@ const LoginView: React.FC = () => {
   return (
     <Card height={'80vh'}>
       <Form onSubmit={onSubmit}>
-        <Avatar src={'img/user.svg'} />
+        <Avatar src={'img/user-solid.svg'} />
+        {/*
+        <div className="profile-img">
+          <i className="acc ion-ios-person"></i>
+        </div>
+        */}
         <Box display="flex" flexDirection="column" alignItems="center" p={20}>
           <label htmlFor="username">
             <b>Username</b>
@@ -114,10 +119,9 @@ const LoginView: React.FC = () => {
 
           {loginForm ? (
             <Button
-              bg="primary.400"
+              color="grey.800"
               boxShadow="neumorphism"
               mt={6}
-              color="white"
               width="80px"
               height="35px"
               borderRadius="5px"
@@ -127,10 +131,9 @@ const LoginView: React.FC = () => {
             </Button>
           ) : (
             <Button
-              bg="primary.400"
+              color="grey.800"
               boxShadow="neumorphism"
               mt={6}
-              color="white"
               width="80px"
               height="35px"
               borderRadius="5px"

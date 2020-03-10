@@ -4,8 +4,12 @@ import { themeGet } from '@styled-system/theme-get';
 
 export const Avatar = styled.img`
   border-radius: 50%;
-  width: 50%;
+  width: 140px;
+  height: 140px;
+  padding: 10px;
+
   object-fit: contain;
+  box-shadow: ${themeGet('shadows.neumorphism')};
 `;
 
 export const AuthSwitch = styled.div`
