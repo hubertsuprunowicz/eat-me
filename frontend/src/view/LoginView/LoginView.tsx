@@ -75,11 +75,6 @@ const LoginView: React.FC = () => {
     <Card height={'80vh'}>
       <Form onSubmit={onSubmit}>
         <Avatar src={'img/user-solid.svg'} />
-        {/*
-        <div className="profile-img">
-          <i className="acc ion-ios-person"></i>
-        </div>
-        */}
         <Box display="flex" flexDirection="column" alignItems="center" p={20}>
           <label htmlFor="username">
             <b>Username</b>

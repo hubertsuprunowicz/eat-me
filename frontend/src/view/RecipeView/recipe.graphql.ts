@@ -23,3 +23,26 @@ export const RECIPE = gql`
     }
   }
 `;
+
+export const COMMENT = gql`
+  mutation CreateComment(
+    $userID: ID!
+    $recipeID: ID!
+    $rating: Int!
+    $timestamp: Long!
+    $description: String
+  ) {
+    createComment(
+      input: {
+        userID: $userID
+        recipeID: $recipeID
+        rating: $rating
+        timestamp: $timestamp
+        description: $description
+      }
+    ) {
+      rating
+      description
+    }
+  }
+`;

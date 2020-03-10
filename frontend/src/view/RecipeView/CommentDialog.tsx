@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useForm from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
-import { StyledRating, Textarea } from './recipe.view.style';
+import { StyledRating } from './recipe.view.style';
+import { useMutation } from '@apollo/react-hooks';
+import { COMMENT } from './recipe.graphql';
+import { toast } from 'react-toastify';
 
 type CommmentForm = {
   rating: number;
@@ -10,41 +13,49 @@ type CommmentForm = {
   timestamp: number;
 };
 
-type Props = { recipe: any; setIsOpen: (arg: boolean) => void };
+type Props = { userID: number; recipe: any; setIsOpen: (arg: boolean) => void };
 
-const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
+const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
   const [rating, setRating] = useState<number>(0);
-  const {
-    handleSubmit,
-    getValues,
-    formState,
-    setValue,
-    register,
-    setError,
-    errors,
-    triggerValidation,
-    reset,
-  } = useForm<CommmentForm>();
+  const { handleSubmit, register, setError, errors, reset } = useForm<
+    CommmentForm
+  >();
 
-  //   const [editUser] = useMutation(EDIT_USER, {
-  //     onError: _ => {
-  //       toast.error('Something has failed', {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //       });
-  //     },
-  //     onCompleted: () => {
-  //       toast.success('Message has been sent', {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //       });
-  //     },
-  //   });
+  const [addComment] = useMutation(COMMENT, {
+    onError: _ => {
+      toast.error('Something has failed', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+    onCompleted: () => {
+      toast.success('Comment has been added', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+  });
 
-  const onSubmit = ({}: CommmentForm) => {
-    console.log('Add Comment');
+  const onSubmit = ({ description }: CommmentForm) => {
+    if (!rating) {
+      setError('description', 'empty', 'Rating should be provided');
+      return;
+    }
+
+    addComment({
+      variables: {
+        userID: userID,
+        recipeID: recipe._id,
+        rating: rating,
+        description: description,
+        timestamp: Date.now(),
+      },
+    }).then(() => {
+      reset();
+      setIsOpen(false);
+    });
   };
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <Box display={'flex'} flexDirection="column" alignItems="center" p={20}>
         <label htmlFor="description" style={{ alignSelf: 'flex-end' }}>
           <StyledRating
@@ -58,6 +69,7 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           name="description"
           ref={register}
         />
+        {errors.description && errors.description.message}
       </Box>
       <Box mb={6} width="100%" display="flex" justifyContent="flex-end">
         <Button
@@ -66,10 +78,6 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           color={'secondary.500'}
           boxShadow="neumorphism"
           mr={5}
-          onClick={e => {
-            e.preventDefault();
-            onSubmit(getValues());
-          }}
         >
           Submit
         </Button>

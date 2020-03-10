@@ -48,6 +48,29 @@ const resolvers = {
       };
     },
 
+    async createComment(_, { input }, context) {
+      const session = await context.driver.session();
+
+      const commentQuery = `
+          MATCH (a:User), (b:Recipe) WHERE ID(a) = ${input.userID} AND ID(b) = ${input.recipeID}
+          CREATE (a)-[:COMMENTS]->(c:Comment{rating: $rating, description: $description, timestamp: $timestamp})
+          <-[:HAS_COMMENT]-(b)
+          RETURN c
+          `;
+
+      const comment = await session
+        .run(commentQuery, {
+          rating: input.rating,
+          description: input.description,
+          timestamp: input.timestamp
+        })
+        .then(results => results.records[0].get(0).properties);
+
+      return {
+        ...comment
+      };
+    },
+
     async createMessage(_, args, context) {
       const session = await context.driver.session();
 

@@ -47,8 +47,6 @@ const RecipeView: React.FC = () => {
 
   if (loading) return <>loading...</>;
 
-  console.log({ user, data });
-
   const [{ name, image, description, time, tag, ingredient }] = data.Recipe;
 
   return (
@@ -274,18 +272,20 @@ const RecipeView: React.FC = () => {
         <Comment />
         <Comment />
       </Box>
-
-      <FormModal
-        title="Add Comment"
-        allRequired={false}
-        isOpen={isCommentDialogOpen}
-        closeModal={() => setIsCommentDialogOpen(false)}
-      >
-        <CommentDialog
-          recipe={data.Recipe[0]}
-          setIsOpen={setIsCommentDialogOpen}
-        />
-      </FormModal>
+      {isCommentDialogOpen && user && (
+        <FormModal
+          title="Add Comment"
+          allRequired={false}
+          isOpen={isCommentDialogOpen}
+          closeModal={() => setIsCommentDialogOpen(false)}
+        >
+          <CommentDialog
+            userID={user._id}
+            recipe={data.Recipe[0]}
+            setIsOpen={setIsCommentDialogOpen}
+          />
+        </FormModal>
+      )}
     </Box>
   );
 };

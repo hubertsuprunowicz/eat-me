@@ -113,8 +113,8 @@ input CommentInput {
   userID: ID!
   recipeID: ID!
   timestamp: Long!
-  rating: RatingInput!
-  description: String!
+  rating: Int!
+  description: String
 }
 
 type Tag {
