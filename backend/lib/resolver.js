@@ -29,6 +29,7 @@ const resolvers = {
       }
 
       const userParams = user[0].get(0).properties;
+
       const valid = await compare(args.password, userParams.password);
 
       if (!valid) {
@@ -47,6 +48,31 @@ const resolvers = {
         }
       };
     },
+
+    async createUser(_, args, context) {
+      const session = await context.driver.session();
+      const password = await hash(args.password, 10);
+
+      const query =
+        "CREATE (n:User{name:$name, password:$password}) RETURN n";
+
+      const user = await session
+        .run(query, { name: args.name, password })
+        .then(results => {
+          return {
+            _id: results.records[0].get(0).identity.low,
+            name: results.records[0].get(0).properties.name
+          };
+        });
+
+      const token = sign({ userId: user._id }, process.env.JWT_SECRET);
+
+      return {
+        token: token,
+        user: user
+      };
+    },
+
 
     async createComment(_, { input }, context) {
       const session = await context.driver.session();
@@ -109,29 +135,7 @@ const resolvers = {
       };
     },
 
-    async createUser(_, args, context) {
-      const session = await context.driver.session();
-      const password = await hash(args.password, 10);
 
-      const query =
-        "CREATE (n:User{name:$name, password:$password}) RETURN ID(n)";
-
-      const user = await session
-        .run(query, { name: args.name, password })
-        .then(results => {
-          return {
-            _id: results.records[0].get(0).low,
-            name: results.records[0].get(0).properties.name
-          };
-        });
-
-      const token = sign({ userId: userID }, process.env.JWT_SECRET);
-
-      return {
-        token: token,
-        user: user
-      };
-    },
 
     async editUser(_, { user }, context) {
       const session = await context.driver.session();

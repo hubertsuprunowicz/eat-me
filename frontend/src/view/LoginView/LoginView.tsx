@@ -52,7 +52,7 @@ const LoginView: React.FC = () => {
     else {
       confirmPassword === password
         ? createUser({
-            variables: { name: username, password: 'test' },
+            variables: { name: username, password: password },
           }).then(() => reset())
         : setError(
             'confirmPassword',
@@ -84,6 +84,7 @@ const LoginView: React.FC = () => {
             placeholder="Enter Username"
             name="username"
             ref={register}
+            autoFocus
             required
           />
           <label htmlFor="password">
