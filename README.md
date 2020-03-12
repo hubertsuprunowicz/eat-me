@@ -21,6 +21,7 @@
 - [ ] create button with 'loved' list
 
 ### profile
+- [ ] logout
 - [ ] add avatar
 - [ ] edit profile modal
 
