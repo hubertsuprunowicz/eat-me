@@ -1,0 +1,3 @@
+[0313/143442.664:ERROR:process_info.cc(118)] ReadProcessMemory bool __cdecl crashpad::(anonymous namespace)::ReadStruct(HANDLE, crashpad::WinVMAddress, T *) [T = crashpad::process_types::PEB<crashpad::process_types::internal::Traits64>]: Ukoñczono tylko czêœæ ¿¹dania ReadProcessMemory lub WriteProcessMemory. (0x12B)
+[0313/143442.664:ERROR:process_info.cc(551)] ReadProcessData failed
+[0313/143442.664:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: Podjêto próbê uzyskania dostêpu do procesu koñcz¹cego dzia³anie. (0xc000010a)

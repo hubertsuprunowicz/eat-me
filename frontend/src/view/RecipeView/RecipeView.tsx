@@ -5,23 +5,18 @@ import {
   EditButton,
   IngredientsList,
   AuthorImage,
-  StyledRating,
-  Textarea,
 } from './recipe.view.style';
-import { Box, Tag, Button, LinkButton } from 'style';
+import { Box, Button, LinkButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import FormModal from 'component/FormModal/FormModal';
-import { RECIPES_VIEW, PROFILE_VIEW } from 'view/Route/constants.route';
-import EditRecipeDialog from './EditRecipeDialog';
+import { PROFILE_VIEW } from 'view/Route/constants.route';
 import { RECIPE } from './recipe.graphql';
 import Comment from 'component/Comment/Comment';
 import CommentDialog from './CommentDialog';
-import { register } from 'serviceWorker';
-import useForm from 'react-hook-form';
 
 const RecipeView: React.FC = () => {
   const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState<boolean>(false);

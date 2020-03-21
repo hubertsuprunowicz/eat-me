@@ -217,7 +217,7 @@ const resolvers = {
         }'})<-[:HAS_TAG]-(a) `;
       }
 
-      const tagQuery = tagQueryBuilder.replace(") (", "), (");
+      const tagQuery = tagQueryBuilder.split(") (").join("), (");
       await session.run(tagQuery);
 
       let ingredientQueryBuilder = `
