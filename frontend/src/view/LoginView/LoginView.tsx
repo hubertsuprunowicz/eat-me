@@ -5,10 +5,9 @@ import { AuthButton, AuthSwitch, Avatar } from './login.view.style';
 import useForm from 'react-hook-form';
 import { LOGIN, CREATE_USER } from './login.graphql';
 import { useMutation } from '@apollo/react-hooks';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
 import { Box, Button } from 'style';
-import { toast } from 'react-toastify';
 import { FieldError } from 'react-hook-form/dist/types';
 import { useAuthDispatch } from 'utils/auth';
 
@@ -22,14 +21,23 @@ type FormData = {
 
 const LoginView: React.FC = () => {
   const authDispatch = useAuthDispatch();
+  const history = useHistory();
   const [loginForm, setLoginForm] = useState<boolean>(true);
   const { handleSubmit, register, errors, setError, reset } = useForm<
     FormData
   >();
 
-  const [login, { data }] = useMutation(LOGIN, {
+  const [login] = useMutation(LOGIN, {
     onError: error =>
       setError('queryError', 'queryError', error.graphQLErrors[0].message),
+    onCompleted: data => {
+      authDispatch({
+        type: 'login',
+        token: data.login.token,
+        user: data.login.user,
+      });
+      history.push(RECIPES_VIEW);
+    },
   });
 
   const [createUser] = useMutation(CREATE_USER, {
@@ -37,13 +45,16 @@ const LoginView: React.FC = () => {
       setError(
         'mutationError',
         'mutationError',
-        error.graphQLErrors[0].message
+        error.graphQLErrors[0].message,
       );
     },
-    onCompleted: () => {
-      toast.success('Registration successfully completed', {
-        position: toast.POSITION.BOTTOM_RIGHT,
+    onCompleted: data => {
+      authDispatch({
+        type: 'login',
+        token: data.createUser.token,
+        user: data.createUser.user,
       });
+      history.push(RECIPES_VIEW);
     },
   });
 
@@ -57,19 +68,10 @@ const LoginView: React.FC = () => {
         : setError(
             'confirmPassword',
             'notMatch',
-            "password confirmation doesn't match password"
+            "password confirmation doesn't match password",
           );
     }
   });
-
-  if (data && data.login) {
-    authDispatch({
-      type: 'login',
-      token: data.login.token,
-      user: data.login.user,
-    });
-    return <Redirect to={RECIPES_VIEW} />;
-  }
 
   return (
     <Card height={'80vh'}>
