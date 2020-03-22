@@ -49,7 +49,11 @@ const messageView = (
   </Authorization>
 );
 
-const recipeView = <RecipeView />;
+const recipeView = (
+  <Authorization>
+    <RecipeView />
+  </Authorization>
+);
 
 const errorView = <ErrorView />;
 

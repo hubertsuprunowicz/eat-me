@@ -36,6 +36,8 @@ export const Card = styled.div<Props>`
     border-radius: ${themeGet('radii.0')}px;
     object-fit: cover;
   }
+
+  
 `;
 
 export const CardDetails = styled.div`

@@ -33,7 +33,7 @@ const RecipeCard: React.FC<Props> = ({
   index,
   setCurrentIndex,
 }) => {
-  const { name, image, difficulty, time, tag, ingredient, user } = recipe;
+  const { name, image, difficulty, time, tag, user } = recipe;
 
   const loveItHandle = () => {
     console.log('LOVE IT');
@@ -47,7 +47,7 @@ const RecipeCard: React.FC<Props> = ({
 
   return (
     <Card key={id} cursor="pointer" height={'70vh'}>
-      <img src={image} alt={name} />
+      <img src={image || '/img/food-404.jpg'} alt={name} />
       <CardDetails>
         <Tag bg={'secondary.600'} pr={4} pl={4}>
           {user.name}

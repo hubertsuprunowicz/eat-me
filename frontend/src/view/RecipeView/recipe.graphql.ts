@@ -9,6 +9,14 @@ export const RECIPE = gql`
       time
       totalCost
       image
+      comment {
+        rating
+        description
+        timestamp
+        user {
+          name
+        }
+      }
       tag {
         name
       }
@@ -17,6 +25,7 @@ export const RECIPE = gql`
         amount
       }
       user {
+        _id
         name
         avatar
       }
@@ -44,5 +53,14 @@ export const COMMENT = gql`
       rating
       description
     }
+  }
+`;
+
+export const WATCHES = gql`
+  mutation CreateWatch($subscribingUser: ID!, $subscribedUser: ID!) {
+    createsWatchRelationship(
+      subscribingUser: $subscribingUser
+      subscribedUser: $subscribedUser
+    )
   }
 `;

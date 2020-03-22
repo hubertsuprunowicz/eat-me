@@ -20,7 +20,7 @@ type AuthProviderProps = { children: React.ReactNode };
 
 const AuthStateContext = React.createContext<State | undefined>(undefined);
 const AuthDispatchContext = React.createContext<Dispatch | undefined>(
-  undefined
+  undefined,
 );
 
 function authReducer(_: State, action: Action) {
@@ -81,6 +81,10 @@ function useAuthDispatch() {
 
 const Authorization: React.FC = ({ children }) => {
   const { login } = useAuthState();
+
+  // TODO: perhaps authorization needs to be done as global (refreshable), i.e. get user by token
+  // const token = sessionStorage.getItem('token');
+  // if (token) return <>{children}</>;
 
   if (login) return <>{children}</>;
   // return <>{children}</>;

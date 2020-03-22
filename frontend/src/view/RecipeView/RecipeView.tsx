@@ -10,23 +10,23 @@ import {
 } from './recipe.view.style';
 import { Box, Tag, Button, LinkButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import FormModal from 'component/FormModal/FormModal';
 import { RECIPES_VIEW, PROFILE_VIEW } from 'view/Route/constants.route';
 import EditRecipeDialog from './EditRecipeDialog';
-import { RECIPE } from './recipe.graphql';
+import { RECIPE, WATCHES } from './recipe.graphql';
 import Comment from 'component/Comment/Comment';
 import CommentDialog from './CommentDialog';
-import { register } from 'serviceWorker';
 import useForm from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const RecipeView: React.FC = () => {
   const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState<boolean>(false);
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState<boolean>(
-    false
+    false,
   );
   const { id } = useParams();
   const { user } = useAuthState();
@@ -38,6 +38,19 @@ const RecipeView: React.FC = () => {
   //   throw new Error('Something went wrong. Plese come back later.');
   // };
 
+  const [addWatches] = useMutation(WATCHES, {
+    onError: _ => {
+      toast.error('Something has failed', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+    onCompleted: () => {
+      toast.success('Subscibed successfully', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+  });
+
   const { loading, error, data } = useQuery(RECIPE, {
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -47,7 +60,33 @@ const RecipeView: React.FC = () => {
 
   if (loading) return <>loading...</>;
 
-  const [{ name, image, description, time, tag, ingredient }] = data.Recipe;
+  const [
+    { name, image, description, time, tag, ingredient, comment },
+  ] = data.Recipe;
+  console.log(data);
+  console.log(user);
+
+  function alreadyVoted() {
+    return comment.findIndex((it: any) => it.user.name === user!.name);
+  }
+
+  function totalRating() {
+    return (
+      comment.reduce(
+        (acc: number, curr: { rating: any }) => acc + curr.rating,
+        0,
+      ) / comment.length
+    ).toFixed(1);
+  }
+
+  const handleSubscribe = () => {
+    addWatches({
+      variables: {
+        subscribingUser: user!._id,
+        subscribedUser: data.Recipe[0].user._id,
+      },
+    });
+  };
 
   return (
     <Box
@@ -60,7 +99,8 @@ const RecipeView: React.FC = () => {
       {/** KARTA */}
       <Box
         mt={-70}
-        pt={4}
+        p={5}
+        pb={4}
         borderRadius={5}
         width={'80%'}
         backgroundColor={'white'}
@@ -94,19 +134,23 @@ const RecipeView: React.FC = () => {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit
         </span>
         <Box display={'flex'} flexDirection={'column'} width={'80%'}>
-          <Box display={'flex'} justifyContent={'space-between'}>
-            <span>time: </span>
+          <Box mt={6} display={'flex'} justifyContent={'space-between'}>
+            <span>rating</span>
+            <span>{totalRating()} / 5</span>
+          </Box>
+          <Box mt={3} display={'flex'} justifyContent={'space-between'}>
+            <span>time</span>
             <span>35min</span>
           </Box>
-          <Box display={'flex'} justifyContent={'space-between'}>
-            <span>total cost: </span>
+          <Box mt={3} display={'flex'} justifyContent={'space-between'}>
+            <span>total cost</span>
             <span>15$</span>
           </Box>
-          <Box display={'flex'} justifyContent={'space-between'}>
+          <Box mt={3} display={'flex'} justifyContent={'space-between'}>
             <span>difficulty</span>
             <span>easy</span>
           </Box>
-          <span>ingredients:</span>
+          <span style={{ marginTop: '4px' }}>ingredients</span>
           <Box display={'flex'} justifyContent={'space-between'}>
             <IngredientsList>
               <li>
@@ -180,15 +224,26 @@ const RecipeView: React.FC = () => {
       </Box>
       {/** KONIEC - KARTA */}
       <Box p={8}>
-        <span
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          How to do it?
-        </span>
+        <Box display={'flex'} justifyContent={'space-between'}>
+          <span
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}
+          >
+            How to do it?
+          </span>
+          <Button
+            color={'danger.500'}
+            borderRadius={'5px'}
+            boxShadow={'neumorphism'}
+            onClick={handleSubscribe}
+          >
+            Subscribe {data.Recipe[0].user.name}{' '}
+            <FontAwesomeIcon size={'sm'} icon={faHeart} />
+          </Button>
+        </Box>
         <p style={{ lineHeight: '21px' }}>
           Sed ut perspiciatis unde omnis iste natus error sit voluptatem
           accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
@@ -237,28 +292,41 @@ const RecipeView: React.FC = () => {
           <AuthorImage src={data.Recipe[0].user.avatar} />
         </Box>
       </Box>
-      <Box display="flex" alignItems="center">
-        <span
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          Leave your feedback{' '}
-        </span>
-        <Button
-          color={'black'}
-          borderRadius={'5px'}
-          ml={4}
-          p={5}
-          boxShadow={'neumorphism'}
-          style={{ fontSize: '1.3rem' }}
-          onClick={() => setIsCommentDialogOpen(true)}
-        >
-          here!
-        </Button>
-      </Box>
+      {alreadyVoted() !== -1 && (
+        <Box>
+          <span>
+            Your rating of this recipe is{' '}
+            <b style={{ fontWeight: 700 }}>
+              {comment[alreadyVoted()].rating}/5
+            </b>
+          </span>
+        </Box>
+      )}
+      {alreadyVoted() === -1 && (
+        <Box display="flex" alignItems="center">
+          <span
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}
+          >
+            Leave your feedback{' '}
+          </span>
+          <Button
+            color={'black'}
+            borderRadius={'5px'}
+            ml={4}
+            p={5}
+            boxShadow={'neumorphism'}
+            style={{ fontSize: '1.3rem' }}
+            onClick={() => setIsCommentDialogOpen(true)}
+          >
+            here!
+          </Button>
+        </Box>
+      )}
+
       <Box
         display={'flex'}
         flexDirection={'row-reverse'}
@@ -266,11 +334,11 @@ const RecipeView: React.FC = () => {
         flexWrap={'wrap'}
         p={8}
       >
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
+        {comment.map(({ timestamp, description, rating, user }: any) => (
+          <Comment rating={rating} username={user.name} timestamp={timestamp}>
+            {description}
+          </Comment>
+        ))}
       </Box>
       {isCommentDialogOpen && user && (
         <FormModal

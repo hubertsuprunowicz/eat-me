@@ -36,6 +36,7 @@ export const Textarea = styled.textarea`
 export const IngredientsList = styled.ul`
   display: flex;
   flex-direction: column;
+  padding-left: 25px;
   li {
     padding: 2px;
     display: list-item;
