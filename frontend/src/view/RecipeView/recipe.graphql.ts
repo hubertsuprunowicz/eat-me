@@ -56,9 +56,29 @@ export const COMMENT = gql`
   }
 `;
 
+export const GET_WATCH = gql`
+  query GetWatch($subscribingUser: ID!, $subscribedUser: ID!) {
+    getWatch(
+      subscribingUser: $subscribingUser
+      subscribedUser: $subscribedUser
+    ) {
+      subscribed
+    }
+  }
+`;
+
 export const WATCHES = gql`
   mutation CreateWatch($subscribingUser: ID!, $subscribedUser: ID!) {
-    createsWatchRelationship(
+    createWatchRelationship(
+      subscribingUser: $subscribingUser
+      subscribedUser: $subscribedUser
+    )
+  }
+`;
+
+export const UNWATCHES = gql`
+  mutation RemoveWatch($subscribingUser: ID!, $subscribedUser: ID!) {
+    removeWatchRelationship(
       subscribingUser: $subscribingUser
       subscribedUser: $subscribedUser
     )

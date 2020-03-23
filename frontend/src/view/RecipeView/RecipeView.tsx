@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BackgroundImage,
   TagWrapper,
@@ -13,11 +13,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import FormModal from 'component/FormModal/FormModal';
 import { RECIPES_VIEW, PROFILE_VIEW } from 'view/Route/constants.route';
 import EditRecipeDialog from './EditRecipeDialog';
-import { RECIPE, WATCHES } from './recipe.graphql';
+import { RECIPE, WATCHES, UNWATCHES, GET_WATCH } from './recipe.graphql';
 import Comment from 'component/Comment/Comment';
 import CommentDialog from './CommentDialog';
 import useForm from 'react-hook-form';
@@ -51,6 +51,19 @@ const RecipeView: React.FC = () => {
     },
   });
 
+  const [removeWatches] = useMutation(UNWATCHES, {
+    onError: _ => {
+      toast.error('Something has failed', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+    onCompleted: () => {
+      toast.success('Unsubscibed successfully', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+  });
+
   const { loading, error, data } = useQuery(RECIPE, {
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -58,12 +71,30 @@ const RecipeView: React.FC = () => {
     },
   });
 
+  const [getWatch, watchQuery] = useLazyQuery(GET_WATCH, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: data => {
+      console.log(data);
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      getWatch({
+        variables: {
+          subscribingUser: user!._id,
+          subscribedUser: data.Recipe[0].user._id || 0,
+        },
+      });
+    }
+  }, [data, getWatch, user, addWatches, removeWatches]);
+
   if (loading) return <>loading...</>;
 
-  const [
-    { name, image, description, time, tag, ingredient, comment },
-  ] = data.Recipe;
   console.log(data);
+  const [{ name, image, description, time, tag, ingredient, comment }] =
+    data.Recipe || {};
+
   console.log(user);
 
   function alreadyVoted() {
@@ -83,10 +114,23 @@ const RecipeView: React.FC = () => {
     addWatches({
       variables: {
         subscribingUser: user!._id,
-        subscribedUser: data.Recipe[0].user._id,
+        subscribedUser: data.Recipe[0].user._id || 0,
       },
     });
   };
+
+  const handleUnsubscribe = () => {
+    removeWatches({
+      variables: {
+        subscribingUser: user!._id,
+        subscribedUser: data.Recipe[0].user._id || 0,
+      },
+    });
+  };
+
+  const subscribed = watchQuery.data
+    ? watchQuery.data.getWatch.subscribed
+    : undefined;
 
   return (
     <Box
@@ -234,15 +278,27 @@ const RecipeView: React.FC = () => {
           >
             How to do it?
           </span>
-          <Button
-            color={'danger.500'}
-            borderRadius={'5px'}
-            boxShadow={'neumorphism'}
-            onClick={handleSubscribe}
-          >
-            Subscribe {data.Recipe[0].user.name}{' '}
-            <FontAwesomeIcon size={'sm'} icon={faHeart} />
-          </Button>
+          {subscribed ? (
+            <Button
+              color={'danger.500'}
+              borderRadius={'5px'}
+              boxShadow={'neumorphism'}
+              onClick={handleUnsubscribe}
+            >
+              Unubscribe {data.Recipe[0].user.name}{' '}
+              <FontAwesomeIcon size={'sm'} icon={faHeart} />
+            </Button>
+          ) : (
+            <Button
+              color={'danger.500'}
+              borderRadius={'5px'}
+              boxShadow={'neumorphism'}
+              onClick={handleSubscribe}
+            >
+              Subscribe {data.Recipe[0].user.name}{' '}
+              <FontAwesomeIcon size={'sm'} icon={faHeart} />
+            </Button>
+          )}
         </Box>
         <p style={{ lineHeight: '21px' }}>
           Sed ut perspiciatis unde omnis iste natus error sit voluptatem
