@@ -15,6 +15,7 @@ const {
 } = require("graphql-auth-directives");
 const cors = require("cors");
 const resolvers = require("./lib/resolver");
+const create = require("./seed/index");
 const typeDefs = require("./lib/schema/graphql-schema");
 dotenv.config();
 
@@ -40,9 +41,16 @@ const driver = neo4j.driver(
   process.env.NEO4J_URI || "bolt://localhost:7687",
   neo4j.auth.basic(
     process.env.NEO4J_USER || "neo4j",
-    process.env.NEO4J_PASSWORD || "trudne10"
+    process.env.NEO4J_PASSWORD || "letmein"
   )
 );
+
+create.users();
+create.recipes();
+create.tags();
+create.comments();
+// opinions
+// messages
 
 const checkErrorHeaderMiddleware = async (req, res, next) => {
   req.error = req.headers["x-error"];

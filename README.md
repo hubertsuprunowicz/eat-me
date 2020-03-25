@@ -13,6 +13,7 @@
 - [ ] Button Link/ /Button -> Link/
 - [ ] eg (query): recipe / recipes -> Recipe
 - [ ] smaller toast
+- [ ] bump toast
 
 ### recipe
 - [ ] overall design
@@ -21,6 +22,7 @@
 - [ ] create button with 'loved' list
 
 ### profile
+- [ ] logout
 - [ ] add avatar
 - [ ] edit profile modal
 

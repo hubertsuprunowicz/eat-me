@@ -4,7 +4,7 @@ import { virtualize } from 'react-swipeable-views-utils';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
 import { useQuery } from '@apollo/react-hooks';
 import User from '../../model/user';
-import { Box, Button } from '../../style';
+import { Box, Button, Text } from '../../style';
 import { RECIPES, LIMIT } from './recipes.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -76,23 +76,40 @@ const RecipesView: React.FC = () => {
         </div>
       </Box>
       {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
-      <SwipeableViews
-        onChangeIndex={(cardNumber: number) =>
-          paginationHandler(cardNumber + 1)
-        }
-        enableMouseEvents
-        index={currentIndex}
-      >
-        {recipes.map((recipe: Recipe, index: any) => (
-          <RecipeCard
-            key={recipe._id}
-            id={recipe._id}
-            recipe={recipe}
-            index={index}
-            setCurrentIndex={setCurrentIndex}
-          />
-        ))}
-      </SwipeableViews>
+      {!recipes.length && (
+        <Box
+          p={8}
+          textAlign={'center'}
+          mt={'50%'}
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          <Text fontSize={24}>
+            Sorry, there is no recipes to show. Please add one or come back
+            later
+          </Text>
+        </Box>
+      )}
+      {recipes.length > 0 && (
+        <SwipeableViews
+          onChangeIndex={(cardNumber: number) =>
+            paginationHandler(cardNumber + 1)
+          }
+          enableMouseEvents
+          index={currentIndex}
+        >
+          {recipes.map((recipe: Recipe, index: any) => (
+            <RecipeCard
+              key={recipe._id}
+              id={recipe._id}
+              recipe={recipe}
+              index={index}
+              setCurrentIndex={setCurrentIndex}
+            />
+          ))}
+        </SwipeableViews>
+      )}
       <FormModal
         title="Add Recipe"
         isOpen={isOpen}
