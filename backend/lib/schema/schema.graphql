@@ -27,6 +27,8 @@ type Query {
   message(name: String): Message
   comment(_id: ID): Comment
   rating(_id: ID): Rating
+
+  getWatch(subscribingUser: ID!, subscribedUser: ID!): Subscribed!
 }
 
 type Mutation {
@@ -53,6 +55,11 @@ type Mutation {
   editUser(user: EditUserInput): Credentials!
   login(name: String!, password: String!): Credentials!
   createComment(input: CommentInput!): Comment
+  createWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
+  removeWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
+}
+type Subscribed {
+  subscribed: Boolean!
 }
 
 input EditUserInput {

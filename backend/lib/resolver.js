@@ -16,7 +16,37 @@ const resolvers = {
       )
     }
   },
+  Query: {
+    async getWatch(_, args, context) {
+      const session = await context.driver.session();
+      const query = `MATCH (a:User)-[r:WATCHES]->(b:User) WHERE ID(a) = ${args.subscribingUser} AND ID(b) = ${args.subscribedUser} RETURN r`;
+
+      const subscribed = await session
+        .run(query)
+        .then(result => result.records);
+
+      return { subscribed: subscribed.length > 0 };
+    }
+  },
   Mutation: {
+    async createWatchRelationship(_, args, context) {
+      const session = await context.driver.session();
+      const query = `MATCH (a:User), (b:User) WHERE ID(a) = ${args.subscribingUser} AND ID(b) = ${args.subscribedUser} CREATE (a)-[:WATCHES]->(b)`;
+
+      await session.run(query).then(result => result.records);
+
+      return 200;
+    },
+
+    async removeWatchRelationship(_, args, context) {
+      const session = await context.driver.session();
+      const query = `MATCH (a:User)-[r:WATCHES]->(b:User) WHERE ID(a) = ${args.subscribingUser} AND ID(b) = ${args.subscribedUser} DELETE r`;
+
+      await session.run(query).then(result => result.records);
+
+      return 200;
+    },
+
     async login(_, args, context) {
       const session = await context.driver.session();
       const query = "MATCH (n:User{name: $name}) RETURN n";
@@ -113,19 +143,18 @@ const resolvers = {
       const session = await context.driver.session();
       const password = await hash(args.password, 10);
 
-      const query =
-        "CREATE (n:User{name:$name, password:$password}) RETURN ID(n)";
+      const query = "CREATE (n:User{name:$name, password:$password}) RETURN n";
 
       const user = await session
         .run(query, { name: args.name, password })
         .then(results => {
           return {
-            _id: results.records[0].get(0).low,
+            _id: results.records[0].get(0).identity.low,
             name: results.records[0].get(0).properties.name
           };
         });
 
-      const token = sign({ userId: userID }, process.env.JWT_SECRET);
+      const token = sign({ userId: user._id }, process.env.JWT_SECRET);
 
       return {
         token: token,

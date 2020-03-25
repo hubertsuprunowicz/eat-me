@@ -24,6 +24,7 @@ import useForm from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 const RecipeView: React.FC = () => {
+  const [subscribed, setSubscribed] = useState<boolean>(false);
   const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState<boolean>(false);
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState<boolean>(
     false,
@@ -71,31 +72,17 @@ const RecipeView: React.FC = () => {
     },
   });
 
-  const [getWatch, watchQuery] = useLazyQuery(GET_WATCH, {
+  const [getWatch] = useLazyQuery(GET_WATCH, {
     fetchPolicy: 'cache-and-network',
     onCompleted: data => {
-      console.log(data);
+      setSubscribed(data.getWatch.subscribed);
     },
   });
 
-  useEffect(() => {
-    if (data) {
-      getWatch({
-        variables: {
-          subscribingUser: user!._id,
-          subscribedUser: data.Recipe[0].user._id || 0,
-        },
-      });
-    }
-  }, [data, getWatch, user, addWatches, removeWatches]);
-
   if (loading) return <>loading...</>;
 
-  console.log(data);
   const [{ name, image, description, time, tag, ingredient, comment }] =
     data.Recipe || {};
-
-  console.log(user);
 
   function alreadyVoted() {
     return comment.findIndex((it: any) => it.user.name === user!.name);
@@ -116,6 +103,13 @@ const RecipeView: React.FC = () => {
         subscribingUser: user!._id,
         subscribedUser: data.Recipe[0].user._id || 0,
       },
+    }).then(() => {
+      getWatch({
+        variables: {
+          subscribingUser: user!._id,
+          subscribedUser: data.Recipe[0].user._id || 0,
+        },
+      });
     });
   };
 
@@ -125,12 +119,15 @@ const RecipeView: React.FC = () => {
         subscribingUser: user!._id,
         subscribedUser: data.Recipe[0].user._id || 0,
       },
+    }).then(() => {
+      getWatch({
+        variables: {
+          subscribingUser: user!._id,
+          subscribedUser: data.Recipe[0].user._id || 0,
+        },
+      });
     });
   };
-
-  const subscribed = watchQuery.data
-    ? watchQuery.data.getWatch.subscribed
-    : undefined;
 
   return (
     <Box
