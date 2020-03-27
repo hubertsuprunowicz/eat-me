@@ -10,6 +10,7 @@ export const RECIPE = gql`
       totalCost
       image
       comment {
+        _id
         rating
         description
         timestamp

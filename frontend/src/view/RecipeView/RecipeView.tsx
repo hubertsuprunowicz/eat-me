@@ -30,13 +30,6 @@ const RecipeView: React.FC = () => {
   const { id } = useParams();
   const { user } = useAuthState();
 
-  // const getName = () => {
-  //   if (username && username !== '') return username;
-  //   if (user) return user.name;
-
-  //   throw new Error('Something went wrong. Plese come back later.');
-  // };
-
   const [addWatches] = useMutation(WATCHES, {
     onError: _ => {
       toast.error('Something has failed', {
@@ -152,17 +145,6 @@ const RecipeView: React.FC = () => {
         boxShadow={'neumorphism'}
         position={'relative'}
       >
-        {user && data.Recipe[0].user.name === user.name && (
-          <EditButton
-            mt={4}
-            mr={4}
-            borderRadius={0}
-            boxShadow="insetNeo"
-            onClick={() => setIsRecipeDialogOpen(true)}
-          >
-            <FontAwesomeIcon size={'lg'} icon={faEdit} />
-          </EditButton>
-        )}
         <span
           style={{
             fontSize: '1.5rem',
@@ -172,6 +154,17 @@ const RecipeView: React.FC = () => {
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing elit
         </span>
+        {user && 'user' === user.name && (
+          <EditButton
+            mt={2}
+            mr={40}
+            borderRadius={'5px'}
+            boxShadow={'neumorphism'}
+            onClick={() => setIsRecipeDialogOpen(true)}
+          >
+            <FontAwesomeIcon size={'lg'} icon={faEdit} />
+          </EditButton>
+        )}
         <Box display={'flex'} flexDirection={'column'} width={'80%'}>
           <Box mt={6} display={'flex'} justifyContent={'space-between'}>
             <span>rating</span>
@@ -385,12 +378,30 @@ const RecipeView: React.FC = () => {
         flexWrap={'wrap'}
         p={8}
       >
-        {comment.map(({ timestamp, description, rating, user }: any) => (
-          <Comment rating={rating} username={user.name} timestamp={timestamp}>
+        {comment.map(({ timestamp, description, rating, user, _id }: any) => (
+          <Comment
+            key={_id}
+            rating={rating}
+            username={user.name}
+            timestamp={timestamp}
+          >
             {description}
           </Comment>
         ))}
       </Box>
+      {isRecipeDialogOpen && user && (
+        <FormModal
+          title="Edit Recipe"
+          allRequired={false}
+          isOpen={isRecipeDialogOpen}
+          closeModal={() => setIsRecipeDialogOpen(false)}
+        >
+          <EditRecipeDialog
+            recipe={data.Recipe[0]}
+            setIsOpen={setIsCommentDialogOpen}
+          />
+        </FormModal>
+      )}
       {isCommentDialogOpen && user && (
         <FormModal
           title="Add Comment"

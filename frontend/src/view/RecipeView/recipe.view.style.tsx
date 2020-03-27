@@ -2,6 +2,13 @@ import styled from 'styled-components';
 import { Button } from 'style';
 import Rating from 'react-rating';
 import { themeGet } from '@styled-system/theme-get';
+import { WidthProps, MarginProps, margin } from 'styled-system';
+
+type Props = WidthProps & MarginProps;
+export const Input = styled.input<Props>`
+  ${margin}
+  width: ${props => props.width}px !important;
+`;
 
 export const ProfileImage = styled.img`
   object-fit: contain;
@@ -17,9 +24,7 @@ export const BackgroundImage = styled.img<{ src: string }>`
 `;
 
 export const EditButton = styled(Button)`
-  position: absolute;
-  top: 0;
-  right: 0;
+  align-self: flex-end;
 `;
 
 export const TagWrapper = styled.div`

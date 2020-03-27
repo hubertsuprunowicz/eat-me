@@ -59,6 +59,7 @@ type RecipeForm = {
   tags?: Tag[];
   ingredient: Ingredient;
   ingredients?: Ingredient[];
+  totalCost: number;
 };
 
 type Props = { setIsOpen: (arg: boolean) => void };
@@ -88,7 +89,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
       setError(
         'tags',
         'tooShort',
-        'This text should be at least 4 letters long'
+        'This text should be at least 4 letters long',
       );
     } else if (tags.length >= 6) {
       setError('tags', 'tooMany', 'There is too many tags');
@@ -106,7 +107,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
       setError(
         'ingredients',
         'tooShort',
-        'This text should be at least 3 letters long'
+        'This text should be at least 3 letters long',
       );
     } else {
       clearError('ingredients');
@@ -134,6 +135,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     title,
     time,
     difficulty,
+    totalCost,
   }: RecipeForm) => {
     if (!user) throw new Error('Not authorized exception');
     createRecipe({
@@ -144,6 +146,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         time: parseInt(time.toString()),
         tag: tags,
         ingredient: ingredients,
+        totalCost: totalCost,
         difficulty: difficulty,
         userID: user._id,
       },
@@ -312,6 +315,17 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </IconButton>
         </Box>
+        <label htmlFor="totalCost">
+          <span>Total Cost</span>
+        </label>
+        <input
+          type="number"
+          placeholder="Enter Total Cost"
+          name="totalCost"
+          ref={register({
+            required: true,
+          })}
+        />
         {ingredients &&
           ingredients.map(({ name, amount }: Ingredient, index) => {
             return (

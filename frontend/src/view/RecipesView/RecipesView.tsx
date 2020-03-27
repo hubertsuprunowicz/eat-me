@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 
 export type Recipe = {
   _id: string;
+  title: string;
   name: string;
   difficulty: Difficulty;
   description?: string;
@@ -27,18 +28,21 @@ export type Recipe = {
 };
 
 const RecipesView: React.FC = () => {
+  console.log('RECIPE VIEW___');
   const [page, setPage] = useState<number>(0);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { username } = useParams();
+  console.log('RECIPE1 ', !!username);
   const { loading, error, data } = useQuery(RECIPES, {
     variables: {
       offset: page,
-      onlyPerson: username ? !!username : false,
+      onlyPerson: !!username,
       personName: username,
     },
     fetchPolicy: 'cache-and-network',
   });
+  console.log('RECIPE2 ', data ? data[Object.keys(data)[0]] : 'empty');
 
   const paginationHandler = (cardNumber: number) => {
     if (!(cardNumber % LIMIT)) {
@@ -47,7 +51,8 @@ const RecipesView: React.FC = () => {
   };
 
   if (loading) return <>Loading data...</>;
-  if (error) return <ErrorRedirect error={error} />;
+  console.log(error);
+  // if (error) return <ErrorRedirect error={error} />;
 
   const recipes = data[Object.keys(data)[0]];
 

@@ -45,10 +45,10 @@ const driver = neo4j.driver(
   )
 );
 
-create.users();
-create.recipes();
-create.tags();
-create.comments();
+// create.users();
+// create.recipes();
+// create.tags();
+// create.comments();
 // opinions
 // messages
 

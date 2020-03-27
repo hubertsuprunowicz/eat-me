@@ -49,12 +49,26 @@ type Mutation {
     tag: [TagInput!]
     ingredient: [IngredientInput!]!
     userID: Int!
+    totalCost: Int!
+  ): Recipe
+  editRecipe(
+    name: String
+    description: String
+    difficulty: Difficulty
+    image: String
+    time: Int
+    tag: [TagInput]
+    ingredient: [IngredientInput]
+    id: ID!
+    totalCost: Int
   ): Recipe
 
+  login(name: String!, password: String!): Credentials!
   createUser(name: String!, password: String!): Credentials!
   editUser(user: EditUserInput): Credentials!
-  login(name: String!, password: String!): Credentials!
+
   createComment(input: CommentInput!): Comment
+
   createWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
   removeWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
 }
@@ -135,7 +149,7 @@ type Recipe {
   description: String!
   difficulty: Difficulty!
   image: String!
-  totalCost: Int
+  totalCost: Int!
   time: Int!
   tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
   user: User @relation(name: "POSTS", direction: "IN")

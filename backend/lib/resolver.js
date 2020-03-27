@@ -83,8 +83,7 @@ const resolvers = {
       const session = await context.driver.session();
       const password = await hash(args.password, 10);
 
-      const query =
-        "CREATE (n:User{name:$name, password:$password}) RETURN n";
+      const query = "CREATE (n:User{name:$name, password:$password}) RETURN n";
 
       const user = await session
         .run(query, { name: args.name, password })
@@ -102,7 +101,6 @@ const resolvers = {
         user: user
       };
     },
-
 
     async createComment(_, { input }, context) {
       const session = await context.driver.session();
@@ -164,33 +162,6 @@ const resolvers = {
         _id: message.id
       };
     },
-
-<<<<<<< HEAD
-    async createUser(_, args, context) {
-      const session = await context.driver.session();
-      const password = await hash(args.password, 10);
-
-      const query = "CREATE (n:User{name:$name, password:$password}) RETURN n";
-
-      const user = await session
-        .run(query, { name: args.name, password })
-        .then(results => {
-          return {
-            _id: results.records[0].get(0).identity.low,
-            name: results.records[0].get(0).properties.name
-          };
-        });
-
-      const token = sign({ userId: user._id }, process.env.JWT_SECRET);
-
-      return {
-        token: token,
-        user: user
-      };
-    },
-=======
-
->>>>>>> 7a7787cb550266703f2efc86a994017e4fe2ab60
 
     async editUser(_, { user }, context) {
       const session = await context.driver.session();
@@ -256,7 +227,8 @@ const resolvers = {
           description: args.description,
           difficulty: args.difficulty,
           image: args.image,
-          time: args.time
+          time: args.time,
+          totalCost: args.totalCost
         })
         .then(results => results.records[0].get(0).low);
 
@@ -293,6 +265,42 @@ const resolvers = {
 
       return {
         _id: recipeID
+      };
+    },
+
+    async editRecipe(_, args, context) {
+      const session = await context.driver.session();
+
+      let setter = "";
+      if (args.name) setter += "name: $name,";
+      if (args.description) setter += "description: $description,";
+      if (args.difficulty) setter += "difficulty: $difficulty,";
+      if (args.image) setter += "image: $image,";
+      if (args.time) setter += "time: $time,";
+      if (args.tag) setter += "tag: $tag,";
+      if (args.ingredient) setter += "ingredient: $ingredient,";
+      if (args.totalCost) setter += "totalCost: $totalCost,";
+      setter = setter.slice(0, -1);
+
+      const recipeQuery = `MATCH (a:Recipe) WHERE ID(a) = '${args.id}' SET a += {${setter}} RETURN a`;
+
+      const recipe = await session
+        .run(recipeQuery, {
+          name: args.name,
+          description: args.description,
+          difficulty: args.difficulty,
+          image: args.image,
+          time: args.time
+        })
+        .then(results => {
+          console.log(results.records[0].get(0));
+          return results.records[0].get(0).low;
+        });
+
+      await session.run(ingredientgQuery);
+
+      return {
+        recipe: recipe
       };
     }
   }

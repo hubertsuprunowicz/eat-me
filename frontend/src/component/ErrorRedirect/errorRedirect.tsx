@@ -17,6 +17,7 @@ function checkIfNotAuthorized(error: ApolloError): boolean {
 }
 
 const ErrorRedirect: React.FC<Props> = ({ error }) => {
+  console.error(error);
   if (typeof error === 'string') {
     return <Redirect to={ERROR_VIEW} />;
   }
