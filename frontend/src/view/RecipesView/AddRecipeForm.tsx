@@ -282,6 +282,17 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             required: true,
           })}
         />
+        <label htmlFor="totalCost">
+          <span>Total Cost</span>
+        </label>
+        <input
+          type="number"
+          placeholder="Enter Total Cost"
+          name="totalCost"
+          ref={register({
+            required: true,
+          })}
+        />
         <label htmlFor="ingredient">
           <span>Ingredients</span>
         </label>
@@ -315,17 +326,6 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </IconButton>
         </Box>
-        <label htmlFor="totalCost">
-          <span>Total Cost</span>
-        </label>
-        <input
-          type="number"
-          placeholder="Enter Total Cost"
-          name="totalCost"
-          ref={register({
-            required: true,
-          })}
-        />
         {ingredients &&
           ingredients.map(({ name, amount }: Ingredient, index) => {
             return (

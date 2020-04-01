@@ -80,11 +80,9 @@ const RecipeCard: React.FC<Props> = ({
         <Box>
           <LinkIconButton
             to={`${RECIPE_VIEW}/${id}`}
-            boxShadow="neumorphism"
             color="black"
             width="38px"
             height="38px"
-            borderRadius="50%"
             ml={4}
             mr={4}
           >
@@ -116,11 +114,9 @@ const RecipeCard: React.FC<Props> = ({
           </IconButton>
           <LinkIconButton
             to={`${PROFILE_VIEW}/${user.name}`}
-            boxShadow="neumorphism"
             width="38px"
             height="38px"
             color="grey.800"
-            borderRadius="50%"
             ml={4}
             mr={4}
           >

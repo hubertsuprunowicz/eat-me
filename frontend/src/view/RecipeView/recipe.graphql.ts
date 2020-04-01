@@ -57,6 +57,34 @@ export const COMMENT = gql`
   }
 `;
 
+export const RECIPE_UPDATE = gql`
+  mutation EditRecipe(
+    $id: ID!
+    $name: String
+    $description: String
+    $image: String
+    $time: Int
+    $totalCost: Float
+    $difficulty: Difficulty
+    $tag: [TagInput]
+    $ingredient: [IngredientInput]
+  ) {
+    editRecipe(
+      id: $id
+      name: $name
+      description: $description
+      image: $image
+      time: $time
+      totalCost: $totalCost
+      difficulty: $difficulty
+      tag: $tag
+      ingredient: $ingredient
+    ) {
+      id
+    }
+  }
+`;
+
 export const GET_WATCH = gql`
   query GetWatch($subscribingUser: ID!, $subscribedUser: ID!) {
     getWatch(

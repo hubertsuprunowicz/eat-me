@@ -56,7 +56,7 @@ import {
   position,
 } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 
 export const Main = styled.main`
   background: white;
@@ -167,7 +167,7 @@ export const Button = styled('button')<ButtonProps>`
   })}
 `;
 
-export const LinkButton = styled(Link)<ButtonProps>`
+export const LinkButton = styled(Link)<LinkProps & ButtonProps>`
 cursor: pointer;
   border: none;
   outline: none;
@@ -179,6 +179,7 @@ cursor: pointer;
   border-radius: ${themeGet('radii.0')}px;
   padding: 8px;
   letter-spacing: 1px;
+  box-shadow: ${themeGet('shadows.neumorphism')};
   /* text-shadow: 4px 4px 8px rgb(163,177,198,1), -4px -4px 8px rgba(255,255,255, 1); */
 
   & svg {
@@ -194,7 +195,6 @@ cursor: pointer;
     /* box-shadow: ${themeGet('shadows.insetNeo')}; */
   };
   ${fontWeight}
-  ${boxShadow}
   ${color}
   ${fontSize}
   ${width}
@@ -203,6 +203,7 @@ cursor: pointer;
   ${border}
   ${borderWidth}
   ${borderColor}
+  ${boxShadow}
   ${borderRadius}
   ${variant({
     prop: 'variant',
@@ -254,7 +255,7 @@ export const IconButton = styled(Button)<IconButtonProps>(
         bg: 'white',
       },
     },
-  })
+  }),
 );
 
 export const LinkIconButton = styled(LinkButton)<IconButtonProps>(
@@ -262,13 +263,14 @@ export const LinkIconButton = styled(LinkButton)<IconButtonProps>(
     border: 'none',
     backgroundColor: 'white',
     cursor: 'pointer',
+    borderRadius: '50%',
+    boxShadow:
+      'inset 0 0 15px rgba(55, 84, 170,0), inset 0 0 20px rgba(255, 255, 255,0), 7px 7px 15px rgba(55, 84, 170,.15), -7px -7px 20px rgba(255, 255, 255,1), inset 0px 0px 4px rgba(255, 255, 255,.2)',
   },
   color,
   width,
   height,
   space,
-  boxShadow,
-  borderRadius,
   variant({
     prop: 'variant',
     scale: 'buttons',
@@ -282,7 +284,7 @@ export const LinkIconButton = styled(LinkButton)<IconButtonProps>(
         bg: 'white',
       },
     },
-  })
+  }),
 );
 
 type Props = ColorProps &

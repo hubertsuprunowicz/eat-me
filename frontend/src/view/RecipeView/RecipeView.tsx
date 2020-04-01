@@ -327,8 +327,6 @@ const RecipeView: React.FC = () => {
             <LinkButton
               to={`${PROFILE_VIEW}/${data.Recipe[0].user.name}`}
               color={'warn.600'}
-              borderRadius={'5px'}
-              boxShadow={'neumorphism'}
             >
               More
             </LinkButton>

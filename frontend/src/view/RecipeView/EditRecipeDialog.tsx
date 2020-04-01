@@ -12,14 +12,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from './recipe.view.style';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Recipe } from 'view/RecipesView/RecipesView';
+import { RECIPE_UPDATE } from './recipe.graphql';
 
 type EditRecipeForm = {
   id: number;
   title?: string;
   description?: string;
   image?: string;
-  time?: number;
+  time?: string;
   difficulty?: Difficulty;
+  totalCost?: string;
   tag?: Tag;
   tags?: Tag[];
   ingredient?: Ingredient;
@@ -49,29 +51,45 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
     watch,
   } = useForm<EditRecipeForm>();
 
-  //   const [editUser] = useMutation(EDIT_USER, {
-  //     onError: _ => {
-  //       toast.error('Something has failed', {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //       });
-  //     },
-  //     onCompleted: () => {
-  //       toast.success('Message has been sent', {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //       });
-  //     },
-  //   });
+  const [editUser] = useMutation(RECIPE_UPDATE, {
+    onError: _ => {
+      toast.error('Something has failed', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+    onCompleted: () => {
+      toast.success('Message has been sent', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+  });
 
-  const onSubmit = ({ description }: EditRecipeForm) => {
-    console.log('EDIT RECIPE');
+  const onSubmit = (data: EditRecipeForm) => {
+    console.log("edit", data)
+    // console.log('EDIT RECIPE', {
+    //   variables: {
+    //     id: recipe._id,
+    //     name: data.title,
+    //     description: data.description,
+    //     image: data.image,
+    //     time: data.time ? parseInt(data.time) : undefined,
+    //     tag: tags,
+    //     ingredient: ingredients,
+    //     totalCost: data.totalCost ? parseFloat(data.totalCost) : undefined,
+    //     difficulty: data.difficulty,
+    //   },
+    // });
     // editUser({
     //   variables: {
-    //     oldName: user.name,
-    //     name: name,
-    //     password: password,
-    //     email: email,
-    //     avatar: avatar,
-    //     description: description,
+    //     id: recipe._id,
+    //     name: data.title,
+    //     description: data.description,
+    //     image: data.image,
+    //     time: data.time ? parseInt(data.time) : undefined,
+    //     tag: tags,
+    //     ingredient: ingredients,
+    //     totalCost: data.totalCost ? parseFloat(data.totalCost) : undefined,
+    //     difficulty: data.difficulty,
     //   },
     // }).then(() => {
     //   reset();
@@ -130,7 +148,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form  >
       <Style.Box
         display={paginationForm === 1 ? 'flex' : 'none'}
         flexDirection="column"
@@ -144,7 +162,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           type="text"
           placeholder="Enter Title"
           name="title"
-          defaultValue={recipe.title}
+          defaultValue={recipe.name}
           ref={register}
         />
         <label htmlFor="image">
@@ -155,9 +173,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           placeholder="Enter Image Link"
           name="image"
           defaultValue={recipe.image}
-          ref={register({
-            required: true,
-          })}
+          ref={register}
         />
         <label htmlFor="time">
           <span>Time</span>
@@ -236,9 +252,17 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           defaultValue={recipe.description}
           placeholder="Enter Description"
           name="description"
-          ref={register({
-            required: true,
-          })}
+          ref={register}
+        />
+        <label htmlFor="totalCost">
+          <span>Total Cost</span>
+        </label>
+        <input
+          type="number"
+          placeholder="Enter Total Cost"
+          name="totalCost"
+          defaultValue={recipe.totalCost.toString()}
+          ref={register}
         />
         <label htmlFor="ingredient">
           <span>Ingredients</span>
@@ -272,8 +296,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           </Style.IconButton>
         </Style.Box>
         {ingredients &&
-          ingredients.map(({ name, amount }: Ingredient, index) => {
-            return (
+          ingredients.map(({ name, amount }: Ingredient, index) => 
               <Style.Box
                 width="100%"
                 display="flex"
@@ -288,8 +311,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
                   <Style.Box>{amount}</Style.Box>
                 </div>
               </Style.Box>
-            );
-          })}
+          )}
 
         {errors.tags && errors.tags.message}
       </Style.Box>
@@ -303,6 +325,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         <Style.Box display="flex" justifyContent="flex-start">
           <Style.Button
             p={5}
+            type="button"
             color={'grey.700'}
             boxShadow={paginationForm === 1 ? 'insetNeo' : 'neumorphism'}
             mr={4}
@@ -312,6 +335,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           </Style.Button>
           <Style.Button
             p={5}
+            type="button"
             color={'grey.700'}
             boxShadow={paginationForm === 2 ? 'insetNeo' : 'neumorphism'}
             mr={4}
@@ -322,6 +346,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           <Style.Button
             p={5}
             color={'grey.700'}
+            type="button"
             boxShadow={paginationForm === 3 ? 'insetNeo' : 'neumorphism'}
             onClick={() => setPaginationForm(3)}
           >
@@ -331,6 +356,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         <Style.Box display="flex" justifyContent="flex-end">
           <Style.Button
             type="submit"
+            onClick={handleSubmit(onSubmit)}
             p={5}
             color={'secondary.500'}
             boxShadow="neumorphism"

@@ -51,6 +51,7 @@ export const RECIPE_CREATE = gql`
     $time: Int!
     $difficulty: Difficulty!
     $tag: [TagInput!]
+    $totalCost: Float!
     $ingredient: [IngredientInput!]!
     $userID: Int!
   ) {
@@ -61,6 +62,7 @@ export const RECIPE_CREATE = gql`
       time: $time
       difficulty: $difficulty
       tag: $tag
+      totalCost: $totalCost
       ingredient: $ingredient
       userID: $userID
     ) {
