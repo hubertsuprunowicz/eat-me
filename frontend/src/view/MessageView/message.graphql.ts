@@ -30,7 +30,7 @@ export const GET_USER = gql`
 
 export const YOUR_MESSAGES = gql`
   query YourMessages($name: String!) {
-    messages(filter: { addressee: { name: $name } }) {
+    messages(filter: { addressee: { name: $name }}) {
       _id
       title
       message

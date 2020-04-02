@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Button } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -10,19 +10,34 @@ import { useQuery } from '@apollo/react-hooks';
 import { YOUR_MESSAGES, MESSAGE_RECIVED } from './message.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import debounce from 'lodash.debounce';
 
 type Props = {};
 
 const MessageView: React.FC<Props> = () => {
   const { user } = useAuthState();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const searchRef = useRef<any>();
+  const [searchBody, setSearchBody] = useState<{
+    message?: string;
+    by?: string;
+  }>({});
 
   const { data, loading, subscribeToMore } = useQuery(YOUR_MESSAGES, {
     fetchPolicy: 'cache-and-network',
     variables: {
       name: user!.name,
+      // ...searchBody
     },
   });
+
+  const onChange = debounce(
+    () => {
+      if (searchRef && searchRef.current) console.log(searchRef.current.value);
+    },
+    200,
+    { maxWait: 250 },
+  );
 
   subscribeToMore({
     document: MESSAGE_RECIVED,
@@ -69,6 +84,15 @@ const MessageView: React.FC<Props> = () => {
           </Button>
         </div>
       </Box>
+      <Box>
+        <input
+          ref={searchRef as any}
+          onChange={onChange}
+          type="search"
+          name="search"
+          placeholder="Search.."
+        />
+      </Box>
       <MessageList>
         {/* TODO: Link */}
         {data.messages &&
@@ -97,7 +121,7 @@ const MessageView: React.FC<Props> = () => {
                   </span>
                 </Box>
               </li>
-            )
+            ),
           )}
       </MessageList>
       <FormModal
