@@ -49,7 +49,7 @@ type Mutation {
     tag: [TagInput!]
     ingredient: [IngredientInput!]!
     userID: Int!
-    totalCost: Int!
+    totalCost: Float!
   ): Recipe
   editRecipe(
     name: String
@@ -60,7 +60,7 @@ type Mutation {
     tag: [TagInput]
     ingredient: [IngredientInput]
     id: ID!
-    totalCost: Int
+    totalCost: Float
   ): Recipe
 
   login(name: String!, password: String!): Credentials!
@@ -82,6 +82,27 @@ input EditUserInput {
   email: EmailAddress
   password: String
   avatar: String
+  description: String
+}
+
+input IngredientInput {
+  name: String!
+  amount: String
+}
+
+input TagInput {
+  name: String!
+}
+
+input RatingInput {
+  rate: Int!
+}
+
+input CommentInput {
+  userID: ID!
+  recipeID: ID!
+  timestamp: Long!
+  rating: Int!
   description: String
 }
 
@@ -117,27 +138,6 @@ type Credentials {
   user: User!
 }
 
-input IngredientInput {
-  name: String!
-  amount: String
-}
-
-input TagInput {
-  name: String!
-}
-
-input RatingInput {
-  rate: Int!
-}
-
-input CommentInput {
-  userID: ID!
-  recipeID: ID!
-  timestamp: Long!
-  rating: Int!
-  description: String
-}
-
 type Tag {
   name: String!
   recipes: [Recipe] @relation(name: "HAS_TAG", direction: "IN")
@@ -149,7 +149,7 @@ type Recipe {
   description: String!
   difficulty: Difficulty!
   image: String!
-  totalCost: Int!
+  totalCost: Float!
   time: Int!
   tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
   user: User @relation(name: "POSTS", direction: "IN")
