@@ -14,6 +14,7 @@
 - [ ] eg (query): recipe / recipes -> Recipe
 - [ ] smaller toast
 - [ ] bump toast
+- [ ] backend needs to return full Object of itself
 
 ### recipe
 - [ ] overall design
