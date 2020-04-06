@@ -25,6 +25,7 @@ export type Recipe = {
   tag: Tag[];
   ingredient: Ingredient[];
   user: User;
+  comment: any;
 };
 
 const RecipesView: React.FC = () => {

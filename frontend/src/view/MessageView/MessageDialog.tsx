@@ -40,11 +40,17 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
     },
     onCompleted: data => {
       if (!user) throw new Error('Not authorized exception');
+      if (data.user._id === user._id) {
+        setError('sender', 'yourself', 'you can not send message to yourself');
+        return;
+      }
 
       const { title, message } = getValues();
 
-      if (!data.user)
+      if (!data.user) {
         setError('addressee', 'notFound', 'provided name does not exist');
+        return;
+      }
 
       if (!isEmpty(errors)) return;
 
@@ -93,6 +99,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
           errors.addressee.type === 'required' &&
           'Your input is required'}
         {errors.addressee && errors.addressee.message}
+        {errors.sender && errors.sender.message}
         <label htmlFor="title">
           <span>Title</span>
         </label>

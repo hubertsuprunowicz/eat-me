@@ -9,8 +9,9 @@ import { useAuthState } from 'utils/auth';
 import { useQuery } from '@apollo/react-hooks';
 import { YOUR_MESSAGES, MESSAGE_RECIVED } from './message.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import debounce from 'lodash.debounce';
+import Form from 'component/Form/Form';
 
 type Props = {};
 
@@ -27,13 +28,14 @@ const MessageView: React.FC<Props> = () => {
     fetchPolicy: 'cache-and-network',
     variables: {
       name: user!.name,
-      // ...searchBody
+      ...searchBody,
     },
   });
 
   const onChange = debounce(
     () => {
-      if (searchRef && searchRef.current) console.log(searchRef.current.value);
+      if (searchRef && searchRef.current)
+        setSearchBody({ message: searchRef.current.value });
     },
     200,
     { maxWait: 250 },
@@ -65,8 +67,7 @@ const MessageView: React.FC<Props> = () => {
     },
   });
 
-  if (loading) return <>loading...</>;
-
+  // TODO: pagination
   return (
     <Box pt={6} style={{ paddingBottom: '80px' }}>
       <Box pl={6} pr={6} display={'flex'} justifyContent={'space-between'}>
@@ -79,51 +80,57 @@ const MessageView: React.FC<Props> = () => {
           >
             <FontAwesomeIcon size={'xs'} icon={faPlusCircle} /> Message
           </Button>
-          <Button boxShadow="neumorphism">
-            <FontAwesomeIcon size={'xs'} icon={faFilter} /> Filter
-          </Button>
         </div>
       </Box>
-      <Box>
-        <input
-          ref={searchRef as any}
-          onChange={onChange}
-          type="search"
-          name="search"
-          placeholder="Search.."
-        />
+      <Box mt={6} display="flex" justifyContent="center">
+        <Form>
+          <input
+            ref={searchRef as any}
+            onChange={onChange}
+            type="search"
+            name="search"
+            placeholder="Search by message content"
+          />
+        </Form>
       </Box>
-      <MessageList>
-        {/* TODO: Link */}
-        {data.messages &&
-          data.messages.map(
-            ({ _id, title, message, timestamp, sender }: any) => (
-              <li key={_id}>
-                <img
-                  src="https://www.gdansk.pl/download/2019-09/135042.jpg"
-                  alt=""
-                />
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-between"
-                  ml={5}
-                  width={'100%'}
-                >
-                  <Box display="flex" justifyContent="space-between">
-                    <b style={{ fontSize: '14px' }}>{sender.name}</b>
-                    <span style={{ fontSize: '10px' }}>
-                      {formatDistance(timestamp, new Date())}
+      {/* TODO: loading overlay */}
+      {loading ? (
+        <>loading...</>
+      ) : (
+        <MessageList>
+          {/* TODO: Link */}
+          {data &&
+            data.messages &&
+            data.messages.map(
+              ({ _id, title, message, timestamp, sender }: any) => (
+                <li key={_id}>
+                  <img
+                    src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+                    alt=""
+                  />
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="space-between"
+                    ml={5}
+                    width={'100%'}
+                  >
+                    <Box display="flex" justifyContent="space-between">
+                      <b style={{ fontSize: '14px' }}>{sender.name}</b>
+                      <span style={{ fontSize: '10px' }}>
+                        {formatDistance(timestamp, new Date())}
+                      </span>
+                    </Box>
+                    <span style={{ fontSize: '10px', color: 'grey' }}>
+                      {message}
                     </span>
                   </Box>
-                  <span style={{ fontSize: '10px', color: 'grey' }}>
-                    {message}
-                  </span>
-                </Box>
-              </li>
-            ),
-          )}
-      </MessageList>
+                </li>
+              ),
+            )}
+        </MessageList>
+      )}
+
       <FormModal
         title="Send Message"
         isOpen={isOpen}

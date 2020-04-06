@@ -7,38 +7,68 @@ export const RECIPES = gql`
 
     recipes(first: ${LIMIT}, offset: $offset) @skip(if: $onlyPerson) {
       _id
+      id
       name
       difficulty
+      totalCost
       time
       image
       tag {
+        id
         name
       }
       ingredient {
+        id
         name
         amount
       }
       user {
+        id
         name
       }
+      comment {
+				_id
+				id
+				rating
+				description
+				timestamp
+				user {
+					name
+				}
+			}
     }
 
     Recipe(filter: {user: {name: $personName}}) @include(if: $onlyPerson) {
       _id
+      id
       name
       difficulty
+      totalCost
       time
       image
       tag {
+        id
         name
       }
       ingredient {
+        id
         name
         amount
       }
       user {
+        id
         name
       }
+      comment {
+				_id
+				id
+				rating
+				description
+				timestamp
+				user {
+					name
+				}
+			}
     }
   }
 `;

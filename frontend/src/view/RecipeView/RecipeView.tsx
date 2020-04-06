@@ -6,9 +6,9 @@ import {
   IngredientsList,
   AuthorImage,
 } from './recipe.view.style';
-import { Box, Button, LinkButton } from 'style';
+import { Box, Button, LinkButton, Text } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
@@ -72,8 +72,21 @@ const RecipeView: React.FC = () => {
 
   if (loading) return <>loading...</>;
 
-  const [{ name, image, description, time, tag, ingredient, comment }] =
-    data.Recipe || {};
+  const [
+    {
+      name,
+      image,
+      description,
+      time,
+      tag,
+      ingredient,
+      comment,
+      difficulty,
+      totalCost,
+    },
+  ] = data.Recipe || {};
+
+  console.log(data.Recipe);
 
   function alreadyVoted() {
     return comment.findIndex((it: any) => it.user.name === user!.name);
@@ -128,7 +141,6 @@ const RecipeView: React.FC = () => {
       mb={100}
     >
       <BackgroundImage src={image} alt={name} />
-      {/** KARTA */}
       <Box
         mt={-70}
         p={5}
@@ -152,78 +164,68 @@ const RecipeView: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit
+          {name}
         </span>
-        {user && 'user' === user.name && (
-          <EditButton
-            mt={2}
-            mr={40}
-            borderRadius={'5px'}
-            boxShadow={'neumorphism'}
-            onClick={() => setIsRecipeDialogOpen(true)}
-          >
-            <FontAwesomeIcon size={'lg'} icon={faEdit} />
-          </EditButton>
-        )}
+        {/* TODO: change 'user' to name of recipe author */}
+
         <Box display={'flex'} flexDirection={'column'} width={'80%'}>
-          <Box mt={6} display={'flex'} justifyContent={'space-between'}>
-            <span>rating</span>
-            <span>{totalRating()} / 5</span>
+          <Box
+            mt={6}
+            display={'flex'}
+            justifyContent={'space-between'}
+            color={'primary.500'}
+          >
+            <div>
+              <FontAwesomeIcon icon={faStar} />
+              {'  '}
+              <Text fontSize={3} fontWeight={700}>
+                {totalRating()} / 5
+              </Text>
+            </div>
+
+            {user && 'user' === user.name && (
+              <EditButton
+                mt={-3}
+                mb={2}
+                borderRadius={'5px'}
+                boxShadow={'neumorphism'}
+                onClick={() => setIsRecipeDialogOpen(true)}
+              >
+                <FontAwesomeIcon size={'lg'} icon={faEdit} />
+              </EditButton>
+            )}
           </Box>
           <Box mt={3} display={'flex'} justifyContent={'space-between'}>
             <span>time</span>
-            <span>35min</span>
+            <span>{time}min</span>
           </Box>
           <Box mt={3} display={'flex'} justifyContent={'space-between'}>
             <span>total cost</span>
-            <span>15$</span>
+            <span>{totalCost}$</span>
           </Box>
           <Box mt={3} display={'flex'} justifyContent={'space-between'}>
             <span>difficulty</span>
-            <span>easy</span>
+            <span>{difficulty.toLowerCase()}</span>
           </Box>
           <span style={{ marginTop: '4px' }}>ingredients</span>
           <Box display={'flex'} justifyContent={'space-between'}>
             <IngredientsList>
-              <li>
-                <Box display={'flex'} justifyContent={'space-between'}>
-                  <span>liters of milk</span>
-                  <span>2l</span>
-                </Box>
-              </li>
-              <li>
-                <Box display={'flex'} justifyContent={'space-between'}>
-                  <span>spoons of sugar with real vanilla</span>
-                  <span>3.5</span>
-                </Box>
-              </li>
-              <li>
-                <Box display={'flex'} justifyContent={'space-between'}>
-                  <span>vanilla sticks</span>
-                  <span>2</span>
-                </Box>
-              </li>
-              <li>
-                <Box display={'flex'} justifyContent={'space-between'}>
-                  <span>egg yolks</span>
-                  <span>2</span>
-                </Box>
-              </li>
-              <li>
-                <Box display={'flex'} justifyContent={'space-between'}>
-                  <span>tablespoons of potato flour</span>
-                  <span>3</span>
-                </Box>
-              </li>
+              {ingredient.map((it: any, index: number) => (
+                <li key={index}>
+                  <Box display={'flex'} justifyContent={'space-between'}>
+                    <span>{it.name}</span>
+                    <span>{it.amount}</span>
+                  </Box>
+                </li>
+              ))}
             </IngredientsList>
           </Box>
         </Box>
         <Box
+          mt={3}
           display={'flex'}
           flexWrap={'wrap'}
-          backgroundColor={'grey.100'}
           justifyContent={'center'}
-          // boxShadow={'insetNeo'}
           style={{
             borderBottomLeftRadius: '5px',
             borderBottomRightRadius: '5px',
@@ -243,18 +245,14 @@ const RecipeView: React.FC = () => {
           >
             #
           </span>
-          <span style={{ padding: '5px', fontWeight: 600 }}>
-            #KuchniaPolska
-          </span>
-          <span style={{ padding: '5px', fontWeight: 600 }}>#Azjatycka</span>
-          <span style={{ padding: '5px', fontWeight: 600 }}>#Azjatycka</span>
-          <span style={{ padding: '5px', fontWeight: 600 }}>#Japonska</span>
-          <span style={{ padding: '5px', fontWeight: 600 }}>
-            #KuchniaPolska
-          </span>
+          {tag.map((it: any, index: number) => (
+            <span key={index} style={{ padding: '5px', fontWeight: 600 }}>
+              {it.name}
+            </span>
+          ))}
         </Box>
       </Box>
-      {/** KONIEC - KARTA */}
+
       <Box p={8}>
         <Box display={'flex'} justifyContent={'space-between'}>
           <span
@@ -268,6 +266,7 @@ const RecipeView: React.FC = () => {
           </span>
           {subscribed ? (
             <Button
+              ml={5}
               color={'danger.500'}
               borderRadius={'5px'}
               boxShadow={'neumorphism'}
@@ -278,6 +277,7 @@ const RecipeView: React.FC = () => {
             </Button>
           ) : (
             <Button
+              ml={5}
               color={'danger.500'}
               borderRadius={'5px'}
               boxShadow={'neumorphism'}
@@ -288,23 +288,7 @@ const RecipeView: React.FC = () => {
             </Button>
           )}
         </Box>
-        <p style={{ lineHeight: '21px' }}>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas
-          <br /> <br />
-          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-          qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
-          dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
-          quia non numquam eius modi tempora incidunt ut labore et dolore magnam
-          aliquam quaerat voluptatem. Ut enim ad minima veniam
-          <br /> <br />
-          exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
-          ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
-          ea voluptate velit esse quam nihil molestiae consequatur, vel illum
-          qui dolorem eum fugiat quo voluptas nulla pariatur?
-        </p>
+        <p style={{ lineHeight: '21px' }}>{description}</p>
       </Box>
       <Box p={8}>
         <span
@@ -371,7 +355,7 @@ const RecipeView: React.FC = () => {
 
       <Box
         display={'flex'}
-        flexDirection={'row-reverse'}
+        flexDirection={'row'}
         justifyContent={'center'}
         flexWrap={'wrap'}
         p={8}

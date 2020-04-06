@@ -65,36 +65,22 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   });
 
   const onSubmit = (data: EditRecipeForm) => {
-    console.log("edit", data)
-    // console.log('EDIT RECIPE', {
-    //   variables: {
-    //     id: recipe._id,
-    //     name: data.title,
-    //     description: data.description,
-    //     image: data.image,
-    //     time: data.time ? parseInt(data.time) : undefined,
-    //     tag: tags,
-    //     ingredient: ingredients,
-    //     totalCost: data.totalCost ? parseFloat(data.totalCost) : undefined,
-    //     difficulty: data.difficulty,
-    //   },
-    // });
-    // editUser({
-    //   variables: {
-    //     id: recipe._id,
-    //     name: data.title,
-    //     description: data.description,
-    //     image: data.image,
-    //     time: data.time ? parseInt(data.time) : undefined,
-    //     tag: tags,
-    //     ingredient: ingredients,
-    //     totalCost: data.totalCost ? parseFloat(data.totalCost) : undefined,
-    //     difficulty: data.difficulty,
-    //   },
-    // }).then(() => {
-    //   reset();
-    //   setIsOpen(false);
-    // });
+    editUser({
+      variables: {
+        id: recipe._id,
+        name: data.title,
+        description: data.description,
+        image: data.image,
+        time: data.time ? parseInt(data.time) : undefined,
+        tag: tags,
+        ingredient: ingredients,
+        totalCost: data.totalCost ? parseFloat(data.totalCost) : undefined,
+        difficulty: data.difficulty,
+      },
+    }).then(() => {
+      reset();
+      setIsOpen(false);
+    });
   };
 
   const removeIngredient = (index: number) => {
@@ -115,11 +101,11 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
     const tag = watch('tag');
     if (!tag) return;
 
-    if (tag.name.length < 4) {
+    if (tag.name.length < 3) {
       setError(
         'tags',
         'tooShort',
-        'This text should be at least 4 letters long',
+        'This text should be at least 3 letters long',
       );
     } else if (tags.length >= 6) {
       setError('tags', 'tooMany', 'There is too many tags');
@@ -148,7 +134,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   };
 
   return (
-    <Form  >
+    <Form>
       <Style.Box
         display={paginationForm === 1 ? 'flex' : 'none'}
         flexDirection="column"
@@ -296,22 +282,22 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           </Style.IconButton>
         </Style.Box>
         {ingredients &&
-          ingredients.map(({ name, amount }: Ingredient, index) => 
-              <Style.Box
-                width="100%"
-                display="flex"
-                flexWrap={'wrap'}
-                justifyContent="space-between"
-                key={name + Math.random() * name.length}
-                cursor={'pointer'}
-                onClick={() => removeIngredient(index)}
-              >
-                <Style.Box>{name}</Style.Box>
-                <div>
-                  <Style.Box>{amount}</Style.Box>
-                </div>
-              </Style.Box>
-          )}
+          ingredients.map(({ name, amount }: Ingredient, index) => (
+            <Style.Box
+              width="100%"
+              display="flex"
+              flexWrap={'wrap'}
+              justifyContent="space-between"
+              key={name + Math.random() * name.length}
+              cursor={'pointer'}
+              onClick={() => removeIngredient(index)}
+            >
+              <Style.Box>{name}</Style.Box>
+              <div>
+                <Style.Box>{amount}</Style.Box>
+              </div>
+            </Style.Box>
+          ))}
 
         {errors.tags && errors.tags.message}
       </Style.Box>

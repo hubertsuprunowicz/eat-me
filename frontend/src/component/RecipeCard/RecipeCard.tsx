@@ -9,12 +9,10 @@ import {
   faClock,
   faFlag,
   faMoneyBill,
-  faSign,
   faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { Card, CardDetails, TagWrapper } from './recipe.card.style';
 import { Recipe } from 'view/RecipesView/RecipesView';
-import { Redirect, Link, useParams } from 'react-router-dom';
 import { PROFILE_VIEW, RECIPE_VIEW } from 'view/Route/constants.route';
 
 export type Props = ItemCardProps;
@@ -33,7 +31,16 @@ const RecipeCard: React.FC<Props> = ({
   index,
   setCurrentIndex,
 }) => {
-  const { name, image, difficulty, time, tag, user } = recipe;
+  const {
+    name,
+    image,
+    difficulty,
+    time,
+    tag,
+    user,
+    comment,
+    totalCost,
+  } = recipe;
 
   const loveItHandle = () => {
     console.log('LOVE IT');
@@ -44,6 +51,15 @@ const RecipeCard: React.FC<Props> = ({
     console.log('QUIT IT');
     setCurrentIndex(index + 1);
   };
+
+  function totalRating() {
+    return (
+      comment.reduce(
+        (acc: number, curr: { rating: any }) => acc + curr.rating,
+        0,
+      ) / comment.length
+    ).toFixed(1);
+  }
 
   return (
     <Card key={id} cursor="pointer" height={'70vh'}>
@@ -57,7 +73,7 @@ const RecipeCard: React.FC<Props> = ({
         <TagWrapper>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faStar} />
-            3.50
+            {totalRating()}
           </Tag>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faClock} />
@@ -69,9 +85,9 @@ const RecipeCard: React.FC<Props> = ({
           </Tag>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faMoneyBill} />
-            $20.50
+            {totalCost}$
           </Tag>
-          {tag.map((it: any) => (
+          {tag.slice(0, 3).map((it: any) => (
             <Tag key={Math.random + it.name} bg={'primary.400'}>
               #{it.name}
             </Tag>
