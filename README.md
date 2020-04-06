@@ -8,7 +8,7 @@
 - [ ] stars and comments for recipes
 - [ ] add default avatar
 - [ ] loading: spinner
-- [ ] _id -> id
+- [ ] _id -> id (if possible)
 - [ ] active link
 - [ ] Button Link/ /Button -> Link/
 - [ ] eg (query): recipe / recipes -> Recipe
