@@ -95,12 +95,7 @@ const ProfileView: React.FC = () => {
         >
           Send Message
         </Button>
-        <LinkButton
-          to={`${RECIPES_VIEW}/${getName()}`}
-          color={'warn.600'}
-          borderRadius={'5px'}
-          boxShadow={'neumorphism'}
-        >
+        <LinkButton to={`${RECIPES_VIEW}/${getName()}`} color={'warn.600'}>
           Recipes
         </LinkButton>
       </Box>

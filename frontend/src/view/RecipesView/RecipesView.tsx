@@ -12,6 +12,7 @@ import { faFilter, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import FormModal from 'component/FormModal/FormModal';
 import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
 import { useParams } from 'react-router-dom';
+import NoRecords from 'component/NoRecords/NoRecords';
 
 export type Recipe = {
   _id: string;
@@ -80,22 +81,11 @@ const RecipesView: React.FC = () => {
         </div>
       </Box>
       {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
-      {!recipes.length && (
-        <Box
-          p={8}
-          textAlign={'center'}
-          mt={'50%'}
-          display={'flex'}
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
-          <Text fontSize={24}>
-            Sorry, there is no recipes to show. Please add one or come back
-            later
-          </Text>
-        </Box>
-      )}
-      {recipes.length > 0 && (
+      {!recipes.length ? (
+        <NoRecords>
+          Sorry, there is no recipes to show. Please add one or come back later
+        </NoRecords>
+      ) : (
         <SwipeableViews
           onChangeIndex={(cardNumber: number) =>
             paginationHandler(cardNumber + 1)

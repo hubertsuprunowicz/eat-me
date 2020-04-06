@@ -54,6 +54,8 @@ import {
   FlexWrapProps,
   PositionProps,
   position,
+  padding,
+  PaddingProps,
 } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
 import { Link, LinkProps } from 'react-router-dom';
@@ -388,13 +390,18 @@ ${variant({
 })}
 `;
 
-type TextProps = TextAlignProps & FontSizeProps & FontWeightProps & ColorProps;
+type TextProps = TextAlignProps &
+  FontSizeProps &
+  FontWeightProps &
+  ColorProps &
+  PaddingProps;
 
 export const Text = styled('span')<TextProps>`
 ${color}
 ${textAlign}
 ${fontSize}
 ${fontWeight}
+${padding}
 `;
 
 // (

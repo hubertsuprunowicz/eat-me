@@ -67,7 +67,7 @@ const colors = {
 };
 
 const typography = {
-  fontSizes: [14, 15, 17, 19],
+  fontSizes: [14, 15, 17, 19, 25],
   space: [0, 1, 2, 4, 8, 12, 16, 18, 32, 64],
 };
 

@@ -12,6 +12,7 @@ import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { formatDistance } from 'date-fns';
 import debounce from 'lodash.debounce';
 import Form from 'component/Form/Form';
+import NoRecords from 'component/NoRecords/NoRecords';
 
 type Props = {};
 
@@ -82,7 +83,7 @@ const MessageView: React.FC<Props> = () => {
           </Button>
         </div>
       </Box>
-      <Box mt={6} display="flex" justifyContent="center">
+      <Box mt={8} display="flex" justifyContent="center">
         <Form>
           <input
             ref={searchRef as any}
@@ -98,12 +99,15 @@ const MessageView: React.FC<Props> = () => {
         <>loading...</>
       ) : (
         <MessageList>
-          {/* TODO: Link */}
-          {data &&
-            data.messages &&
+          {data && data.messages && data.messages.length < 1 ? (
+            <NoRecords>
+              Sorry, there is no messages to show. Come back later :)
+            </NoRecords>
+          ) : (
             data.messages.map(
               ({ _id, title, message, timestamp, sender }: any) => (
                 <li key={_id}>
+                  {/* TODO: Link */}
                   <img
                     src="https://www.gdansk.pl/download/2019-09/135042.jpg"
                     alt=""
@@ -127,7 +131,8 @@ const MessageView: React.FC<Props> = () => {
                   </Box>
                 </li>
               ),
-            )}
+            )
+          )}
         </MessageList>
       )}
 
