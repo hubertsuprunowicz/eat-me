@@ -14,6 +14,14 @@ const resolvers = {
 					return payload.messageRecived.addresseeID.toString() === variables.id;
 				}
 			)
+		},
+		newRecipeDiscover: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator('newRecipeDiscover'),
+				(_payload, _variables) => {
+					return true;
+				}
+			)
 		}
 	},
 	Query: {
@@ -24,6 +32,30 @@ const resolvers = {
 			const subscribed = await session.run(query).then((result) => result.records);
 
 			return { subscribed: subscribed.length > 0 };
+		},
+
+		async watchesRecipes(_, args, context) {
+			const session = await context.driver.session();
+
+			const recipesRuery = `MATCH (a:User)-[:WATCHES]->(b:User)-[:POSTS]->(r:Recipe) WHERE ID(a) = ${args.id} RETURN collect(r), collect(b)`;
+
+			const recipes = await session.run(recipesRuery).then((results) => {
+				return {
+					...results.records[0].get(0).map((it, index) => {
+						return {
+							...it.properties,
+							_id: it.identity.low,
+							id: it.identity.low,
+							user: {
+								...results.records[0].get(1)[index].properties,
+								id: results.records[0].get(1)[index].identity.low
+							}
+						};
+					})
+				};
+			});
+
+			return Object.values(recipes);
 		}
 	},
 	Mutation: {
@@ -120,8 +152,8 @@ const resolvers = {
 				});
 
 			return {
-				id: comment.id,
-				...comment.properties
+				...comment.properties,
+				id: comment.id
 			};
 		},
 
@@ -146,32 +178,32 @@ const resolvers = {
 				})
 				.then((results) => {
 					return {
-						id: results.records[0].get(0).low,
 						...results.records[0].get(1).properties,
+						id: results.records[0].get(0).low,
 						addressee: {
-							id: results.records[0].get(1).identity.low,
-							...results.records[0].get(1).properties
+							...results.records[0].get(1).properties,
+							id: results.records[0].get(1).identity.low
 						},
 						sender: {
-							id: results.records[0].get(2).identity.low,
-							...results.records[0].get(2).properties
+							...results.records[0].get(2).properties,
+							id: results.records[0].get(2).identity.low
 						}
 					};
 				});
 
 			pubsub.publish('messageRecived', {
 				messageRecived: {
+					...args,
 					_id: message.id,
 					id: message.id,
-					...args,
 					addressee: { ...message.addressee },
 					sender: { ...message.sender }
 				}
 			});
 			return {
+				...args,
 				_id: message.id,
 				id: message.id,
-				...args,
 				addressee: { ...message.addressee },
 				sender: { ...message.sender }
 			};
@@ -203,9 +235,9 @@ const resolvers = {
 				})
 				.then((results) => {
 					return {
+						...results.records[0].get(0).properties,
 						id: results.records[0].get(0).identity.low,
-						_id: results.records[0].get(0).identity.low,
-						...results.records[0].get(0).properties
+						_id: results.records[0].get(0).identity.low
 					};
 				});
 
@@ -232,11 +264,11 @@ const resolvers = {
 			const recipeQuery = `
           MATCH (b:User) WHERE ID(b) = ${userID}
           CREATE (a:Recipe{name:$name, description:$description, difficulty:$difficulty, 
-          image:$image, time:$time})<-[:POSTS]-(b)
-          RETURN ID(a)
+          image:$image, time:$time, totalCost:$totalCost, timestamp: ${Date.now()}})<-[:POSTS]-(b)
+          RETURN a, b
           `;
 
-			const recipeID = await session
+			const recipe = await session
 				.run(recipeQuery, {
 					name: args.name,
 					description: args.description,
@@ -245,11 +277,22 @@ const resolvers = {
 					time: args.time,
 					totalCost: args.totalCost
 				})
-				.then((results) => results.records[0].get(0).low);
+				.then((results) => {
+					return {
+						...results.records[0].get(0).properties,
+						user: {
+							id: results.records[0].get(1).identity.low,
+							_id: results.records[0].get(1).identity.low,
+							...results.records[0].get(1).properties
+						},
+						id: results.records[0].get(0).identity.low,
+						_id: results.records[0].get(0).identity.low
+					};
+				});
 
 			// FIXME: such spaghetti...
 			let tagQueryBuilder = `
-        MATCH (a:Recipe) WHERE ID(a) = ${recipeID}
+        MATCH (a:Recipe) WHERE ID(a) = ${recipe.id}
         CREATE 
       `;
 
@@ -261,7 +304,7 @@ const resolvers = {
 			await session.run(tagQuery);
 
 			let ingredientQueryBuilder = `
-        MATCH (a:Recipe) WHERE ID(a) = ${recipeID}
+        MATCH (a:Recipe) WHERE ID(a) = ${recipe.id}
         CREATE 
       `;
 
@@ -273,15 +316,21 @@ const resolvers = {
 			const ingredientgQuery = ingredientQueryBuilder.replace(') (', '), (');
 			await session.run(ingredientgQuery);
 
+			pubsub.publish('newRecipeDiscover', {
+				newRecipeDiscover: {
+					...recipe
+				}
+			});
+
 			return {
-				_id: recipeID
+				...recipe
 			};
 		},
 
 		async editRecipe(_, args, context) {
 			const session = await context.driver.session();
 
-			let setter = '';
+			let setter = `timestamp: ${Date.now()},`;
 			if (args.name) setter += 'name: $name,';
 			if (args.description) setter += 'description: $description,';
 			if (args.difficulty) setter += 'difficulty: $difficulty,';
@@ -351,14 +400,14 @@ const resolvers = {
 				...recipe,
 				ingredient: ingredients.map((it) => {
 					return {
-						id: it.identity.low,
-						...it.properties
+						...it.properties,
+						id: it.identity.low
 					};
 				}),
 				tag: tags.map((it) => {
 					return {
-						id: it.identity.low,
-						...it.properties
+						...it.properties,
+						id: it.identity.low
 					};
 				})
 			};

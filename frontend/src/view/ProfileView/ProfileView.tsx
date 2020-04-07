@@ -4,7 +4,7 @@ import { Box, Tag, Button, LinkButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { USER } from './profile.graphql';
 import { useQuery } from '@apollo/react-hooks';
 import EditUserDialog from './EditUserDialog';
@@ -31,12 +31,9 @@ const ProfileView: React.FC = () => {
   });
 
   if (loading) return <>loading...</>;
-  // console.log(data);
 
   const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
   const { name, email, avatar, description, recipe } = data.User[0];
-
-  console.log(recipe.slice(0, 3));
 
   return (
     <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>

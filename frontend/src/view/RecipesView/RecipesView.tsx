@@ -78,7 +78,7 @@ const RecipesView: React.FC = () => {
             ...filter,
             user: { name: username },
           }
-        : filter,
+        : { filter },
     },
   });
 
@@ -90,7 +90,7 @@ const RecipesView: React.FC = () => {
 
   if (loading) return <>Loading data...</>;
   // if (error) return <ErrorRedirect error={error} />;
-
+  console.log(data);
   const recipes = data.Recipe;
 
   return (

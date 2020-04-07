@@ -32,6 +32,7 @@ export const Card = styled.div<Props>`
 
   > img {
     width: 100%;
+    min-height: 60%;
     height: 60%;
     border-radius: ${themeGet('radii.0')}px;
     object-fit: cover;

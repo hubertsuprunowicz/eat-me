@@ -39,7 +39,10 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     );
   }
 
-  if (networkError) console.error(`[Network error]: ${networkError}`);
+  if (networkError) {
+    console.error(`[Network error]: `);
+    console.error(networkError);
+  }
 });
 
 const wsLink = new WebSocketLink({

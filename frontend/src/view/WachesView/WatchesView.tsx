@@ -1,13 +1,49 @@
 import React from 'react';
-import { Box, IconButton, Tag } from 'style';
+import { Box, IconButton, Text } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { WatchesList, SubscribeTag } from './watches.view.style';
 import { Link } from 'react-router-dom';
+import { useSubscription, useQuery } from '@apollo/react-hooks';
+import { RECIPE_DISCOVERD, WATCHES_RECIPES } from './watches.graphql';
+import { useAuthState } from 'utils/auth';
+import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 
-type Props = {};
+const WatchesView: React.FC = () => {
+  const { user } = useAuthState();
+  const { data, loading, subscribeToMore } = useQuery(WATCHES_RECIPES, {
+    fetchPolicy: 'cache-and-network',
+    variables: { id: user!._id },
+  });
 
-const WatchesView: React.FC<Props> = () => {
+  subscribeToMore({
+    document: RECIPE_DISCOVERD,
+    variables: { id: user!._id },
+    onError: err => {
+      return <ErrorRedirect error={err.message} />;
+    },
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData.data) return prev.messages;
+
+      // Needed due to multiple resubscriptions
+      if (
+        prev.watchesRecipes.length > 0 &&
+        prev.watchesRecipes[prev.watchesRecipes.length - 1].id ===
+          subscriptionData.data.newRecipeDiscover.id
+      )
+        return prev.watchesRecipes;
+
+      return {
+        watchesRecipes: [
+          ...prev.watchesRecipes,
+          subscriptionData.data.newRecipeDiscover,
+        ],
+      };
+    },
+  });
+
+  if (loading) return <>loading...</>;
+
   return (
     <Box p={5} style={{ paddingBottom: '80px' }}>
       <Box display={'flex'} justifyContent={'space-between'}>
@@ -17,132 +53,20 @@ const WatchesView: React.FC<Props> = () => {
         </IconButton>
       </Box>
       <WatchesList>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSRW-6kkUVv1JWapToUlIq_3xoAfiSssBvyptHJhBUbPeoiR9fZ"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTH554DH7o2j2D4yHITgUX7ADnFF-3unX2AOLmRMwH9EnjtOFG-"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRGb7lDEd5Q6foBfeZGU-SBBFuCei9vy_4z2H3iaLAhEkdpE9Qv"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSmVLcEkcHmbDfmachF6prNvSIvny2iCzW11Kj7NbCDgoyfxiYx"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRCBx28acYlpUdfYPOqB4_mlpIjtUkASTbRADpECTW78vVlVEzf"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS_bplhWkKldrNAwNLeyUhGCQXQW7zdvlgPRqXXKt4VdFqAKGXF"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
-        <li>
-          <Link to="/profile">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTxUfSevDDou209NwNJlJV0nHhi_5LpNgOIQOnLaMzSHHnyEDfr"
-              alt=""
-            />
-            <b style={{ fontSize: '14px' }}>Lorem ipsum</b>
-          </Link>
-          <SubscribeTag
-            defaultValue={'0'}
-            p={0}
-            m={0}
-            bg={'warn.600'}
-            color={'grey.700'}
-          >
-            3
-          </SubscribeTag>
-        </li>
+        {data &&
+          data.watchesRecipes.map((it: any) => (
+            <li key={it.id}>
+              <Link to="/profile">
+                <img src={it.image} alt={it.name + '_image'} />
+                <Text fontSize={0} fontWeight={400}>
+                  by{' '}
+                </Text>
+                <Text fontSize={0} fontWeight={700}>
+                  {it.user.name}
+                </Text>
+              </Link>
+            </li>
+          ))}
       </WatchesList>
     </Box>
   );

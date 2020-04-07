@@ -47,7 +47,7 @@ export const RECIPE_CREATE = gql`
     $tag: [TagInput!]
     $totalCost: Float!
     $ingredient: [IngredientInput!]!
-    $userID: Int!
+    $userID: ID!
   ) {
     createRecipe(
       name: $name

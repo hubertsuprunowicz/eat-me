@@ -10,6 +10,7 @@ enum Difficulty {
 
 type Subscription {
 	messageRecived(id: ID!): Message
+	newRecipeDiscover(id: ID!): Recipe
 }
 
 type Query {
@@ -26,6 +27,7 @@ type Query {
 	message(name: String): Message
 	comment(_id: ID): Comment
 	getWatch(subscribingUser: ID!, subscribedUser: ID!): Subscribed!
+	watchesRecipes(id: ID!): [Recipe]
 }
 
 type Mutation {
@@ -38,7 +40,7 @@ type Mutation {
 		time: Int!
 		tag: [TagInput!]
 		ingredient: [IngredientInput!]!
-		userID: Int!
+		userID: ID!
 		totalCost: Float!
 	): Recipe
 	editRecipe(
@@ -167,6 +169,7 @@ type Recipe {
 	ingredient: [Ingredient] @relation(name: "HAS_INGREDIENT", direction: "OUT")
 	comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
 	# @cypher(statement: "MATCH (this)<-[:HAS]-(u:User) RETURN u")
+	timestamp: Long
 }
 
 type Comment @isAuthenticated {

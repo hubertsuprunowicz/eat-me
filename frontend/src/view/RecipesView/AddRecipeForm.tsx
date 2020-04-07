@@ -146,8 +146,8 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         time: parseInt(time.toString()),
         tag: tags,
         ingredient: ingredients,
-        totalCost: totalCost,
-        difficulty: difficulty,
+        totalCost: parseFloat(totalCost.toString()),
+        difficulty: difficulty.toUpperCase() as "EASY" | "MEDIUM" | "HARD",
         userID: user._id,
       },
     }).then(() => {
