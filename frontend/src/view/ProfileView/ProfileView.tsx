@@ -23,7 +23,7 @@ const ProfileView: React.FC = () => {
     throw new Error('Something went wrong. Plese come back later.');
   };
 
-  const { loading, error, data } = useQuery(USER, {
+  const { loading, error, data, refetch } = useQuery(USER, {
     fetchPolicy: 'cache-and-network',
     variables: {
       name: getName(),
@@ -31,13 +31,19 @@ const ProfileView: React.FC = () => {
   });
 
   if (loading) return <>loading...</>;
+  // console.log(data);
 
   const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
-  const { name, email, avatar, description } = data.user;
+  const { name, email, avatar, description, recipe } = data.User[0];
+
+  console.log(recipe.slice(0, 3));
 
   return (
     <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
-      <BackgroundImage src={avatar || defaultAvatar} />
+      <BackgroundImage
+        src={avatar ? avatar : defaultAvatar}
+        alt={name + '_avatar'}
+      />
       <Box
         mt={-130}
         p={4}
@@ -54,18 +60,19 @@ const ProfileView: React.FC = () => {
         boxShadow={'spread'}
         position={'relative'}
       >
-        {user && username === user.name && (
-          <EditButton
-            mt={4}
-            mr={4}
-            borderRadius={0}
-            boxShadow="insetNeo"
-            onClick={() => setIsOpen(true)}
-          >
-            <FontAwesomeIcon size={'lg'} icon={faEdit} />
-          </EditButton>
-        )}
-        <span>Hubert Suprunowicz</span>
+        {(user && user.name === username) ||
+          (!username && (
+            <EditButton
+              mt={4}
+              mr={4}
+              borderRadius={0}
+              boxShadow="insetNeo"
+              onClick={() => setIsOpen(true)}
+            >
+              <FontAwesomeIcon size={'lg'} icon={faEdit} />
+            </EditButton>
+          ))}
+        <span>{name}</span>
         <Box
           display={'flex'}
           flexDirection={'column'}
@@ -73,17 +80,22 @@ const ProfileView: React.FC = () => {
           pr={3}
           pl={3}
         >
-          <p style={{ fontSize: '12px', margin: 0 }}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-          </p>
-          <hr style={{ width: '100%' }} />
-          <h4 style={{ fontSize: '14px', margin: 0 }}>Ulubiona Kuchnia:</h4>
-          <TagWrapper>
-            <Tag bg={'primary.500'}>Polska</Tag>
-            <Tag bg={'primary.500'}>Azjatycka</Tag>
-            <Tag bg={'primary.500'}>Staropolska</Tag>
-          </TagWrapper>
+          <p style={{ fontSize: '12px', margin: 0 }}>{description}</p>
+          {recipe && recipe.length > 0 && (
+            <>
+              <hr style={{ width: '100%' }} />
+              <h4 style={{ fontSize: '14px', margin: 0, marginBottom: '5px' }}>
+                Favourites!
+              </h4>
+              <TagWrapper>
+                {recipe.slice(0, 3).map((it: any) => (
+                  <Tag key={it.tag[0]._id} bg={'primary.500'}>
+                    {it.tag[0].name}
+                  </Tag>
+                ))}
+              </TagWrapper>
+            </>
+          )}
         </Box>
       </Box>
       <Box mt={5}>
@@ -106,7 +118,11 @@ const ProfileView: React.FC = () => {
           closeModal={() => setIsOpen(false)}
           allRequired={false}
         >
-          <EditUserDialog user={data.user} setIsOpen={setIsOpen} />
+          <EditUserDialog
+            refetch={refetch}
+            user={data.User[0]}
+            setIsOpen={setIsOpen}
+          />
         </FormModal>
       )}
     </Box>

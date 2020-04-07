@@ -5,7 +5,7 @@ import RecipeCard from '../../component/RecipeCard/RecipeCard';
 import { useQuery } from '@apollo/react-hooks';
 import User from '../../model/user';
 import { Box, Button, Text } from '../../style';
-import { RECIPES, LIMIT } from './recipes.graphql';
+import { RECIPES } from './recipes.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +13,18 @@ import FormModal from 'component/FormModal/FormModal';
 import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
 import { useParams } from 'react-router-dom';
 import NoRecords from 'component/NoRecords/NoRecords';
+import Filter from './Filtrer';
+
+export type RecipeFilter = {
+  user?: { name?: string };
+  totalCost_gte?: number;
+  totalCost_lte?: number;
+  time_gte?: number;
+  time_lte?: number;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  tag?: { name?: string };
+  comment?: { rating_gte?: number; rating_lte?: number };
+};
 
 export type Recipe = {
   _id: string;
@@ -29,18 +41,45 @@ export type Recipe = {
   comment: any;
 };
 
+type RecipeFilterForm = {
+  rating?: {
+    from?: number;
+    to?: number;
+  };
+  price?: {
+    from?: number;
+    to?: number;
+  };
+  time?: {
+    from?: number;
+    to?: number;
+  };
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  tag?: string;
+};
+
+const LIMIT = 6;
+
 const RecipesView: React.FC = () => {
+  const { username } = useParams();
   const [page, setPage] = useState<number>(0);
+  const [mode, setMode] = useState<'ALL' | 'LOVED' | 'YOURS'>('ALL');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { username } = useParams();
+  const [isFilterOpen, setFilterIsOpen] = useState<boolean>(false);
+  const [filter, setFilter] = useState<RecipeFilter>();
   const { loading, error, data } = useQuery(RECIPES, {
-    variables: {
-      offset: page,
-      onlyPerson: !!username,
-      personName: username,
-    },
     fetchPolicy: 'cache-and-network',
+    variables: {
+      limit: !!username ? undefined : LIMIT,
+      offset: !!username ? undefined : page,
+      filter: username
+        ? {
+            ...filter,
+            user: { name: username },
+          }
+        : filter,
+    },
   });
 
   const paginationHandler = (cardNumber: number) => {
@@ -50,11 +89,9 @@ const RecipesView: React.FC = () => {
   };
 
   if (loading) return <>Loading data...</>;
-
-  // TODO: error occured after change view: recipes -> recipe -> recipes
   // if (error) return <ErrorRedirect error={error} />;
 
-  const recipes = data[Object.keys(data)[0]];
+  const recipes = data.Recipe;
 
   return (
     <Box>
@@ -75,7 +112,7 @@ const RecipesView: React.FC = () => {
           >
             <FontAwesomeIcon size={'xs'} icon={faPlusCircle} /> Recipe
           </Button>
-          <Button boxShadow="neumorphism">
+          <Button boxShadow="neumorphism" onClick={() => setFilterIsOpen(true)}>
             <FontAwesomeIcon size={'xs'} icon={faFilter} /> Filter
           </Button>
         </div>
@@ -104,13 +141,29 @@ const RecipesView: React.FC = () => {
           ))}
         </SwipeableViews>
       )}
-      <FormModal
-        title="Add Recipe"
-        isOpen={isOpen}
-        closeModal={() => setIsOpen(false)}
-      >
-        <AddRecipeForm setIsOpen={setIsOpen} />
-      </FormModal>
+      {isOpen && (
+        <FormModal
+          title="Add Recipe"
+          isOpen={isOpen}
+          closeModal={() => setIsOpen(false)}
+        >
+          <AddRecipeForm setIsOpen={setIsOpen} />
+        </FormModal>
+      )}
+      {isFilterOpen && (
+        <FormModal
+          title="Recipe Filter"
+          isOpen={isFilterOpen}
+          allRequired={false}
+          closeModal={() => setFilterIsOpen(false)}
+        >
+          <Filter
+            setIsOpen={setFilterIsOpen}
+            setMode={setMode}
+            setFilter={setFilter}
+          />
+        </FormModal>
+      )}
     </Box>
   );
 };

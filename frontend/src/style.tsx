@@ -394,7 +394,8 @@ type TextProps = TextAlignProps &
   FontSizeProps &
   FontWeightProps &
   ColorProps &
-  PaddingProps;
+  PaddingProps &
+  MarginProps;
 
 export const Text = styled('span')<TextProps>`
 ${color}
@@ -402,6 +403,7 @@ ${textAlign}
 ${fontSize}
 ${fontWeight}
 ${padding}
+${margin}
 `;
 
 // (

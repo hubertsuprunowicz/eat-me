@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useForm from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { useMutation } from '@apollo/react-hooks';
-import { useAuthState } from 'utils/auth';
 import { EDIT_USER } from './profile.graphql';
 import User from 'model/user';
 import { Textarea } from './profile.view.style';
@@ -19,22 +18,17 @@ type EditUserForm = {
   description: string;
 };
 
-type Props = { user: User; setIsOpen: (arg: boolean) => void };
+type Props = {
+  refetch: () => void;
+  user: User;
+  setIsOpen: (arg: boolean) => void;
+};
 
-const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
-  const [, resetComponent] = useState();
+const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
   const [paginationForm, setPaginationForm] = useState<boolean>(true);
-  const {
-    handleSubmit,
-    getValues,
-    formState,
-    setValue,
-    register,
-    setError,
-    errors,
-    triggerValidation,
-    reset,
-  } = useForm<EditUserForm>({
+  const { register, setError, errors, reset, handleSubmit } = useForm<
+    EditUserForm
+  >({
     defaultValues: {
       name: user.name || '',
       email: user.email || '',
@@ -55,37 +49,9 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
       toast.success('Message has been sent', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
+      refetch();
     },
   });
-
-  const lengthValidator = (field: string, value: string) => {
-    if (value === '') return false;
-    if (value.length < 4) {
-      setError(
-        field as
-          | 'name'
-          | 'email'
-          | 'avatar'
-          | 'description'
-          | 'password'
-          | 'confirmPassword',
-        'length',
-        `${field} need to be at least 4 characters long`
-      );
-      return true;
-    }
-
-    return false;
-  };
-
-  const emailIsNotValid = (email: string) => {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('email', 'notValid', `email is not valid`);
-      return true;
-    }
-
-    return false;
-  };
 
   const onSubmit = ({
     name,
@@ -100,19 +66,12 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
       setError(
         'confirmPassword',
         'notMatch',
-        "password confirmation doesn't match password"
+        "password confirmation doesn't match password",
       );
+      return;
     }
 
-    lengthValidator('name', name);
-    lengthValidator('password', password);
-    lengthValidator('email', email);
-    lengthValidator('avatar', avatar);
-    lengthValidator('description', description);
-    emailIsNotValid(email);
-
     if (!isEmpty(errors)) return;
-
     editUser({
       variables: {
         oldName: user.name,
@@ -129,7 +88,8 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
   };
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      {console.log(errors)}
       <Box
         display={paginationForm ? 'flex' : 'none'}
         flexDirection="column"
@@ -143,7 +103,12 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           type="text"
           placeholder="Enter Username"
           name="name"
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 4,
+              message: 'Username needs to be at least 4 characters long',
+            },
+          })}
         />
         {errors.name && errors.name.message}
         <label htmlFor="password">
@@ -153,7 +118,12 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           type="password"
           placeholder="Enter Password"
           name="password"
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 4,
+              message: 'Password needs to be at least 4 characters long',
+            },
+          })}
         />
         {errors.password && errors.password.message}
         <label htmlFor="confirmPassword">
@@ -169,12 +139,19 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           <span>Email</span>
         </label>
         <input
-          type="email"
+          type="text"
           placeholder="Enter Email"
           name="email"
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 4,
+              message: 'Email needs to be at least 4 characters long',
+            },
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          })}
         />
         {errors.email && errors.email.message}
+        {errors.email && errors.email.type === 'pattern' && 'Not valid email'}
       </Box>
       <Box
         display={paginationForm ? 'none' : 'flex'}
@@ -189,7 +166,12 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           type="text"
           placeholder="Enter Avatar Url"
           name="avatar"
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 4,
+              message: 'Avatar needs to be at least 4 characters long',
+            },
+          })}
         />
         {errors.avatar && errors.avatar.message}
         <label htmlFor="description">
@@ -201,7 +183,12 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
           className={'widder'}
           placeholder="Enter Description"
           name="description"
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 4,
+              message: 'Description needs to be at least 4 characters long',
+            },
+          })}
         />
         {errors.description && errors.description.message}
       </Box>
@@ -234,10 +221,6 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user }) => {
             color={'secondary.500'}
             boxShadow="neumorphism"
             mr={5}
-            onClick={e => {
-              e.preventDefault();
-              onSubmit(getValues());
-            }}
           >
             Submit
           </Button>

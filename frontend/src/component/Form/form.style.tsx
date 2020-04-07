@@ -7,6 +7,10 @@ export const FormDefault = styled.form`
   align-items: center;
   height: 100%;
 
+  &.filter input[type=number] {
+    width: 105px;
+  }
+
   input:focus,
   textarea:focus,
   select:focus {

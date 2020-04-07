@@ -112,10 +112,16 @@ const resolvers = {
 					description: input.description,
 					timestamp: input.timestamp
 				})
-				.then((results) => results.records[0].get(0).properties);
+				.then((results) => {
+					return {
+						id: results.records[0].get(0).identity.low,
+						properties: results.records[0].get(0).properties
+					};
+				});
 
 			return {
-				...comment
+				id: comment.id,
+				...comment.properties
 			};
 		},
 
@@ -129,7 +135,7 @@ const resolvers = {
           MATCH (a:User), (b:User) WHERE ID(a) = ${addresseeID} AND ID(b) = ${senderID}
           CREATE (b)<-[:SENT_FROM]-(c:Message{title: $title, message: $message, timestamp: $timestamp})
           -[:SENT_TO]->(a)
-          RETURN ID(c), b
+          RETURN ID(c), a, b
           `;
 
 			const message = await session
@@ -141,19 +147,33 @@ const resolvers = {
 				.then((results) => {
 					return {
 						id: results.records[0].get(0).low,
-						properties: results.records[0].get(1).properties
+						...results.records[0].get(1).properties,
+						addressee: {
+							id: results.records[0].get(1).identity.low,
+							...results.records[0].get(1).properties
+						},
+						sender: {
+							id: results.records[0].get(2).identity.low,
+							...results.records[0].get(2).properties
+						}
 					};
 				});
 
 			pubsub.publish('messageRecived', {
 				messageRecived: {
 					_id: message.id,
+					id: message.id,
 					...args,
-					sender: { name: message.properties.name }
+					addressee: { ...message.addressee },
+					sender: { ...message.sender }
 				}
 			});
 			return {
-				_id: message.id
+				_id: message.id,
+				id: message.id,
+				...args,
+				addressee: { ...message.addressee },
+				sender: { ...message.sender }
 			};
 		},
 
@@ -183,16 +203,20 @@ const resolvers = {
 				})
 				.then((results) => {
 					return {
-						_id: results.records[0].get(0).low,
-						name: results.records[0].get(0).properties.name
+						id: results.records[0].get(0).identity.low,
+						_id: results.records[0].get(0).identity.low,
+						...results.records[0].get(0).properties
 					};
 				});
 
 			return {
-				user: userData
+				...userData
 			};
 		},
 
+		// TODO: total refactor of this method
+		// proper return
+		// proper query
 		async createRecipe(_, args, context) {
 			const session = await context.driver.session();
 			const { userID } = args;

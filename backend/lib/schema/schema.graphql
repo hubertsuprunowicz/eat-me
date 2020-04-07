@@ -1,177 +1,183 @@
 scalar Long
+
 scalar EmailAddress
 
 enum Difficulty {
-  EASY
-  NORMAL
-  HARD
+	EASY
+	NORMAL
+	HARD
 }
 
 type Subscription {
-  messageRecived(id: ID!): Message
+	messageRecived(id: ID!): Message
 }
 
 type Query {
-  users: [User!]!
-  ingredients: [Ingredient!]!
-  recipes: [Recipe!]!
-  tags: [Tag!]
-  messages: [Message!]
-  comments: [Comment!]!
-  ratings: [Rating!]!
-
-  user(name: String): User
-  ingredient(name: String): Ingredient
-  recipe(name: String): Recipe
-  tag(name: String): Tag
-  message(name: String): Message
-  comment(_id: ID): Comment
-  rating(_id: ID): Rating
-
-  getWatch(subscribingUser: ID!, subscribedUser: ID!): Subscribed!
+	users: [User!]!
+	ingredients: [Ingredient!]!
+	recipes: [Recipe!]!
+	tags: [Tag!]
+	messages: [Message!]
+	comments: [Comment!]!
+	user(name: String): User
+	ingredient(name: String): Ingredient
+	recipe(name: String): Recipe
+	tag(name: String): Tag
+	message(name: String): Message
+	comment(_id: ID): Comment
+	getWatch(subscribingUser: ID!, subscribedUser: ID!): Subscribed!
 }
 
 type Mutation {
-  createMessage(
-    addresseeID: Int!
-    senderID: Int!
-    title: String!
-    message: String!
-    timestamp: Long!
-  ): Message
-
-  createRecipe(
-    name: String!
-    description: String!
-    difficulty: Difficulty!
-    image: String!
-    time: Int!
-    tag: [TagInput!]
-    ingredient: [IngredientInput!]!
-    userID: Int!
-    totalCost: Float!
-  ): Recipe
-  editRecipe(
-    name: String
-    description: String
-    difficulty: Difficulty
-    image: String
-    time: Int
-    tag: [TagInput]
-    ingredient: [IngredientInput]
-    id: ID!
-    totalCost: Float
-  ): Recipe
-
-  login(name: String!, password: String!): Credentials!
-  createUser(name: String!, password: String!): Credentials!
-  editUser(user: EditUserInput): Credentials!
-
-  createComment(input: CommentInput!): Comment
-
-  createWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
-  removeWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
+	createMessage(addresseeID: Int!, senderID: Int!, title: String!, message: String!, timestamp: Long!): Message
+	createRecipe(
+		name: String!
+		description: String!
+		difficulty: Difficulty!
+		image: String!
+		time: Int!
+		tag: [TagInput!]
+		ingredient: [IngredientInput!]!
+		userID: Int!
+		totalCost: Float!
+	): Recipe
+	editRecipe(
+		name: String
+		description: String
+		difficulty: Difficulty
+		image: String
+		time: Int
+		tag: [TagInput]
+		ingredient: [IngredientInput]
+		id: ID!
+		totalCost: Float
+	): Recipe
+	login(name: String!, password: String!): Credentials!
+	createUser(name: String!, password: String!): Credentials!
+	editUser(user: EditUserInput): User
+	createComment(input: CommentInput!): Comment
+	createWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
+	removeWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
 }
+
+input RecipeFilter {
+	user: UserFilter
+	totalCost_gte: Float
+	totalCost_lte: Float
+	time_gte: Float
+	time_lte: Float
+	difficulty: Difficulty
+	tag: TagFilter
+	comment: CommentFilter
+}
+
+input UserFilter {
+	name: String
+}
+
+input TagFilter {
+	name: String
+}
+
+input CommentFilter {
+	rating_gte: Float
+	rating_lte: Float
+}
+
 type Subscribed {
-  subscribed: Boolean!
+	subscribed: Boolean!
 }
 
 input EditUserInput {
-  oldName: String!
-  name: String
-  email: EmailAddress
-  password: String
-  avatar: String
-  description: String
+	oldName: String!
+	name: String
+	email: EmailAddress
+	password: String
+	avatar: String
+	description: String
 }
 
 input IngredientInput {
-  name: String!
-  amount: String
+	name: String!
+	amount: String
 }
 
 input TagInput {
-  name: String!
-}
-
-input RatingInput {
-  rate: Int!
+	name: String!
 }
 
 input CommentInput {
-  userID: ID!
-  recipeID: ID!
-  timestamp: Long!
-  rating: Int!
-  description: String
+	userID: ID!
+	recipeID: ID!
+	timestamp: Long!
+	rating: Int!
+	description: String
 }
 
 type User {
-  id: ID
-  name: String!
-  email: EmailAddress
-  password: String!
-  avatar: String
-  description: String
-  comment: [Comment] @relation(name: "COMMENTS", direction: "OUT")
-  friends: [User] @relation(name: "WATCHES", direction: "OUT")
-  recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
-  # @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
+	id: ID
+	name: String!
+	email: EmailAddress
+	password: String!
+	avatar: String
+	description: String
+	comment: [Comment] @relation(name: "COMMENTS", direction: "OUT")
+	friends: [User] @relation(name: "WATCHES", direction: "OUT")
+	recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
+	# @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
 }
 
 type Message {
-  id: ID
-  addressee: User! @relation(name: "SENT_TO", direction: "OUT")
-  sender: User! @relation(name: "SENT_FROM", direction: "OUT")
-  title: String!
-  message: String!
-  timestamp: Long!
+	id: ID
+	addressee: User! @relation(name: "SENT_TO", direction: "OUT")
+	sender: User! @relation(name: "SENT_FROM", direction: "OUT")
+	title: String!
+	message: String!
+	timestamp: Long!
 }
 
 type Ingredient @isAuthenticated {
-  name: String!
-  amount: String
+	id: ID
+	name: String!
+	amount: String
 }
 
 type Credentials {
-  token: String!
-  user: User!
+	token: String!
+	user: User!
 }
 
 type Tag {
-  name: String!
-  recipes: [Recipe] @relation(name: "HAS_TAG", direction: "IN")
+	id: ID
+	name: String!
+	recipes: [Recipe] @relation(name: "HAS_TAG", direction: "IN")
 }
 
 type Recipe {
-  id: ID
-  name: String!
-  description: String!
-  difficulty: Difficulty!
-  image: String!
-  totalCost: Float!
-  time: Int!
-  tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
-  user: User @relation(name: "POSTS", direction: "IN")
-  # @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
-  ingredient: [Ingredient] @relation(name: "HAS_INGREDIENT", direction: "OUT")
-  comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
-  # @cypher(statement: "MATCH (this)<-[:HAS]-(u:User) RETURN u")
+	id: ID
+	name: String!
+	description: String!
+	difficulty: Difficulty!
+	image: String!
+	totalCost: Float!
+	time: Int!
+	tag: [Tag]! @relation(name: "HAS_TAG", direction: "OUT")
+	user: User @relation(name: "POSTS", direction: "IN")
+	# @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
+	ingredient: [Ingredient] @relation(name: "HAS_INGREDIENT", direction: "OUT")
+	comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
+	# @cypher(statement: "MATCH (this)<-[:HAS]-(u:User) RETURN u")
 }
 
 type Comment @isAuthenticated {
-  timestamp: Long!
-  rating: Int!
-  # rating: Rating! @relation(name: "HAS_RATING", direction: "OUT")
-  description: String
-  user: User @relation(name: "COMMENTS", direction: "IN")
-  recipe: Recipe @relation(name: "HAS_COMMENT", direction: "OUT")
-}
-
-type Rating @isAuthenticated {
-  rate: Int! @relation(name: "HAS_RATING", direction: "IN")
+	id: ID
+	timestamp: Long!
+	rating: Int!
+	description: String
+	user: User @relation(name: "COMMENTS", direction: "IN")
+	recipe: Recipe @relation(name: "HAS_COMMENT", direction: "OUT")
 }
 
 type Token {
-  token: String!
+	token: String!
 }
