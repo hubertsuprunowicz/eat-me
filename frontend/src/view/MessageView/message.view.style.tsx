@@ -1,7 +1,19 @@
 import styled from 'styled-components';
 import { LinkIconButton } from 'style';
 
+export const ListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: -webkit-fill-available;
+`;
+
 export const MessageList = styled.ul`
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
   text-decoration: none;
   padding: 0;
   overflow-y: auto;

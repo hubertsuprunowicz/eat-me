@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, UIEventHandler } from 'react';
 import { Box, Button, Text, IconButton, LinkIconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { MessageList } from './message.view.style';
+import { MessageList, ListWrapper } from './message.view.style';
 import FormModal from 'component/FormModal/FormModal';
 import MessageDialog from './MessageDialog';
 import { useAuthState } from 'utils/auth';
@@ -19,31 +19,38 @@ import Form from 'component/Form/Form';
 import NoRecords from 'component/NoRecords/NoRecords';
 import { toast } from 'react-toastify';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
+import produce from 'immer';
 
 const MessageView: React.FC = () => {
   const { user } = useAuthState();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const searchRef = useRef<any>();
+  const [offset, setOffset] = useState<number>(0);
+  const searchRef = useRef<HTMLInputElement>();
+  const wrapperRef = useRef<HTMLDivElement>();
   const [searchBody, setSearchBody] = useState<{
     message?: string;
     by?: string;
   }>({});
 
-  const { data, loading, subscribeToMore, refetch, updateQuery } = useQuery(
-    YOUR_MESSAGES,
-    {
-      fetchPolicy: 'cache-and-network',
-      variables: {
-        name: user!.name,
-        ...searchBody,
-      },
+  const {
+    data,
+    loading,
+    subscribeToMore,
+    refetch,
+    updateQuery,
+    fetchMore,
+  } = useQuery(YOUR_MESSAGES, {
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      name: user!.name,
+      ...searchBody,
+      offset: 0,
     },
-  );
+  });
 
   const [deleteMessage] = useMutation(DELETE_MESSAGE, {
     onError: _ => {
       toast.error('Something has failed', {
-        delay: 500,
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
@@ -92,7 +99,41 @@ const MessageView: React.FC = () => {
     },
   });
 
-  // TODO: pagination
+  const onScroll: UIEventHandler = debounce(
+    () => {
+      if (!data) return;
+      if (!wrapperRef.current) return;
+      if (offset < 0) return;
+
+      if (
+        wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight <=
+        wrapperRef.current.scrollTop
+      ) {
+        fetchMore({
+          variables: {
+            name: user!.name,
+            ...searchBody,
+            offset: offset + 10,
+          },
+
+          updateQuery: (prev, { fetchMoreResult }) => {
+            setOffset(offset + 10);
+            if (fetchMoreResult.messages.length < 1) {
+              setOffset(-1);
+              return prev;
+            }
+
+            return {
+              messages: [...prev.messages, ...fetchMoreResult.messages],
+            };
+          },
+        });
+      }
+    },
+    200,
+    { maxWait: 250 },
+  );
+
   return (
     <Box pt={6} style={{ paddingBottom: '80px' }}>
       <Box pl={6} pr={6} display={'flex'} justifyContent={'space-between'}>
@@ -119,15 +160,15 @@ const MessageView: React.FC = () => {
         </Form>
       </Box>
       {/* TODO: loading overlay */}
-      {loading ? (
-        <>loading...</>
-      ) : (
-        <MessageList>
+      <ListWrapper>
+        <MessageList onScroll={onScroll} ref={wrapperRef as any}>
           {data && data.messages && data.messages.length < 1 ? (
             <NoRecords>
               Sorry, there is no messages to show. Come back later :)
             </NoRecords>
           ) : (
+            data &&
+            data.messages &&
             data.messages.map(
               ({ _id, title, message, timestamp, sender }: any) => (
                 <li key={_id}>
@@ -139,7 +180,7 @@ const MessageView: React.FC = () => {
                   >
                     <img
                       src="https://www.gdansk.pl/download/2019-09/135042.jpg"
-                      alt=""
+                      alt={sender.name + '_image'}
                     />
                   </LinkIconButton>
 
@@ -184,8 +225,9 @@ const MessageView: React.FC = () => {
               ),
             )
           )}
+          <li></li>
         </MessageList>
-      )}
+      </ListWrapper>
 
       <FormModal
         title="Send Message"
