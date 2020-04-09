@@ -157,6 +157,15 @@ const resolvers = {
 			};
 		},
 
+		async deleteMessage(_, args, context) {
+			const session = await context.driver.session();
+			const query = `MATCH (m:Message) WHERE ID(m) = ${args.id} DETACH DELETE m`;
+
+			await session.run(query).then((result) => result.records);
+
+			return 200;
+		},
+
 		async createMessage(_, args, context) {
 			const session = await context.driver.session();
 

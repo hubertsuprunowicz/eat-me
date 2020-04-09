@@ -31,6 +31,7 @@ type Query {
 }
 
 type Mutation {
+	deleteMessage(id: ID!): Int
 	createMessage(addresseeID: Int!, senderID: Int!, title: String!, message: String!, timestamp: Long!): Message
 	createRecipe(
 		name: String!

@@ -20,7 +20,7 @@ import WatchesView from 'view/WachesView/WatchesView';
 import MessageView from 'view/MessageView/MessageView';
 import ErrorView from 'component/ErrorRedirect/errorView';
 import { Authorization, AuthProvider } from 'utils/auth';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RecipeView from 'view/RecipeView/RecipeView';
 
@@ -61,6 +61,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <Main>
+        <ToastContainer className="toast-size" />
         <Router>
           <AuthProvider>
             <Switch>

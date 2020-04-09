@@ -32,7 +32,6 @@ export const YOUR_MESSAGES = gql`
 			timestamp
 			sender {
 				id
-				_id
 				name
 			}
 		}
@@ -48,9 +47,14 @@ export const MESSAGE_RECIVED = gql`
 			timestamp
 			sender {
 				id
-				_id
 				name
 			}
 		}
+	}
+`;
+
+export const DELETE_MESSAGE = gql`
+	mutation DeleteMessage($id: ID!) {
+		deleteMessage(id: $id)
 	}
 `;

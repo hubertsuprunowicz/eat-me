@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { LinkIconButton } from 'style';
 
 export const MessageList = styled.ul`
   text-decoration: none;
@@ -6,13 +7,20 @@ export const MessageList = styled.ul`
   overflow-y: auto;
   padding-bottom: 40px;
 
+  & ${LinkIconButton} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   & li {
     display: flex;
     align-content: space-around;
+    align-items: flex-end;
     background-color: transparent;
     margin: 0;
-    padding: 20px 15px;
-    height: 45px;
+    padding: 20px 25px;
+    height: 50px;
   }
 
   & li:hover {
@@ -22,7 +30,6 @@ export const MessageList = styled.ul`
   }
 
   img {
-    margin-right: 10px;
     object-fit: cover;
     border-radius: 50%;
     box-shadow: 9px 9px 16px rgb(163, 177, 198, 0.6),

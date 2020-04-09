@@ -1,22 +1,26 @@
 import React, { useState, useRef } from 'react';
-import { Box, Button } from 'style';
+import { Box, Button, Text, IconButton, LinkIconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { MessageList } from './message.view.style';
 import FormModal from 'component/FormModal/FormModal';
 import MessageDialog from './MessageDialog';
 import { useAuthState } from 'utils/auth';
-import { useQuery } from '@apollo/react-hooks';
-import { YOUR_MESSAGES, MESSAGE_RECIVED } from './message.graphql';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import {
+  YOUR_MESSAGES,
+  MESSAGE_RECIVED,
+  DELETE_MESSAGE,
+} from './message.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { formatDistance } from 'date-fns';
 import debounce from 'lodash.debounce';
 import Form from 'component/Form/Form';
 import NoRecords from 'component/NoRecords/NoRecords';
+import { toast } from 'react-toastify';
+import { PROFILE_VIEW } from 'view/Route/constants.route';
 
-type Props = {};
-
-const MessageView: React.FC<Props> = () => {
+const MessageView: React.FC = () => {
   const { user } = useAuthState();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const searchRef = useRef<any>();
@@ -25,11 +29,31 @@ const MessageView: React.FC<Props> = () => {
     by?: string;
   }>({});
 
-  const { data, loading, subscribeToMore } = useQuery(YOUR_MESSAGES, {
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      name: user!.name,
-      ...searchBody,
+  const { data, loading, subscribeToMore, refetch, updateQuery } = useQuery(
+    YOUR_MESSAGES,
+    {
+      fetchPolicy: 'cache-and-network',
+      variables: {
+        name: user!.name,
+        ...searchBody,
+      },
+    },
+  );
+
+  const [deleteMessage] = useMutation(DELETE_MESSAGE, {
+    onError: _ => {
+      toast.error('Something has failed', {
+        delay: 500,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+    onCompleted: data => {
+      refetch();
+      // TODO: update query via immer after delete
+      // updateQuery: (prev, { subscriptionData }) => {
+      //   return produce(prev, draft => {
+      //     draft = data
+      //   });
     },
   });
 
@@ -107,11 +131,18 @@ const MessageView: React.FC<Props> = () => {
             data.messages.map(
               ({ _id, title, message, timestamp, sender }: any) => (
                 <li key={_id}>
-                  {/* TODO: Link */}
-                  <img
-                    src="https://www.gdansk.pl/download/2019-09/135042.jpg"
-                    alt=""
-                  />
+                  <LinkIconButton
+                    mr={5}
+                    to={`${PROFILE_VIEW}/${sender.name}`}
+                    width="35px"
+                    height="35px"
+                  >
+                    <img
+                      src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+                      alt=""
+                    />
+                  </LinkIconButton>
+
                   <Box
                     display="flex"
                     flexDirection="column"
@@ -119,15 +150,35 @@ const MessageView: React.FC<Props> = () => {
                     ml={5}
                     width={'100%'}
                   >
-                    <Box display="flex" justifyContent="space-between">
-                      <b style={{ fontSize: '14px' }}>{sender.name}</b>
-                      <span style={{ fontSize: '10px' }}>
+                    <Box
+                      width={'100%'}
+                      display="flex"
+                      justifyContent="space-between"
+                    >
+                      <Text fontSize={14} fontWeight={500}>
+                        {sender.name}
+                      </Text>
+                      <Text fontSize={10}>
                         {formatDistance(timestamp, new Date())}
-                      </span>
+                      </Text>
                     </Box>
-                    <span style={{ fontSize: '10px', color: 'grey' }}>
-                      {message}
-                    </span>
+                    <Box display="flex" justifyContent={'space-between'}>
+                      <Text p={4} pl={0} fontSize={10} color={'grey'}>
+                        {message}
+                      </Text>
+                      <IconButton
+                        onClick={() =>
+                          deleteMessage({ variables: { id: _id } })
+                        }
+                        boxShadow="neumorphism"
+                        width="33px"
+                        height="33px"
+                        color="danger.500"
+                        borderRadius="50%"
+                      >
+                        <FontAwesomeIcon icon={faTimes} />
+                      </IconButton>
+                    </Box>
                   </Box>
                 </li>
               ),

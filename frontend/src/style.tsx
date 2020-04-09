@@ -62,19 +62,16 @@ import { Link, LinkProps } from 'react-router-dom';
 
 export const Main = styled.main`
   background: white;
-  /* background: rgb(247, 247, 247); */
-  /* background: linear-gradient(
-    180deg,
-    rgba(247, 247, 247, 1) 1%,
-    rgba(240, 240, 240, 1) 52%,
-    rgba(232, 232, 232, 1) 100%
-  ); */
-
   width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
+
+  .toast-size {
+    width: 220px;
+    height: 100px;
+  }
 
   > * {
     ::-webkit-input-placeholder {
