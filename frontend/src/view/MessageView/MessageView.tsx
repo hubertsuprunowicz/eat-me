@@ -19,7 +19,6 @@ import Form from 'component/Form/Form';
 import NoRecords from 'component/NoRecords/NoRecords';
 import { toast } from 'react-toastify';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
-import produce from 'immer';
 
 const MessageView: React.FC = () => {
   const { user } = useAuthState();
@@ -68,6 +67,7 @@ const MessageView: React.FC = () => {
     () => {
       if (searchRef && searchRef.current)
         setSearchBody({ message: searchRef.current.value });
+      setOffset(0);
     },
     200,
     { maxWait: 250 },

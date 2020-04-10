@@ -14,6 +14,7 @@ type Props = HeightProps & CursorProps;
 
 export const Card = styled.div<Props>`
   ${height}
+  position: absolute;
   box-shadow: ${themeGet('shadows.neumorphism')};
   cursor: ${props => props.cursor};
   max-width: 400px;
@@ -37,8 +38,6 @@ export const Card = styled.div<Props>`
     border-radius: ${themeGet('radii.0')}px;
     object-fit: cover;
   }
-
-  
 `;
 
 export const CardDetails = styled.div`

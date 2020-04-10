@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const RECIPES = gql`
-  query Recipes($offset: Int, $limit: Int, $filter: _RecipeFilter) {
-    Recipe(first: $limit, offset: $offset, filter: $filter) {
+  query Recipes($offset: Int, $filter: _RecipeFilter) {
+    Recipe(first: 10, offset: $offset, filter: $filter) {
       _id
       id
       name

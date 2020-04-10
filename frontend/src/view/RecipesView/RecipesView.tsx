@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import { virtualize } from 'react-swipeable-views-utils';
+// import TinderCard from 'react-tinder-card';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
 import { useQuery } from '@apollo/react-hooks';
 import User from '../../model/user';
@@ -14,6 +14,7 @@ import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
 import { useParams } from 'react-router-dom';
 import NoRecords from 'component/NoRecords/NoRecords';
 import Filter from './Filtrer';
+import TinderCard from 'component/TinderCard';
 
 export type RecipeFilter = {
   user?: { name?: string };
@@ -41,38 +42,17 @@ export type Recipe = {
   comment: any;
 };
 
-type RecipeFilterForm = {
-  rating?: {
-    from?: number;
-    to?: number;
-  };
-  price?: {
-    from?: number;
-    to?: number;
-  };
-  time?: {
-    from?: number;
-    to?: number;
-  };
-  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
-  tag?: string;
-};
-
-const LIMIT = 6;
-
 const RecipesView: React.FC = () => {
   const { username } = useParams();
-  const [page, setPage] = useState<number>(0);
   const [mode, setMode] = useState<'ALL' | 'LOVED' | 'YOURS'>('ALL');
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFilterOpen, setFilterIsOpen] = useState<boolean>(false);
   const [filter, setFilter] = useState<RecipeFilter>();
-  const { loading, error, data } = useQuery(RECIPES, {
+  const { loading, error, data, fetchMore } = useQuery(RECIPES, {
     fetchPolicy: 'cache-and-network',
     variables: {
-      limit: !!username ? undefined : LIMIT,
-      offset: !!username ? undefined : page,
+      offset: 0,
       filter: username
         ? {
             ...filter,
@@ -82,17 +62,40 @@ const RecipesView: React.FC = () => {
     },
   });
 
-  const paginationHandler = (cardNumber: number) => {
-    if (!(cardNumber % LIMIT)) {
-      setPage(cardNumber + page);
-    }
+  // <NoRecords>
+  //             Sorry, there is no recipes to show. Please add one or come back
+  //             later
+  //           </NoRecords>
+
+  // TODO
+  if (!data) return null;
+  // if (loading) return <>Loading data...</>;
+  // if (error) return <ErrorRedirect error={error} />;
+
+  const onCardLeftScreen = (index: number, direction: 'left' | 'right') => {
+    const nextPageOffset = Math.abs(10 - index);
+    if ((currentIndex + nextPageOffset) % 8) return;
+    setCurrentIndex(currentIndex + nextPageOffset);
+    fetchMore({
+      variables: {
+        offset: currentIndex + nextPageOffset,
+        filter: username
+          ? {
+              ...filter,
+              user: { name: username },
+            }
+          : { filter },
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        return {
+          Recipe: [...fetchMoreResult.Recipe],
+          ...prev.Recipe.slice(10 - index),
+        };
+      },
+    });
   };
 
-  if (loading) return <>Loading data...</>;
-  // if (error) return <ErrorRedirect error={error} />;
-  console.log(data);
   const recipes = data.Recipe;
-
   return (
     <Box>
       <Box
@@ -118,29 +121,23 @@ const RecipesView: React.FC = () => {
         </div>
       </Box>
       {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
-      {!recipes.length ? (
-        <NoRecords>
-          Sorry, there is no recipes to show. Please add one or come back later
-        </NoRecords>
-      ) : (
-        <SwipeableViews
-          onChangeIndex={(cardNumber: number) =>
-            paginationHandler(cardNumber + 1)
+      {recipes.reverse().map((recipe: Recipe, index: number) => (
+        <TinderCard
+          key={recipe._id}
+          preventSwipe={['up', 'down']}
+          onCardLeftScreen={(direction: 'left' | 'right') =>
+            onCardLeftScreen(index, direction)
           }
-          enableMouseEvents
-          index={currentIndex}
         >
-          {recipes.map((recipe: Recipe, index: any) => (
-            <RecipeCard
-              key={recipe._id}
-              id={recipe._id}
-              recipe={recipe}
-              index={index}
-              setCurrentIndex={setCurrentIndex}
-            />
-          ))}
-        </SwipeableViews>
-      )}
+          <RecipeCard
+            key={recipe._id}
+            id={recipe._id}
+            recipe={recipe}
+            index={index}
+            setCurrentIndex={setCurrentIndex}
+          />
+        </TinderCard>
+      ))}
       {isOpen && (
         <FormModal
           title="Add Recipe"
