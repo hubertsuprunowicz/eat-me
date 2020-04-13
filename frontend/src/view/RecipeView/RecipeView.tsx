@@ -6,9 +6,15 @@ import {
   IngredientsList,
   AuthorImage,
 } from './recipe.view.style';
-import { Box, Button, LinkButton, Text } from 'style';
+import { Box, Button, LinkButton, Text, IconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEdit,
+  faHeart,
+  faStar,
+  faEye,
+  faEyeSlash,
+} from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
@@ -86,16 +92,15 @@ const RecipeView: React.FC = () => {
     },
   ] = data.Recipe || {};
 
-  console.log(data.Recipe);
-
   function alreadyVoted() {
     return comment.findIndex((it: any) => it.user.name === user!.name);
   }
 
+  // TODO: return number, solution: add model with graphql:codegen
   function totalRating() {
     return (
       comment.reduce(
-        (acc: number, curr: { rating: any }) => acc + curr.rating,
+        (acc: number, curr: { rating: number }) => acc + curr.rating,
         0,
       ) / comment.length
     ).toFixed(1);
@@ -178,9 +183,15 @@ const RecipeView: React.FC = () => {
             <div>
               <FontAwesomeIcon icon={faStar} />
               {'  '}
-              <Text fontSize={3} fontWeight={700}>
-                {totalRating()} / 5
-              </Text>
+              {totalRating() ? (
+                <Text fontSize={3} fontWeight={700}>
+                  {totalRating()} / 5
+                </Text>
+              ) : (
+                <Text fontSize={3} fontWeight={700}>
+                  No ratings, be first!
+                </Text>
+              )}
             </div>
 
             {user && 'user' === user.name && (
@@ -252,9 +263,38 @@ const RecipeView: React.FC = () => {
           ))}
         </Box>
       </Box>
+      <Box mt={7}>
+        {subscribed ? (
+          <IconButton
+            ml={5}
+            color={'secondary.500'}
+            boxShadow={'neumorphism'}
+            onClick={handleUnsubscribe}
+          >
+            <FontAwesomeIcon size={'lg'} icon={faEyeSlash} />
+          </IconButton>
+        ) : (
+          <IconButton
+            ml={5}
+            color={'secondary.500'}
+            boxShadow={'neumorphism'}
+            onClick={handleSubscribe}
+          >
+            <FontAwesomeIcon size={'lg'} icon={faEye} />
+          </IconButton>
+        )}
+        <IconButton
+          ml={5}
+          color={'danger.500'}
+          boxShadow={'neumorphism'}
+          onClick={handleSubscribe}
+        >
+          <FontAwesomeIcon size={'lg'} icon={faHeart} />
+        </IconButton>
+      </Box>
 
       <Box p={8}>
-        <Box display={'flex'} justifyContent={'space-between'}>
+        <Box display={'flex'} justifyContent={'center'}>
           <span
             style={{
               fontSize: '1.5rem',
@@ -264,29 +304,6 @@ const RecipeView: React.FC = () => {
           >
             How to do it?
           </span>
-          {subscribed ? (
-            <Button
-              ml={5}
-              color={'danger.500'}
-              borderRadius={'5px'}
-              boxShadow={'neumorphism'}
-              onClick={handleUnsubscribe}
-            >
-              Unubscribe {data.Recipe[0].user.name}{' '}
-              <FontAwesomeIcon size={'sm'} icon={faHeart} />
-            </Button>
-          ) : (
-            <Button
-              ml={5}
-              color={'danger.500'}
-              borderRadius={'5px'}
-              boxShadow={'neumorphism'}
-              onClick={handleSubscribe}
-            >
-              Subscribe {data.Recipe[0].user.name}{' '}
-              <FontAwesomeIcon size={'sm'} icon={faHeart} />
-            </Button>
-          )}
         </Box>
         <p style={{ lineHeight: '21px' }}>{description}</p>
       </Box>

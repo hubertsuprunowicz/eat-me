@@ -107,6 +107,7 @@ const RecipeCard: React.FC<Props> = ({
           <IconButton
             boxShadow="neumorphism"
             onClick={loveItHandle}
+            type="button"
             width="38px"
             height="38px"
             color="secondary.600"
@@ -119,6 +120,7 @@ const RecipeCard: React.FC<Props> = ({
           <IconButton
             boxShadow="neumorphism"
             onClick={quitItHandle}
+            type="button"
             width="38px"
             height="38px"
             color="danger.900"
