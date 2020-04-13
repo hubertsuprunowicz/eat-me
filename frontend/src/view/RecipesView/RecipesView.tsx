@@ -42,6 +42,8 @@ export type Recipe = {
   comment: any;
 };
 
+const OFFSET = 10;
+
 const RecipesView: React.FC = () => {
   const { username } = useParams();
   const [mode, setMode] = useState<'ALL' | 'LOVED' | 'YOURS'>('ALL');
@@ -53,14 +55,13 @@ const RecipesView: React.FC = () => {
     fetchPolicy: 'cache-and-network',
     variables: {
       offset: 0,
-      filter: username
-        ? {
-            ...filter,
-            user: { name: username },
-          }
-        : { filter },
+      filter: filter,
     },
   });
+
+  useEffect(() => {
+    if (username) setFilter({ user: { name: username } });
+  }, [username]);
 
   // <NoRecords>
   //             Sorry, there is no recipes to show. Please add one or come back
@@ -73,23 +74,18 @@ const RecipesView: React.FC = () => {
   // if (error) return <ErrorRedirect error={error} />;
 
   const onCardLeftScreen = (index: number, direction: 'left' | 'right') => {
-    const nextPageOffset = Math.abs(10 - index);
-    if ((currentIndex + nextPageOffset) % 8) return;
+    const nextPageOffset = Math.abs(OFFSET - index);
+    if ((currentIndex + nextPageOffset) % (OFFSET - 2)) return;
     setCurrentIndex(currentIndex + nextPageOffset);
     fetchMore({
       variables: {
         offset: currentIndex + nextPageOffset,
-        filter: username
-          ? {
-              ...filter,
-              user: { name: username },
-            }
-          : { filter },
+        // filter: filter,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         return {
           Recipe: [...fetchMoreResult.Recipe],
-          ...prev.Recipe.slice(10 - index),
+          ...prev.Recipe.slice(OFFSET - index),
         };
       },
     });
@@ -121,7 +117,7 @@ const RecipesView: React.FC = () => {
         </div>
       </Box>
       {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
-      {recipes.reverse().map((recipe: Recipe, index: number) => (
+      {recipes.map((recipe: Recipe, index: number) => (
         <TinderCard
           key={recipe._id}
           preventSwipe={['up', 'down']}
