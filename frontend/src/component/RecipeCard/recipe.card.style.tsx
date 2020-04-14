@@ -27,6 +27,32 @@ export const Card = styled.div<Props>`
   padding: ${CARD_PADDING};
   margin: ${CARD_MARGIN};
 
+  &.swipe-left {
+    animation: swipeLeft 0.4s ease-out forwards;
+  }
+
+  &.swipe-right {
+    animation: swipeRight 0.4s ease-out forwards;
+  }
+
+  @keyframes swipeRight {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(1000px);
+    }
+  }
+
+  @keyframes swipeLeft {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-1000px);
+    }
+  }
+
   & button {
     padding: 0;
   }

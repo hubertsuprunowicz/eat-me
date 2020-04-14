@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, IconButton, Tag, LinkIconButton } from '../../style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,15 +22,11 @@ export type ItemCardProps = {
   recipe: Recipe;
   color?: string;
   index: number;
-  setCurrentIndex: (index: number) => void;
+  onSwipe: (direction: 'left' | 'right', recipe: any) => void;
 };
 
-const RecipeCard: React.FC<Props> = ({
-  id,
-  recipe,
-  index,
-  setCurrentIndex,
-}) => {
+const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
+  const [swipe, setSwipe] = useState<undefined | 'left' | 'right'>();
   const {
     name,
     image,
@@ -43,13 +39,20 @@ const RecipeCard: React.FC<Props> = ({
   } = recipe;
 
   const loveItHandle = () => {
-    console.log('LOVE IT');
-    setCurrentIndex(index + 1);
+    setTimeout(() => {
+      console.log('LOVE IT');
+      onSwipe('right', recipe);
+    }, 400);
+    setSwipe('right');
   };
 
   const quitItHandle = () => {
-    console.log('QUIT IT');
-    setCurrentIndex(index + 1);
+    setTimeout(() => {
+      console.log('QUIT IT');
+      onSwipe('left', recipe);
+    }, 400);
+
+    setSwipe('left');
   };
 
   function totalRating() {
@@ -62,7 +65,12 @@ const RecipeCard: React.FC<Props> = ({
   }
 
   return (
-    <Card key={id} cursor="pointer" height={'70vh'}>
+    <Card
+      key={id}
+      cursor="pointer"
+      height={'70vh'}
+      className={swipe ? 'swipe-' + swipe : undefined}
+    >
       <img src={image || '/img/food-404.jpg'} alt={name} />
       <CardDetails>
         <Tag bg={'secondary.600'} pr={4} pl={4}>
@@ -105,6 +113,7 @@ const RecipeCard: React.FC<Props> = ({
             <FontAwesomeIcon size={'sm'} icon={faSignInAlt} />
           </LinkIconButton>
           <IconButton
+            id="swipeRight"
             boxShadow="neumorphism"
             onClick={loveItHandle}
             type="button"
@@ -118,6 +127,7 @@ const RecipeCard: React.FC<Props> = ({
             <FontAwesomeIcon size={'lg'} icon={faHeart} />
           </IconButton>
           <IconButton
+            id="swipeLeft"
             boxShadow="neumorphism"
             onClick={quitItHandle}
             type="button"

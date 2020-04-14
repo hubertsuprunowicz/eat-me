@@ -8,13 +8,18 @@ import { Box, Button, Text } from '../../style';
 import { RECIPES } from './recipes.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFilter,
+  faPlusCircle,
+  faHeart,
+} from '@fortawesome/free-solid-svg-icons';
 import FormModal from 'component/FormModal/FormModal';
 import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
 import { useParams } from 'react-router-dom';
 import NoRecords from 'component/NoRecords/NoRecords';
 import Filter from './Filtrer';
 import TinderCard from 'component/TinderCard';
+import Badge from 'component/Badge/Badge';
 
 export type RecipeFilter = {
   user?: { name?: string };
@@ -46,11 +51,13 @@ const OFFSET = 10;
 
 const RecipesView: React.FC = () => {
   const { username } = useParams();
-  const [mode, setMode] = useState<'ALL' | 'LOVED' | 'YOURS'>('ALL');
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [recipeIsOpen, setRecipeIsOpen] = useState<boolean>(false);
   const [isFilterOpen, setFilterIsOpen] = useState<boolean>(false);
+  const [allRecipes, setAllRecipes] = useState<boolean>(true);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [qty, setQty] = useState<number>(0);
   const [filter, setFilter] = useState<RecipeFilter>();
+  const [lovedList, setLovedList] = useState<any[]>([]);
   const { loading, error, data, fetchMore } = useQuery(RECIPES, {
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -63,24 +70,32 @@ const RecipesView: React.FC = () => {
     if (username) setFilter({ user: { name: username } });
   }, [username]);
 
-  // <NoRecords>
-  //             Sorry, there is no recipes to show. Please add one or come back
-  //             later
-  //           </NoRecords>
+  useEffect(() => {
+    if (data) handleCardLeftScreen(qty);
 
-  // TODO
-  if (!data) return null;
-  // if (loading) return <>Loading data...</>;
-  // if (error) return <ErrorRedirect error={error} />;
+    // Unnecessary depth
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qty]);
 
-  const onCardLeftScreen = (index: number, direction: 'left' | 'right') => {
+  const handleSwipe = (direction: 'left' | 'right', recipe: any) => {
+    recipes.pop();
+    setQty(recipes.length);
+
+    if (direction === 'right') setLovedList([...lovedList, recipe]);
+  };
+
+  const handleCardLeftScreen = (
+    index: number,
+    direction?: 'left' | 'right',
+  ) => {
     const nextPageOffset = Math.abs(OFFSET - index);
+
+    if (direction === 'right') setLovedList([...lovedList, recipes[index]]);
     if ((currentIndex + nextPageOffset) % (OFFSET - 2)) return;
     setCurrentIndex(currentIndex + nextPageOffset);
     fetchMore({
       variables: {
         offset: currentIndex + nextPageOffset,
-        // filter: filter,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         return {
@@ -91,6 +106,11 @@ const RecipesView: React.FC = () => {
     });
   };
 
+  // TODO
+  if (!data) return null;
+  // if (loading) return <>Loading data...</>;
+  // if (error) return <ErrorRedirect error={error} />;
+
   const recipes = data.Recipe;
   return (
     <Box>
@@ -98,7 +118,6 @@ const RecipesView: React.FC = () => {
         pl={5}
         pr={5}
         mt={5}
-        mb={4}
         display={'flex'}
         justifyContent={'space-between'}
       >
@@ -107,7 +126,7 @@ const RecipesView: React.FC = () => {
           <Button
             boxShadow="neumorphism"
             mr={4}
-            onClick={() => setIsOpen(true)}
+            onClick={() => setRecipeIsOpen(true)}
           >
             <FontAwesomeIcon size={'xs'} icon={faPlusCircle} /> Recipe
           </Button>
@@ -116,31 +135,57 @@ const RecipesView: React.FC = () => {
           </Button>
         </div>
       </Box>
+      <Button
+        onClick={() => setAllRecipes(false)}
+        ml={4}
+        color="danger.500"
+        boxShadow="neumorphism"
+      >
+        <FontAwesomeIcon size={'xs'} icon={faHeart} /> Loved list
+        <Badge backgroundColor={'danger.500'}>{lovedList.length}</Badge>
+      </Button>
       {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
-      {recipes.map((recipe: Recipe, index: number) => (
-        <TinderCard
-          key={recipe._id}
-          preventSwipe={['up', 'down']}
-          onCardLeftScreen={(direction: 'left' | 'right') =>
-            onCardLeftScreen(index, direction)
-          }
-        >
-          <RecipeCard
+      {!allRecipes &&
+        lovedList.map((recipe: Recipe, index: number) => (
+          <TinderCard
             key={recipe._id}
-            id={recipe._id}
-            recipe={recipe}
-            index={index}
-            setCurrentIndex={setCurrentIndex}
-          />
-        </TinderCard>
-      ))}
-      {isOpen && (
+            preventSwipe={['up', 'down']}
+            onCardLeftScreen={(direction: 'left' | 'right') =>
+              handleCardLeftScreen(index, direction)
+            }
+          >
+            <RecipeCard
+              id={recipe._id}
+              recipe={recipe}
+              index={index}
+              onSwipe={handleSwipe}
+            />
+          </TinderCard>
+        ))}
+      {allRecipes &&
+        recipes.map((recipe: Recipe, index: number) => (
+          <TinderCard
+            key={recipe._id}
+            preventSwipe={['up', 'down']}
+            onCardLeftScreen={(direction: 'left' | 'right') =>
+              handleCardLeftScreen(index, direction)
+            }
+          >
+            <RecipeCard
+              id={recipe._id}
+              recipe={recipe}
+              index={index}
+              onSwipe={handleSwipe}
+            />
+          </TinderCard>
+        ))}
+      {recipeIsOpen && (
         <FormModal
           title="Add Recipe"
-          isOpen={isOpen}
-          closeModal={() => setIsOpen(false)}
+          isOpen={recipeIsOpen}
+          closeModal={() => setRecipeIsOpen(false)}
         >
-          <AddRecipeForm setIsOpen={setIsOpen} />
+          <AddRecipeForm setIsOpen={setRecipeIsOpen} />
         </FormModal>
       )}
       {isFilterOpen && (
@@ -150,11 +195,7 @@ const RecipesView: React.FC = () => {
           allRequired={false}
           closeModal={() => setFilterIsOpen(false)}
         >
-          <Filter
-            setIsOpen={setFilterIsOpen}
-            setMode={setMode}
-            setFilter={setFilter}
-          />
+          <Filter setIsOpen={setRecipeIsOpen} setFilter={setFilter} />
         </FormModal>
       )}
     </Box>

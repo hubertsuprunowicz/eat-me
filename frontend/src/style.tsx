@@ -116,6 +116,7 @@ type ButtonProps = ColorProps &
 export const Button = styled('button')<ButtonProps>`
   cursor: pointer;
   border: none;
+  position: relative;
   outline: none;
   text-decoration: none;
   text-align: center;

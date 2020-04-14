@@ -89,7 +89,6 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      {console.log(errors)}
       <Box
         display={paginationForm ? 'flex' : 'none'}
         flexDirection="column"

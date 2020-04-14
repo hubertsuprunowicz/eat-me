@@ -16,7 +16,6 @@ type RecipeFilterForm = {
 
 type Props = {
   setIsOpen: (arg: boolean) => void;
-  setMode: (mode: 'ALL' | 'LOVED' | 'YOURS') => void;
   setFilter: (arg: RecipeFilter) => void;
 };
 
