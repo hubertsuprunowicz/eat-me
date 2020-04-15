@@ -20,6 +20,7 @@ import NoRecords from 'component/NoRecords/NoRecords';
 import Filter from './Filtrer';
 import TinderCard from 'component/TinderCard';
 import Badge from 'component/Badge/Badge';
+import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 
 export type RecipeFilter = {
   user?: { name?: string };
@@ -145,23 +146,25 @@ const RecipesView: React.FC = () => {
         <Badge backgroundColor={'danger.500'}>{lovedList.length}</Badge>
       </Button>
       {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
-      {!allRecipes &&
-        lovedList.map((recipe: Recipe, index: number) => (
-          <TinderCard
-            key={recipe._id}
-            preventSwipe={['up', 'down']}
-            onCardLeftScreen={(direction: 'left' | 'right') =>
-              handleCardLeftScreen(index, direction)
-            }
-          >
-            <RecipeCard
-              id={recipe._id}
-              recipe={recipe}
-              index={index}
-              onSwipe={handleSwipe}
-            />
-          </TinderCard>
-        ))}
+      <LoadingOverlay height={'80vh'} isLoading={loading}>
+        {!allRecipes &&
+          lovedList.map((recipe: Recipe, index: number) => (
+            <TinderCard
+              key={recipe._id}
+              preventSwipe={['up', 'down']}
+              onCardLeftScreen={(direction: 'left' | 'right') =>
+                handleCardLeftScreen(index, direction)
+              }
+            >
+              <RecipeCard
+                id={recipe._id}
+                recipe={recipe}
+                index={index}
+                onSwipe={handleSwipe}
+              />
+            </TinderCard>
+          ))}
+      </LoadingOverlay>
       {allRecipes &&
         recipes.map((recipe: Recipe, index: number) => (
           <TinderCard

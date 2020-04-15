@@ -8,6 +8,7 @@ import { useSubscription, useQuery } from '@apollo/react-hooks';
 import { RECIPE_DISCOVERD, WATCHES_RECIPES } from './watches.graphql';
 import { useAuthState } from 'utils/auth';
 import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
+import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 
 const WatchesView: React.FC = () => {
   const { user } = useAuthState();
@@ -52,22 +53,24 @@ const WatchesView: React.FC = () => {
           <FontAwesomeIcon icon={faEllipsisV} />
         </IconButton>
       </Box>
-      <WatchesList>
-        {data &&
-          data.watchesRecipes.map((it: any) => (
-            <li key={it.id}>
-              <Link to="/profile">
-                <img src={it.image} alt={it.name + '_image'} />
-                <Text fontSize={0} fontWeight={400}>
-                  by{' '}
-                </Text>
-                <Text fontSize={0} fontWeight={700}>
-                  {it.user.name}
-                </Text>
-              </Link>
-            </li>
-          ))}
-      </WatchesList>
+      <LoadingOverlay isLoading={loading}>
+        <WatchesList>
+          {data &&
+            data.watchesRecipes.map((it: any) => (
+              <li key={it.id}>
+                <Link to="/profile">
+                  <img src={it.image} alt={it.name + '_image'} />
+                  <Text fontSize={0} fontWeight={400}>
+                    by{' '}
+                  </Text>
+                  <Text fontSize={0} fontWeight={700}>
+                    {it.user.name}
+                  </Text>
+                </Link>
+              </li>
+            ))}
+        </WatchesList>
+      </LoadingOverlay>
     </Box>
   );
 };

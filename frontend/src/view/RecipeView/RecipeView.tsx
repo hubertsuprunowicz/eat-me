@@ -26,6 +26,7 @@ import Comment from 'component/Comment/Comment';
 import CommentDialog from './CommentDialog';
 import useForm from 'react-hook-form';
 import { toast } from 'react-toastify';
+import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 
 const RecipeView: React.FC = () => {
   const [subscribed, setSubscribed] = useState<boolean>(false);
@@ -76,22 +77,6 @@ const RecipeView: React.FC = () => {
     },
   });
 
-  if (loading) return <>loading...</>;
-
-  const [
-    {
-      name,
-      image,
-      description,
-      time,
-      tag,
-      ingredient,
-      comment,
-      difficulty,
-      totalCost,
-    },
-  ] = data.Recipe || {};
-
   function alreadyVoted() {
     return comment.findIndex((it: any) => it.user.name === user!.name);
   }
@@ -138,215 +123,194 @@ const RecipeView: React.FC = () => {
     });
   };
 
+  if (!data) return null;
+
+  const [
+    {
+      name,
+      image,
+      description,
+      time,
+      tag,
+      ingredient,
+      comment,
+      difficulty,
+      totalCost,
+    },
+  ] = data.Recipe || {};
+
   return (
-    <Box
-      display={'flex'}
-      flexDirection={'column'}
-      alignItems={'center'}
-      mb={100}
-    >
-      <BackgroundImage src={image} alt={name} />
+    <LoadingOverlay isLoading={loading}>
       <Box
-        mt={-70}
-        p={5}
-        pb={4}
-        borderRadius={5}
-        width={'80%'}
-        backgroundColor={'white'}
         display={'flex'}
-        justifyContent={'space-around'}
         flexDirection={'column'}
-        minHeight={'240px'}
-        alignContent={'space-around'}
         alignItems={'center'}
-        boxShadow={'neumorphism'}
-        position={'relative'}
+        mb={100}
       >
-        <span
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          {name}
-        </span>
-        {/* TODO: change 'user' to name of recipe author */}
+        <BackgroundImage src={image} alt={name} />
 
-        <Box display={'flex'} flexDirection={'column'} width={'80%'}>
-          <Box
-            mt={6}
-            display={'flex'}
-            justifyContent={'space-between'}
-            color={'primary.500'}
-          >
-            <div>
-              <FontAwesomeIcon icon={faStar} />
-              {'  '}
-              {totalRating() ? (
-                <Text fontSize={3} fontWeight={700}>
-                  {totalRating()} / 5
-                </Text>
-              ) : (
-                <Text fontSize={3} fontWeight={700}>
-                  No ratings, be first!
-                </Text>
-              )}
-            </div>
-
-            {user && 'user' === user.name && (
-              <EditButton
-                mt={-3}
-                mb={2}
-                borderRadius={'5px'}
-                boxShadow={'neumorphism'}
-                onClick={() => setIsRecipeDialogOpen(true)}
-              >
-                <FontAwesomeIcon size={'lg'} icon={faEdit} />
-              </EditButton>
-            )}
-          </Box>
-          <Box mt={3} display={'flex'} justifyContent={'space-between'}>
-            <span>time</span>
-            <span>{time}min</span>
-          </Box>
-          <Box mt={3} display={'flex'} justifyContent={'space-between'}>
-            <span>total cost</span>
-            <span>{totalCost}$</span>
-          </Box>
-          <Box mt={3} display={'flex'} justifyContent={'space-between'}>
-            <span>difficulty</span>
-            <span>{difficulty.toLowerCase()}</span>
-          </Box>
-          <span style={{ marginTop: '4px' }}>ingredients</span>
-          <Box display={'flex'} justifyContent={'space-between'}>
-            <IngredientsList>
-              {ingredient.map((it: any, index: number) => (
-                <li key={index}>
-                  <Box display={'flex'} justifyContent={'space-between'}>
-                    <span>{it.name}</span>
-                    <span>{it.amount}</span>
-                  </Box>
-                </li>
-              ))}
-            </IngredientsList>
-          </Box>
-        </Box>
         <Box
-          mt={3}
+          mt={-70}
+          p={5}
+          pb={4}
+          borderRadius={5}
+          width={'80%'}
+          backgroundColor={'white'}
           display={'flex'}
-          flexWrap={'wrap'}
-          justifyContent={'center'}
-          style={{
-            borderBottomLeftRadius: '5px',
-            borderBottomRightRadius: '5px',
-            fontSize: '0.8rem',
-          }}
-          p={4}
+          justifyContent={'space-around'}
+          flexDirection={'column'}
+          minHeight={'240px'}
+          alignContent={'space-around'}
+          alignItems={'center'}
+          boxShadow={'neumorphism'}
+          position={'relative'}
         >
           <span
             style={{
-              position: 'absolute',
-              fontSize: '5rem',
+              fontSize: '1.5rem',
               fontWeight: 'bold',
-              left: 15,
-              bottom: -10,
-              opacity: 0.05,
+              textAlign: 'center',
             }}
           >
-            #
+            {name}
           </span>
-          {tag.map((it: any, index: number) => (
-            <span key={index} style={{ padding: '5px', fontWeight: 600 }}>
-              {it.name}
-            </span>
-          ))}
-        </Box>
-      </Box>
-      <Box mt={7}>
-        {subscribed ? (
-          <IconButton
-            ml={5}
-            color={'secondary.500'}
-            boxShadow={'neumorphism'}
-            onClick={handleUnsubscribe}
+          {/* TODO: change 'user' to name of recipe author */}
+
+          <Box display={'flex'} flexDirection={'column'} width={'80%'}>
+            <Box
+              mt={6}
+              display={'flex'}
+              justifyContent={'space-between'}
+              color={'primary.500'}
+            >
+              <div>
+                <FontAwesomeIcon icon={faStar} />
+                {'  '}
+                {totalRating() ? (
+                  <Text fontSize={3} fontWeight={700}>
+                    {totalRating()} / 5
+                  </Text>
+                ) : (
+                  <Text fontSize={3} fontWeight={700}>
+                    No ratings, be first!
+                  </Text>
+                )}
+              </div>
+
+              {user && 'user' === user.name && (
+                <EditButton
+                  mt={-3}
+                  mb={2}
+                  borderRadius={'5px'}
+                  boxShadow={'neumorphism'}
+                  onClick={() => setIsRecipeDialogOpen(true)}
+                >
+                  <FontAwesomeIcon size={'lg'} icon={faEdit} />
+                </EditButton>
+              )}
+            </Box>
+            <Box mt={3} display={'flex'} justifyContent={'space-between'}>
+              <span>time</span>
+              <span>{time}min</span>
+            </Box>
+            <Box mt={3} display={'flex'} justifyContent={'space-between'}>
+              <span>total cost</span>
+              <span>{totalCost}$</span>
+            </Box>
+            <Box mt={3} display={'flex'} justifyContent={'space-between'}>
+              <span>difficulty</span>
+              <span>{difficulty.toLowerCase()}</span>
+            </Box>
+            <span style={{ marginTop: '4px' }}>ingredients</span>
+            <Box display={'flex'} justifyContent={'space-between'}>
+              <IngredientsList>
+                {ingredient.map((it: any, index: number) => (
+                  <li key={index}>
+                    <Box display={'flex'} justifyContent={'space-between'}>
+                      <span>{it.name}</span>
+                      <span>{it.amount}</span>
+                    </Box>
+                  </li>
+                ))}
+              </IngredientsList>
+            </Box>
+          </Box>
+          <Box
+            mt={3}
+            display={'flex'}
+            flexWrap={'wrap'}
+            justifyContent={'center'}
+            style={{
+              borderBottomLeftRadius: '5px',
+              borderBottomRightRadius: '5px',
+              fontSize: '0.8rem',
+            }}
+            p={4}
           >
-            <FontAwesomeIcon size={'lg'} icon={faEyeSlash} />
-          </IconButton>
-        ) : (
+            <span
+              style={{
+                position: 'absolute',
+                fontSize: '5rem',
+                fontWeight: 'bold',
+                left: 15,
+                bottom: -10,
+                opacity: 0.05,
+              }}
+            >
+              #
+            </span>
+            {tag.map((it: any, index: number) => (
+              <span key={index} style={{ padding: '5px', fontWeight: 600 }}>
+                {it.name}
+              </span>
+            ))}
+          </Box>
+        </Box>
+        <Box mt={7}>
+          {subscribed ? (
+            <IconButton
+              ml={5}
+              color={'secondary.500'}
+              boxShadow={'neumorphism'}
+              onClick={handleUnsubscribe}
+            >
+              <FontAwesomeIcon size={'lg'} icon={faEyeSlash} />
+            </IconButton>
+          ) : (
+            <IconButton
+              ml={5}
+              color={'secondary.500'}
+              boxShadow={'neumorphism'}
+              onClick={handleSubscribe}
+            >
+              <FontAwesomeIcon size={'lg'} icon={faEye} />
+            </IconButton>
+          )}
           <IconButton
             ml={5}
-            color={'secondary.500'}
+            color={'danger.500'}
             boxShadow={'neumorphism'}
             onClick={handleSubscribe}
           >
-            <FontAwesomeIcon size={'lg'} icon={faEye} />
+            <FontAwesomeIcon size={'lg'} icon={faHeart} />
           </IconButton>
-        )}
-        <IconButton
-          ml={5}
-          color={'danger.500'}
-          boxShadow={'neumorphism'}
-          onClick={handleSubscribe}
-        >
-          <FontAwesomeIcon size={'lg'} icon={faHeart} />
-        </IconButton>
-      </Box>
-
-      <Box p={8}>
-        <Box display={'flex'} justifyContent={'center'}>
-          <span
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
-            How to do it?
-          </span>
         </Box>
-        <p style={{ lineHeight: '21px' }}>{description}</p>
-      </Box>
-      <Box p={8}>
-        <span
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          Author
-        </span>
-        <Box display={'flex'} mt={3}>
-          <Box
-            mr={7}
-            display={'flex'}
-            flexDirection={'column'}
-            justifyContent={'space-between'}
-          >
-            <span>{data.Recipe[0].user.name}</span>
-            <LinkButton
-              to={`${PROFILE_VIEW}/${data.Recipe[0].user.name}`}
-              color={'warn.600'}
+
+        <Box p={8}>
+          <Box display={'flex'} justifyContent={'center'}>
+            <span
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
             >
-              More
-            </LinkButton>
+              How to do it?
+            </span>
           </Box>
-          <AuthorImage src={data.Recipe[0].user.avatar} />
+          <p style={{ lineHeight: '21px' }}>{description}</p>
         </Box>
-      </Box>
-      {alreadyVoted() !== -1 && (
-        <Box>
-          <span>
-            Your rating of this recipe is{' '}
-            <b style={{ fontWeight: 700 }}>
-              {comment[alreadyVoted()].rating}/5
-            </b>
-          </span>
-        </Box>
-      )}
-      {alreadyVoted() === -1 && (
-        <Box display="flex" alignItems="center">
+        <Box p={8}>
           <span
             style={{
               fontSize: '1.5rem',
@@ -354,68 +318,109 @@ const RecipeView: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            Leave your feedback{' '}
+            Author
           </span>
-          <Button
-            color={'black'}
-            borderRadius={'5px'}
-            ml={4}
-            p={5}
-            boxShadow={'neumorphism'}
-            style={{ fontSize: '1.3rem' }}
-            onClick={() => setIsCommentDialogOpen(true)}
-          >
-            here!
-          </Button>
+          <Box display={'flex'} mt={3}>
+            <Box
+              mr={7}
+              display={'flex'}
+              flexDirection={'column'}
+              justifyContent={'space-between'}
+            >
+              <span>{data.Recipe[0].user.name}</span>
+              <LinkButton
+                to={`${PROFILE_VIEW}/${data.Recipe[0].user.name}`}
+                color={'warn.600'}
+              >
+                More
+              </LinkButton>
+            </Box>
+            <AuthorImage src={data.Recipe[0].user.avatar} />
+          </Box>
         </Box>
-      )}
+        {alreadyVoted() !== -1 && (
+          <Box>
+            <span>
+              Your rating of this recipe is{' '}
+              <b style={{ fontWeight: 700 }}>
+                {comment[alreadyVoted()].rating}/5
+              </b>
+            </span>
+          </Box>
+        )}
+        {alreadyVoted() === -1 && (
+          <Box display="flex" alignItems="center">
+            <span
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
+            >
+              Leave your feedback{' '}
+            </span>
+            <Button
+              color={'black'}
+              borderRadius={'5px'}
+              ml={4}
+              p={5}
+              boxShadow={'neumorphism'}
+              style={{ fontSize: '1.3rem' }}
+              onClick={() => setIsCommentDialogOpen(true)}
+            >
+              here!
+            </Button>
+          </Box>
+        )}
 
-      <Box
-        display={'flex'}
-        flexDirection={'row'}
-        justifyContent={'center'}
-        flexWrap={'wrap'}
-        p={8}
-      >
-        {comment.map(({ timestamp, description, rating, user, _id }: any) => (
-          <Comment
-            key={_id}
-            rating={rating}
-            username={user.name}
-            timestamp={timestamp}
+        <Box
+          display={'flex'}
+          flexDirection={'row'}
+          justifyContent={'center'}
+          flexWrap={'wrap'}
+          p={8}
+        >
+          {comment.map(({ timestamp, description, rating, user, _id }: any) => (
+            <Comment
+              key={_id}
+              rating={rating}
+              username={user.name}
+              timestamp={timestamp}
+            >
+              {description}
+            </Comment>
+          ))}
+        </Box>
+        {isRecipeDialogOpen && user && (
+          <FormModal
+            title="Edit Recipe"
+            allRequired={false}
+            isOpen={isRecipeDialogOpen}
+            closeModal={() => setIsRecipeDialogOpen(false)}
           >
-            {description}
-          </Comment>
-        ))}
+            <EditRecipeDialog
+              recipe={data.Recipe[0]}
+              setIsOpen={setIsCommentDialogOpen}
+            />
+          </FormModal>
+        )}
+
+        {isCommentDialogOpen && user && (
+          <FormModal
+            title="Add Comment"
+            allRequired={false}
+            isOpen={isCommentDialogOpen}
+            closeModal={() => setIsCommentDialogOpen(false)}
+          >
+            <CommentDialog
+              userID={user._id}
+              recipe={data.Recipe[0]}
+              setIsOpen={setIsCommentDialogOpen}
+            />
+          </FormModal>
+        )}
       </Box>
-      {isRecipeDialogOpen && user && (
-        <FormModal
-          title="Edit Recipe"
-          allRequired={false}
-          isOpen={isRecipeDialogOpen}
-          closeModal={() => setIsRecipeDialogOpen(false)}
-        >
-          <EditRecipeDialog
-            recipe={data.Recipe[0]}
-            setIsOpen={setIsCommentDialogOpen}
-          />
-        </FormModal>
-      )}
-      {isCommentDialogOpen && user && (
-        <FormModal
-          title="Add Comment"
-          allRequired={false}
-          isOpen={isCommentDialogOpen}
-          closeModal={() => setIsCommentDialogOpen(false)}
-        >
-          <CommentDialog
-            userID={user._id}
-            recipe={data.Recipe[0]}
-            setIsOpen={setIsCommentDialogOpen}
-          />
-        </FormModal>
-      )}
-    </Box>
+    </LoadingOverlay>
   );
 };
 

@@ -19,6 +19,7 @@ import Form from 'component/Form/Form';
 import NoRecords from 'component/NoRecords/NoRecords';
 import { toast } from 'react-toastify';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
+import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 
 const MessageView: React.FC = () => {
   const { user } = useAuthState();
@@ -159,75 +160,76 @@ const MessageView: React.FC = () => {
           />
         </Form>
       </Box>
-      {/* TODO: loading overlay */}
-      <ListWrapper>
-        <MessageList onScroll={onScroll} ref={wrapperRef as any}>
-          {data && data.messages && data.messages.length < 1 ? (
-            <NoRecords>
-              Sorry, there is no messages to show. Come back later :)
-            </NoRecords>
-          ) : (
-            data &&
-            data.messages &&
-            data.messages.map(
-              ({ _id, title, message, timestamp, sender }: any) => (
-                <li key={_id}>
-                  <LinkIconButton
-                    mr={5}
-                    to={`${PROFILE_VIEW}/${sender.name}`}
-                    width="35px"
-                    height="35px"
-                  >
-                    <img
-                      src="https://www.gdansk.pl/download/2019-09/135042.jpg"
-                      alt={sender.name + '_image'}
-                    />
-                  </LinkIconButton>
-
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="space-between"
-                    ml={5}
-                    width={'100%'}
-                  >
-                    <Box
-                      width={'100%'}
-                      display="flex"
-                      justifyContent="space-between"
+      <LoadingOverlay height={'70vh'} isLoading={loading}>
+        <ListWrapper>
+          <MessageList onScroll={onScroll} ref={wrapperRef as any}>
+            {data && data.messages && data.messages.length < 1 ? (
+              <NoRecords>
+                Sorry, there is no messages to show. Come back later :)
+              </NoRecords>
+            ) : (
+              data &&
+              data.messages &&
+              data.messages.map(
+                ({ _id, title, message, timestamp, sender }: any) => (
+                  <li key={_id}>
+                    <LinkIconButton
+                      mr={5}
+                      to={`${PROFILE_VIEW}/${sender.name}`}
+                      width="35px"
+                      height="35px"
                     >
-                      <Text fontSize={14} fontWeight={500}>
-                        {sender.name}
-                      </Text>
-                      <Text fontSize={10}>
-                        {formatDistance(timestamp, new Date())}
-                      </Text>
-                    </Box>
-                    <Box display="flex" justifyContent={'space-between'}>
-                      <Text p={4} pl={0} fontSize={10} color={'grey'}>
-                        {message}
-                      </Text>
-                      <IconButton
-                        onClick={() =>
-                          deleteMessage({ variables: { id: _id } })
-                        }
-                        boxShadow="neumorphism"
-                        width="33px"
-                        height="33px"
-                        color="danger.500"
-                        borderRadius="50%"
+                      <img
+                        src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+                        alt={sender.name + '_image'}
+                      />
+                    </LinkIconButton>
+
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="space-between"
+                      ml={5}
+                      width={'100%'}
+                    >
+                      <Box
+                        width={'100%'}
+                        display="flex"
+                        justifyContent="space-between"
                       >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </IconButton>
+                        <Text fontSize={14} fontWeight={500}>
+                          {sender.name}
+                        </Text>
+                        <Text fontSize={10}>
+                          {formatDistance(timestamp, new Date())}
+                        </Text>
+                      </Box>
+                      <Box display="flex" justifyContent={'space-between'}>
+                        <Text p={4} pl={0} fontSize={10} color={'grey'}>
+                          {message}
+                        </Text>
+                        <IconButton
+                          onClick={() =>
+                            deleteMessage({ variables: { id: _id } })
+                          }
+                          boxShadow="neumorphism"
+                          width="33px"
+                          height="33px"
+                          color="danger.500"
+                          borderRadius="50%"
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </IconButton>
+                      </Box>
                     </Box>
-                  </Box>
-                </li>
-              ),
-            )
-          )}
-          <li></li>
-        </MessageList>
-      </ListWrapper>
+                  </li>
+                ),
+              )
+            )}
+            <li></li>
+          </MessageList>
+        </ListWrapper>
+      </LoadingOverlay>
 
       <FormModal
         title="Send Message"

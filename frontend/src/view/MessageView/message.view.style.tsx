@@ -11,7 +11,6 @@ export const ListWrapper = styled.div`
 export const MessageList = styled.ul`
   overflow-y: auto;
   width: 100%;
-  height: 100%;
   position: absolute;
 
   text-decoration: none;

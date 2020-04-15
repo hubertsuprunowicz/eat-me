@@ -10,6 +10,9 @@ import { useQuery } from '@apollo/react-hooks';
 import EditUserDialog from './EditUserDialog';
 import FormModal from 'component/FormModal/FormModal';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
+import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
+
+const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
 
 const ProfileView: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -30,9 +33,7 @@ const ProfileView: React.FC = () => {
     },
   });
 
-  if (loading) return <>loading...</>;
-
-  const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
+  if (!data) return null;
   const { name, email, avatar, description, recipe } = data.User[0];
 
   return (
@@ -57,44 +58,49 @@ const ProfileView: React.FC = () => {
         boxShadow={'spread'}
         position={'relative'}
       >
-        {(user && user.name === username) ||
-          (!username && (
-            <EditButton
-              mt={4}
-              mr={4}
-              borderRadius={0}
-              boxShadow="insetNeo"
-              onClick={() => setIsOpen(true)}
-            >
-              <FontAwesomeIcon size={'lg'} icon={faEdit} />
-            </EditButton>
-          ))}
-        <span>{name}</span>
-        <Box
-          display={'flex'}
-          flexDirection={'column'}
-          alignItems={'center'}
-          pr={3}
-          pl={3}
-        >
-          <p style={{ fontSize: '12px', margin: 0 }}>{description}</p>
-          {recipe && recipe.length > 0 && (
-            <>
-              <hr style={{ width: '100%' }} />
-              <h4 style={{ fontSize: '14px', margin: 0, marginBottom: '5px' }}>
-                Favourites!
-              </h4>
-              <TagWrapper>
-                {recipe.slice(0, 3).map((it: any) => (
-                  <Tag key={it.tag[0]._id} bg={'primary.500'}>
-                    {it.tag[0].name}
-                  </Tag>
-                ))}
-              </TagWrapper>
-            </>
-          )}
-        </Box>
+        <LoadingOverlay isLoading={loading}>
+          {(user && user.name === username) ||
+            (!username && (
+              <EditButton
+                mt={4}
+                mr={4}
+                borderRadius={0}
+                boxShadow="insetNeo"
+                onClick={() => setIsOpen(true)}
+              >
+                <FontAwesomeIcon size={'lg'} icon={faEdit} />
+              </EditButton>
+            ))}
+          <span>{name}</span>
+          <Box
+            display={'flex'}
+            flexDirection={'column'}
+            alignItems={'center'}
+            pr={3}
+            pl={3}
+          >
+            <p style={{ fontSize: '12px', margin: 0 }}>{description}</p>
+            {recipe && recipe.length > 0 && (
+              <>
+                <hr style={{ width: '100%' }} />
+                <h4
+                  style={{ fontSize: '14px', margin: 0, marginBottom: '5px' }}
+                >
+                  Favourites!
+                </h4>
+                <TagWrapper>
+                  {recipe.slice(0, 3).map((it: any) => (
+                    <Tag key={it.tag[0]._id} bg={'primary.500'}>
+                      {it.tag[0].name}
+                    </Tag>
+                  ))}
+                </TagWrapper>
+              </>
+            )}
+          </Box>
+        </LoadingOverlay>
       </Box>
+
       <Box mt={5}>
         <Button
           color={'secondary.600'}
@@ -108,6 +114,7 @@ const ProfileView: React.FC = () => {
           Recipes
         </LinkButton>
       </Box>
+
       {data && (
         <FormModal
           title="Edit User"
