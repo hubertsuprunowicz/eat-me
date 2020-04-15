@@ -2,7 +2,7 @@ import React, { useState, useRef, UIEventHandler } from 'react';
 import { Box, Button, Text, IconButton, LinkIconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { MessageList, ListWrapper } from './message.view.style';
+import { MessageList, ListWrapper } from './styles';
 import FormModal from 'component/FormModal/FormModal';
 import MessageDialog from './MessageDialog';
 import { useAuthState } from 'utils/auth';
@@ -20,6 +20,78 @@ import NoRecords from 'component/NoRecords/NoRecords';
 import { toast } from 'react-toastify';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
+
+type RowProps = {
+  _id: string;
+  sender: {
+    name: string;
+  };
+  message: string;
+  timestamp: number;
+  deleteMessage: any;
+};
+
+const Row: React.FC<RowProps> = ({
+  _id,
+  sender,
+  timestamp,
+  message,
+  deleteMessage,
+}) => {
+  const [textDropDown, setTextDropDown] = useState<boolean>(false);
+
+  return (
+    <li
+      key={_id}
+      onClick={() => setTextDropDown(!textDropDown)}
+      className={textDropDown ? 'dropped' : undefined}
+    >
+      <LinkIconButton
+        mr={5}
+        to={`${PROFILE_VIEW}/${sender.name}`}
+        width="35px"
+        height="35px"
+      >
+        <img
+          src="https://www.gdansk.pl/download/2019-09/135042.jpg"
+          alt={sender.name + '_image'}
+        />
+      </LinkIconButton>
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        ml={5}
+        width={'100%'}
+      >
+        <Box width={'100%'} display="flex" justifyContent="space-between">
+          <Text fontSize={14} fontWeight={500}>
+            {sender.name}
+          </Text>
+          <Text fontSize={10}>{formatDistance(timestamp, new Date())}</Text>
+        </Box>
+        <Box display="flex" justifyContent={'space-between'}>
+          <Text p={4} pl={0} fontSize={10} color={'grey'}>
+            {textDropDown
+              ? message
+              : message.slice(0, 90) + (message.length > 90 ? '...' : '')}
+          </Text>
+          <IconButton
+            onClick={() => deleteMessage({ variables: { id: _id } })}
+            boxShadow="neumorphism"
+            width="33px"
+            height="33px"
+            color="danger.500"
+            borderRadius="50%"
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </IconButton>
+        </Box>
+      </Box>
+    </li>
+  );
+};
 
 const MessageView: React.FC = () => {
   const { user } = useAuthState();
@@ -172,57 +244,13 @@ const MessageView: React.FC = () => {
               data.messages &&
               data.messages.map(
                 ({ _id, title, message, timestamp, sender }: any) => (
-                  <li key={_id}>
-                    <LinkIconButton
-                      mr={5}
-                      to={`${PROFILE_VIEW}/${sender.name}`}
-                      width="35px"
-                      height="35px"
-                    >
-                      <img
-                        src="https://www.gdansk.pl/download/2019-09/135042.jpg"
-                        alt={sender.name + '_image'}
-                      />
-                    </LinkIconButton>
-
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="space-between"
-                      ml={5}
-                      width={'100%'}
-                    >
-                      <Box
-                        width={'100%'}
-                        display="flex"
-                        justifyContent="space-between"
-                      >
-                        <Text fontSize={14} fontWeight={500}>
-                          {sender.name}
-                        </Text>
-                        <Text fontSize={10}>
-                          {formatDistance(timestamp, new Date())}
-                        </Text>
-                      </Box>
-                      <Box display="flex" justifyContent={'space-between'}>
-                        <Text p={4} pl={0} fontSize={10} color={'grey'}>
-                          {message}
-                        </Text>
-                        <IconButton
-                          onClick={() =>
-                            deleteMessage({ variables: { id: _id } })
-                          }
-                          boxShadow="neumorphism"
-                          width="33px"
-                          height="33px"
-                          color="danger.500"
-                          borderRadius="50%"
-                        >
-                          <FontAwesomeIcon icon={faTimes} />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </li>
+                  <Row
+                    _id={_id}
+                    message={message}
+                    timestamp={timestamp}
+                    sender={sender}
+                    deleteMessage={deleteMessage}
+                  />
                 ),
               )
             )}
