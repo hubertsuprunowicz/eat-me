@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Card } from '../../component/RecipeCard/recipe.card.style';
 import Form from '../../component/Form/Form';
 import { AuthButton, AuthSwitch, Avatar } from './login.view.style';
-import useForm from 'react-hook-form';
 import { LOGIN, CREATE_USER } from './login.graphql';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
 import { Box, Button } from 'style';
-import { FieldError } from 'react-hook-form/dist/types';
 import { useAuthDispatch } from 'utils/auth';
+import { useForm, FieldError } from 'react-hook-form';
+import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 
 type FormData = {
   username: string;
@@ -41,13 +41,12 @@ const LoginView: React.FC = () => {
   });
 
   const [createUser] = useMutation(CREATE_USER, {
-    onError: error => {
+    onError: error =>
       setError(
         'mutationError',
         'mutationError',
         error.graphQLErrors[0].message,
-      );
-    },
+      ),
     onCompleted: data => {
       authDispatch({
         type: 'login',
@@ -64,7 +63,7 @@ const LoginView: React.FC = () => {
       confirmPassword === password
         ? createUser({
             variables: { name: username, password: password },
-          }).then(() => reset())
+          })
         : setError(
             'confirmPassword',
             'notMatch',
@@ -85,10 +84,21 @@ const LoginView: React.FC = () => {
             type="text"
             placeholder="Enter Username"
             name="username"
-            ref={register}
+            ref={
+              loginForm
+                ? register
+                : register({
+                    required: 'Username is required',
+                    minLength: {
+                      value: 4,
+                      message:
+                        'Username needs to be at least 4 characters long',
+                    },
+                  })
+            }
             autoFocus
-            required
           />
+          <ErrorMessage errors={errors} name={'username'} />
           <label htmlFor="password">
             <b>Password</b>
           </label>
@@ -96,9 +106,20 @@ const LoginView: React.FC = () => {
             type="password"
             placeholder="Enter Password"
             name="password"
-            ref={register}
-            required
+            ref={
+              loginForm
+                ? register
+                : register({
+                    required: 'Password is required',
+                    minLength: {
+                      value: 6,
+                      message:
+                        'Password needs to be at least 6 characters long',
+                    },
+                  })
+            }
           />
+          <ErrorMessage errors={errors} name={'password'} />
           {!loginForm && (
             <label htmlFor="confirmPassword">
               <input
@@ -109,11 +130,9 @@ const LoginView: React.FC = () => {
               />
             </label>
           )}
-          {errors.confirmPassword && errors.confirmPassword.message}
-          {errors.queryError && errors.queryError.message}
-
-          {/* FIXME: don't know what's going on */}
-          {errors.mutationError && errors.mutationError.message}
+          <ErrorMessage errors={errors} name={'mutationError'} />
+          <ErrorMessage errors={errors} name={'confirmPassword'} />
+          <ErrorMessage errors={errors} name={'queryError'} />
 
           {loginForm ? (
             <Button
@@ -122,7 +141,6 @@ const LoginView: React.FC = () => {
               mt={6}
               width="80px"
               height="35px"
-              borderRadius="5px"
               type="submit"
             >
               Login
@@ -134,7 +152,6 @@ const LoginView: React.FC = () => {
               mt={6}
               width="80px"
               height="35px"
-              borderRadius="5px"
               type="submit"
             >
               Register

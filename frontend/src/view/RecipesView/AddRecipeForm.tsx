@@ -1,5 +1,4 @@
 import React, { useState, memo } from 'react';
-import useForm from 'react-hook-form';
 import { Box, IconButton, Tag, Button } from 'style';
 import { Input } from './recipes.view.style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,6 +8,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { RECIPE_CREATE } from './recipes.graphql';
 import { toast } from 'react-toastify';
 import { useAuthState } from 'utils/auth';
+import { useForm } from 'react-hook-form';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -70,7 +70,6 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
   const {
     handleSubmit,
     watch,
-    getValues,
     register,
     setError,
     errors,

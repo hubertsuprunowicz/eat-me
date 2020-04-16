@@ -1,5 +1,5 @@
 import React from 'react';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { SEND_MESSAGE, GET_USER } from './message.graphql';
@@ -10,7 +10,6 @@ import { useAuthState } from 'utils/auth';
 type MessageForm = {
   addressee: string;
   sender: string;
-  title: string;
   message: number;
   timestamp: number;
 };
@@ -45,7 +44,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
         return;
       }
 
-      const { title, message } = getValues();
+      const { message } = getValues();
 
       if (!data.user) {
         setError('addressee', 'notFound', 'provided name does not exist');
@@ -58,7 +57,6 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
         variables: {
           senderID: parseInt(user._id.toString()),
           addresseeID: parseInt(data.user._id),
-          title: title,
           message: message,
           timestamp: Date.now(),
         },
@@ -100,20 +98,6 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
           'Your input is required'}
         {errors.addressee && errors.addressee.message}
         {errors.sender && errors.sender.message}
-        <label htmlFor="title">
-          <span>Title</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Enter Title"
-          name="title"
-          ref={register({
-            required: true,
-          })}
-        />
-        {errors.title &&
-          errors.title.type === 'required' &&
-          'Your input is required'}
         <label htmlFor="message">
           <span>Message</span>
         </label>

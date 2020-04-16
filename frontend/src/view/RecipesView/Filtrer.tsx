@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import useForm from 'react-hook-form';
+import React from 'react';
 import { Box, Button, Text } from 'style';
 import Form from 'component/Form/Form';
 import { RecipeFilter } from './RecipesView';
+import { useForm } from 'react-hook-form';
 
 type RecipeFilterForm = {
   [key in

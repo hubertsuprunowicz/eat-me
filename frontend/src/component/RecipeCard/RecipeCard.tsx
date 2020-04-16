@@ -40,7 +40,6 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
 
   const loveItHandle = () => {
     setTimeout(() => {
-      console.log('LOVE IT');
       onSwipe('right', recipe);
     }, 400);
     setSwipe('right');
@@ -48,7 +47,6 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
 
   const quitItHandle = () => {
     setTimeout(() => {
-      console.log('QUIT IT');
       onSwipe('left', recipe);
     }, 400);
 
@@ -73,7 +71,7 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
     >
       <img src={image || '/img/food-404.jpg'} alt={name} />
       <CardDetails>
-        <Tag bg={'secondary.600'} pr={4} pl={4}>
+        <Tag border={'none'} bg={'secondary.600'} pr={4} pl={4}>
           {user.name}
         </Tag>
 

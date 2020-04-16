@@ -1,6 +1,6 @@
 const { sign } = require('jsonwebtoken');
 const { compare, hash } = require('bcryptjs');
-const { PubSub, withFilter } = require('apollo-server');
+const { PubSub, withFilter, UserInputError } = require('apollo-server');
 
 const pubsub = new PubSub();
 pubsub.ee.setMaxListeners(30);
@@ -110,6 +110,13 @@ const resolvers = {
 		async createUser(_, args, context) {
 			const session = await context.driver.session();
 			const password = await hash(args.password, 10);
+
+			const userQuery = 'MATCH (n:User{name: $name}) RETURN n';
+			const isUserExists = await session.run(userQuery, { name: args.name }).then((result) => result.records[0]);
+
+			if (isUserExists) {
+				throw new UserInputError('Existing user with the given name');
+			}
 
 			const query = 'CREATE (n:User{name:$name, password:$password}) RETURN n';
 

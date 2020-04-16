@@ -1,13 +1,8 @@
 import React from 'react';
-import { LinkButton, Box } from 'style';
+import { LinkButton, Box, Text } from 'style';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
 
-type Props = {
-  error?: string;
-};
-
-// TODO: Create error view
-const ErrorView: React.FC<Props> = ({ children, error }) => {
+const ErrorView: React.FC = () => {
   return (
     <Box
       display={'flex'}
@@ -17,13 +12,11 @@ const ErrorView: React.FC<Props> = ({ children, error }) => {
       alignContent={'center'}
       height={'100vh'}
     >
-      Error View ----------------------- {error ? error : ''}
-      <LinkButton
-        to={`${RECIPES_VIEW}`}
-        color={'warn.600'}
-        borderRadius={'5px'}
-        boxShadow={'neumorphism'}
-      >
+      <Text variant="cursive" fontSize={80} fontWeight={400}>
+        Opss...
+      </Text>
+      <Text mt={4}>Something went wrong</Text>
+      <LinkButton to={`${RECIPES_VIEW}`} mt={7}>
         Go Back
       </LinkButton>
     </Box>

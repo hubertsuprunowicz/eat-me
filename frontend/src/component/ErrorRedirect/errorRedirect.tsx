@@ -7,7 +7,6 @@ type Props = {
   error: ApolloError | string;
 };
 
-// TODO: more generic. fe. error could be only string
 function checkIfNotAuthorized(error: ApolloError): boolean {
   return (
     error.graphQLErrors &&
@@ -17,15 +16,26 @@ function checkIfNotAuthorized(error: ApolloError): boolean {
 }
 
 const ErrorRedirect: React.FC<Props> = ({ error }) => {
-  console.error(error);
   if (typeof error === 'string') {
     return <Redirect to={ERROR_VIEW} />;
   }
 
+  const errorMessage = error.networkError
+    ? error.networkError.message
+    : error.graphQLErrors[0].message;
+
+  // TODO: pass error message to error view
+  // currently solution not working
   return checkIfNotAuthorized(error) ? (
     <Redirect to={LOGIN_VIEW} />
   ) : (
-    <Redirect to={ERROR_VIEW} />
+    <Redirect
+      to={{
+        pathname: ERROR_VIEW,
+        state: { error: errorMessage },
+        key: errorMessage,
+      }}
+    />
   );
 };
 

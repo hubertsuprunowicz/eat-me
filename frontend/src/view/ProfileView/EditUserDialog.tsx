@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { useMutation } from '@apollo/react-hooks';
 import { EDIT_USER } from './profile.graphql';
 import User from 'model/user';
-import { Textarea } from './profile.view.style';
+import { Textarea } from './styles';
 import { isEmpty } from 'view/MessageView/MessageDialog';
 
 type EditUserForm = {
@@ -186,6 +186,10 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
             minLength: {
               value: 4,
               message: 'Description needs to be at least 4 characters long',
+            },
+            maxLength: {
+              value: 480,
+              message: 'Description needs to be at most 480 characters long',
             },
           })}
         />

@@ -56,6 +56,10 @@ import {
   position,
   padding,
   PaddingProps,
+  lineHeight,
+  LineHeightProps,
+  ZIndexProps,
+  zIndex,
 } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
 import { Link, LinkProps } from 'react-router-dom';
@@ -73,11 +77,8 @@ export const Main = styled.main`
     height: 100px;
   }
 
-  > * {
-    ::-webkit-input-placeholder {
-      font-family: 'Raleway', sans-serif;
-      color: red !important;
-    }
+  ::-webkit-input-placeholder {
+    font-family: 'Raleway', sans-serif;
   }
 
   * {
@@ -310,12 +311,14 @@ type Props = ColorProps &
   PositionProps &
   MarginProps &
   FlexWrapProps &
+  ZIndexProps &
   TextAlignProps & { cursor?: 'pointer' | 'none' };
 
 export const Box = styled.div<Props>`
   ${flexWrap}
   ${textAlign}
   ${position}
+  ${zIndex}
   ${margin}
   ${alignContent}
   ${justifyContent}
@@ -346,31 +349,31 @@ type TagProps = WidthProps &
   Variant &
   BorderRadiusProps &
   SpaceProps &
-  BoxShadowProps & { cursor?: 'pointer' | 'none' };
+  BoxShadowProps & { cursor?: 'pointer' | 'none' } & {
+    border?: 'double' | 'none';
+  };
 
-export const Tag = styled('div')<TagProps>`
-${color}
-${width}
-${height}
-${space}
-${boxShadow}
-${borderRadius}
+export const Tag = styled.div<TagProps>`
 cursor: ${props => props.cursor};
 border-radius: 10px;
+border: ${props => (props.border === 'none' ? undefined : '5px double white')};
 margin: 3px 5px 3px 5px;
 padding: 8px;
 color: white;
 font-size: 0.75em;
 letter-spacing: 1px;
 font-weight: 600;
-/* border: 4px solid #eee; */
-/* box-shadow: inset 3px 3px 3px rgba(0,0,0,0.2), inset -3px -4px 4px rgba(255,255,255,0.4); */
-box-shadow: inset 3px 3px 3px rgba(0,0,0,0.2);
-
 > * {
   margin-left: 3px;
   margin-right: 3px;
 }
+
+${color}
+${width}
+${height}
+${space}
+${boxShadow}
+${borderRadius}
 
 ${variant({
   prop: 'variant',
@@ -392,53 +395,18 @@ type TextProps = TextAlignProps &
   FontSizeProps &
   FontWeightProps &
   ColorProps &
+  LineHeightProps &
   PaddingProps &
-  MarginProps;
+  MarginProps & { variant?: 'cursive' };
 
-export const Text = styled('span')<TextProps>`
-${color}
-${textAlign}
-${fontSize}
-${fontWeight}
-${padding}
-${margin}
+export const Text = styled.span<TextProps>`
+  font-family: ${props =>
+    props.variant === 'cursive' ? 'Pacifico, cursive' : undefined};
+  ${color} 
+  ${lineHeight} 
+  ${textAlign} 
+  ${fontSize} 
+  ${fontWeight} 
+  ${padding}
+  ${margin}
 `;
-
-// (
-//   {
-//     borderRadius: '20px',
-//     margin: '3px 5px 3px 5px',
-//     padding: '7px',
-//     color: 'white',
-//     fontSize: '0.75em',
-//     boxShadow: `${themeGet('shadows.insetNeo')}`,
-
-//     '> *': {
-//       marginLeft: '3px',
-//       marginRight: '3px',
-//     },
-//   },
-//   color,
-//   width,
-//   height,
-//   space,
-//   boxShadow,
-//   borderRadius,
-//   variant({
-//     prop: 'variant',
-//     scale: 'tags',
-//     variants: {
-//       primary: {
-//         color: 'white',
-//         bg: 'white',
-//       },
-//       secondary: {
-//         color: 'white',
-//         bg: 'white',
-//       },
-//     },
-//   })
-// );
-
-// TODO: <Text />
-// TODO: <LinkButton />

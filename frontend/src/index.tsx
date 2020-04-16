@@ -8,7 +8,7 @@ import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import { onError } from 'apollo-link-error';
-import { ApolloLink, split } from 'apollo-link';
+import { ApolloLink, split, GraphQLRequest } from 'apollo-link';
 import { RetryLink } from 'apollo-link-retry';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
@@ -16,10 +16,10 @@ import { getMainDefinition } from 'apollo-utilities';
 require('dotenv').config();
 
 const httpLink = createHttpLink({
-  uri: process.env.REACT_APP_GRAPHQL,
+  uri: process.env.REACT_APP_GRAPHQL || 'http://localhost:4000/graphql',
 });
 
-const authLink = setContext((_, { headers }: any) => {
+const authLink = setContext((_: GraphQLRequest, { headers }: any) => {
   const token = sessionStorage.getItem('token');
 
   return {
@@ -40,8 +40,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 
   if (networkError) {
-    console.error(`[Network error]: `);
-    console.error(networkError);
+    console.error(`[Network error]: `, networkError);
   }
 });
 

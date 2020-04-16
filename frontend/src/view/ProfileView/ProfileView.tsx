@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { BackgroundImage, TagWrapper, EditButton } from './profile.view.style';
-import { Box, Tag, Button, LinkButton } from 'style';
+import { BackgroundImage, TagWrapper, TagText } from './styles';
+import { Box, Tag, Button, LinkButton, Text } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
@@ -11,6 +11,7 @@ import EditUserDialog from './EditUserDialog';
 import FormModal from 'component/FormModal/FormModal';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
+import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 
 const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
 
@@ -33,45 +34,40 @@ const ProfileView: React.FC = () => {
     },
   });
 
+  if (error) return <ErrorRedirect error={error} />;
   if (!data) return null;
-  const { name, email, avatar, description, recipe } = data.User[0];
+  const { name, avatar, description, recipe } = data.User[0];
 
   return (
-    <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
-      <BackgroundImage
-        src={avatar ? avatar : defaultAvatar}
-        alt={name + '_avatar'}
-      />
-      <Box
-        mt={-130}
-        p={4}
-        borderRadius={5}
-        width={'80%'}
-        backgroundColor={'white'}
-        display={'flex'}
-        justifyContent={'space-around'}
-        flexDirection={'column'}
-        minHeight={'240px'}
-        maxHeight={'280px'}
-        alignContent={'space-around'}
-        alignItems={'center'}
-        boxShadow={'spread'}
-        position={'relative'}
-      >
-        <LoadingOverlay isLoading={loading}>
-          {(user && user.name === username) ||
-            (!username && (
-              <EditButton
-                mt={4}
-                mr={4}
-                borderRadius={0}
-                boxShadow="insetNeo"
-                onClick={() => setIsOpen(true)}
-              >
-                <FontAwesomeIcon size={'lg'} icon={faEdit} />
-              </EditButton>
-            ))}
-          <span>{name}</span>
+    <LoadingOverlay isLoading={loading}>
+      <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
+        <BackgroundImage
+          src={avatar ? avatar : defaultAvatar}
+          alt={name + '_avatar'}
+        />
+
+        <Box
+          mt={-130}
+          p={7}
+          borderRadius={0}
+          width={'80%'}
+          backgroundColor={'white'}
+          display={'flex'}
+          justifyContent={'space-around'}
+          flexDirection={'column'}
+          minHeight={'240px'}
+          maxHeight={'340px'}
+          alignContent={'space-around'}
+          alignItems={'center'}
+          boxShadow={'spread'}
+          position={'relative'}
+        >
+          <Text variant={'cursive'} color={'grey.900'} mt={-20} fontSize={40}>
+            {name}
+          </Text>
+          <Text fontSize={0} margin={0}>
+            {description}
+          </Text>
           <Box
             display={'flex'}
             flexDirection={'column'}
@@ -79,15 +75,16 @@ const ProfileView: React.FC = () => {
             pr={3}
             pl={3}
           >
-            <p style={{ fontSize: '12px', margin: 0 }}>{description}</p>
             {recipe && recipe.length > 0 && (
               <>
-                <hr style={{ width: '100%' }} />
-                <h4
-                  style={{ fontSize: '14px', margin: 0, marginBottom: '5px' }}
+                <TagText
+                  color={'grey.300'}
+                  fontWeight={700}
+                  fontSize={65}
+                  variant={'cursive'}
                 >
                   Favourites!
-                </h4>
+                </TagText>
                 <TagWrapper>
                   {recipe.slice(0, 3).map((it: any) => (
                     <Tag key={it.tag[0]._id} bg={'primary.500'}>
@@ -98,38 +95,41 @@ const ProfileView: React.FC = () => {
               </>
             )}
           </Box>
-        </LoadingOverlay>
-      </Box>
+        </Box>
 
-      <Box mt={5}>
-        <Button
-          color={'secondary.600'}
-          borderRadius={'5px'}
-          mr={4}
-          boxShadow={'neumorphism'}
-        >
-          Send Message
-        </Button>
-        <LinkButton to={`${RECIPES_VIEW}/${getName()}`} color={'warn.600'}>
-          Recipes
-        </LinkButton>
-      </Box>
+        <Box mt={5}>
+          {(user && user.name === username) ||
+            (!username && (
+              <Button
+                color={'secondary.600'}
+                onClick={() => setIsOpen(true)}
+                mr={4}
+                boxShadow={'neumorphism'}
+              >
+                Edit Profile
+              </Button>
+            ))}
+          <LinkButton to={`${RECIPES_VIEW}/${getName()}`} color={'warn.600'}>
+            Recipes
+          </LinkButton>
+        </Box>
 
-      {data && (
-        <FormModal
-          title="Edit User"
-          isOpen={isOpen}
-          closeModal={() => setIsOpen(false)}
-          allRequired={false}
-        >
-          <EditUserDialog
-            refetch={refetch}
-            user={data.User[0]}
-            setIsOpen={setIsOpen}
-          />
-        </FormModal>
-      )}
-    </Box>
+        {data && (
+          <FormModal
+            title="Edit User"
+            isOpen={isOpen}
+            closeModal={() => setIsOpen(false)}
+            allRequired={false}
+          >
+            <EditUserDialog
+              refetch={refetch}
+              user={data.User[0]}
+              setIsOpen={setIsOpen}
+            />
+          </FormModal>
+        )}
+      </Box>
+    </LoadingOverlay>
   );
 };
 

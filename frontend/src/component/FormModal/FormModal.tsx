@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from 'react-modal';
 import { FormModalStyle, modalStyle, CloseButton } from './form.modal.style';
-import { Box, IconButton, Button, Text } from 'style';
+import { Box, Text } from 'style';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { BooleanValueNode } from 'graphql';
 
 type Props = {
   title: string;
   isOpen: boolean;
   closeModal: () => void;
-  submitData?: ({}: any) => Promise<void>;
+  submitData?: (arg: any) => Promise<void>;
   allRequired?: boolean;
 };
 

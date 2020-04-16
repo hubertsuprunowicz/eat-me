@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { StyledRating } from './recipe.view.style';

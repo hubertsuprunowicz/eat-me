@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import useForm from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import * as Style from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { useMutation } from '@apollo/react-hooks';
-import { useAuthState } from 'utils/auth';
-import User from 'model/user';
-import { isEmpty } from 'view/MessageView/MessageDialog';
 import { Difficulty, Ingredient, Tag } from 'view/RecipesView/AddRecipeForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from './recipe.view.style';
@@ -39,13 +36,10 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   );
   const {
     handleSubmit,
-    getValues,
-    formState,
     setValue,
     register,
     setError,
     errors,
-    triggerValidation,
     reset,
     clearError,
     watch,

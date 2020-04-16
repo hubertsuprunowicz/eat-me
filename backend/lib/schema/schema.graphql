@@ -134,7 +134,6 @@ type Message {
 	id: ID
 	addressee: User! @relation(name: "SENT_TO", direction: "OUT")
 	sender: User! @relation(name: "SENT_FROM", direction: "OUT")
-	title: String!
 	message: String!
 	timestamp: Long!
 }

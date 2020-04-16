@@ -1,14 +1,13 @@
 import React from 'react';
-import { Box, IconButton, Text } from 'style';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import { WatchesList, SubscribeTag } from './watches.view.style';
+import { Box, Text } from 'style';
+import { WatchesList } from './styles';
 import { Link } from 'react-router-dom';
-import { useSubscription, useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { RECIPE_DISCOVERD, WATCHES_RECIPES } from './watches.graphql';
 import { useAuthState } from 'utils/auth';
-import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
+import { PROFILE_VIEW } from 'view/Route/constants.route';
+import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 
 const WatchesView: React.FC = () => {
   const { user } = useAuthState();
@@ -43,22 +42,17 @@ const WatchesView: React.FC = () => {
     },
   });
 
-  if (loading) return <>loading...</>;
-
   return (
     <Box p={5} style={{ paddingBottom: '80px' }}>
-      <Box display={'flex'} justifyContent={'space-between'}>
+      <Box display={'flex'} justifyContent={'flex-start'}>
         <span>Watches</span>
-        <IconButton bg="transparent">
-          <FontAwesomeIcon icon={faEllipsisV} />
-        </IconButton>
       </Box>
       <LoadingOverlay isLoading={loading}>
         <WatchesList>
           {data &&
             data.watchesRecipes.map((it: any) => (
               <li key={it.id}>
-                <Link to="/profile">
+                <Link to={`${PROFILE_VIEW}/${it.user.name}`}>
                   <img src={it.image} alt={it.name + '_image'} />
                   <Text fontSize={0} fontWeight={400}>
                     by{' '}

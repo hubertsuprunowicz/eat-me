@@ -18,7 +18,7 @@ import ProfileView from 'view/ProfileView/ProfileView';
 import { theme } from 'utils/theme';
 import WatchesView from 'view/WachesView/WatchesView';
 import MessageView from 'view/MessageView/MessageView';
-import ErrorView from 'component/ErrorRedirect/errorView';
+import ErrorView from 'component/ErrorRedirect/ErrorView';
 import { Authorization, AuthProvider } from 'utils/auth';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

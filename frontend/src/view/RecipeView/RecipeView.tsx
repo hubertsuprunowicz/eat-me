@@ -153,7 +153,7 @@ const RecipeView: React.FC = () => {
           mt={-70}
           p={5}
           pb={4}
-          borderRadius={5}
+          borderRadius={0}
           width={'80%'}
           backgroundColor={'white'}
           display={'flex'}
@@ -165,15 +165,9 @@ const RecipeView: React.FC = () => {
           boxShadow={'neumorphism'}
           position={'relative'}
         >
-          <span
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
+          <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
             {name}
-          </span>
+          </Text>
           {/* TODO: change 'user' to name of recipe author */}
 
           <Box display={'flex'} flexDirection={'column'} width={'80%'}>
@@ -201,7 +195,6 @@ const RecipeView: React.FC = () => {
                 <EditButton
                   mt={-3}
                   mb={2}
-                  borderRadius={'5px'}
                   boxShadow={'neumorphism'}
                   onClick={() => setIsRecipeDialogOpen(true)}
                 >
@@ -221,7 +214,7 @@ const RecipeView: React.FC = () => {
               <span>difficulty</span>
               <span>{difficulty.toLowerCase()}</span>
             </Box>
-            <span style={{ marginTop: '4px' }}>ingredients</span>
+            <Text mt={3}>ingredients</Text>
             <Box display={'flex'} justifyContent={'space-between'}>
               <IngredientsList>
                 {ingredient.map((it: any, index: number) => (
@@ -298,28 +291,21 @@ const RecipeView: React.FC = () => {
 
         <Box p={8}>
           <Box display={'flex'} justifyContent={'center'}>
-            <span
-              style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                textAlign: 'center',
-              }}
+            <Text
+              variant="cursive"
+              fontWeight={700}
+              fontSize={5}
+              color={'grey.800'}
             >
               How to do it?
-            </span>
+            </Text>
           </Box>
-          <p style={{ lineHeight: '21px' }}>{description}</p>
+          <Text lineHeight={'21px'}>{description}</Text>
         </Box>
         <Box p={8}>
-          <span
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
+          <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
             Author
-          </span>
+          </Text>
           <Box display={'flex'} mt={3}>
             <Box
               mr={7}
@@ -342,33 +328,23 @@ const RecipeView: React.FC = () => {
           <Box>
             <span>
               Your rating of this recipe is{' '}
-              <b style={{ fontWeight: 700 }}>
-                {comment[alreadyVoted()].rating}/5
-              </b>
+              <Text fontWeight={700}>{comment[alreadyVoted()].rating}/5</Text>
             </span>
           </Box>
         )}
         {alreadyVoted() === -1 && (
           <Box display="flex" alignItems="center">
-            <span
-              style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                textAlign: 'center',
-              }}
-            >
+            <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
               Leave your feedback{' '}
-            </span>
+            </Text>
             <Button
-              color={'black'}
-              borderRadius={'5px'}
+              color={'grey.900'}
               ml={4}
               p={5}
               boxShadow={'neumorphism'}
-              style={{ fontSize: '1.3rem' }}
               onClick={() => setIsCommentDialogOpen(true)}
             >
-              here!
+              <Text fontSize="1.3rem">here!</Text>
             </Button>
           </Box>
         )}

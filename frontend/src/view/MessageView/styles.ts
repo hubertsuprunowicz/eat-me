@@ -40,7 +40,7 @@ export const MessageList = styled.ul`
 	}
 
 	img {
-		object-fit: cover;
+		object-fit: contain;
 		border-radius: 50%;
 		box-shadow: 9px 9px 16px rgb(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
 

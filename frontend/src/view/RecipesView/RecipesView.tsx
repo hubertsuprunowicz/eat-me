@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import SwipeableViews from 'react-swipeable-views';
-// import TinderCard from 'react-tinder-card';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
 import { useQuery } from '@apollo/react-hooks';
 import User from '../../model/user';
-import { Box, Button, Text } from '../../style';
+import { Box, Button } from '../../style';
 import { RECIPES } from './recipes.graphql';
-import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
+import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFilter,
@@ -107,10 +105,8 @@ const RecipesView: React.FC = () => {
     });
   };
 
-  // TODO
+  if (error) return <ErrorRedirect error={error} />;
   if (!data) return null;
-  // if (loading) return <>Loading data...</>;
-  // if (error) return <ErrorRedirect error={error} />;
 
   const recipes = data.Recipe;
   return (
@@ -145,7 +141,6 @@ const RecipesView: React.FC = () => {
         <FontAwesomeIcon size={'xs'} icon={faHeart} /> Loved list
         <Badge backgroundColor={'danger.500'}>{lovedList.length}</Badge>
       </Button>
-      {/* <h2 style={{ padding: '0 40px' }}>What are you going to eat today?</h2> */}
       <LoadingOverlay height={'80vh'} isLoading={loading}>
         {!allRecipes &&
           lovedList.map((recipe: Recipe, index: number) => (
@@ -198,7 +193,7 @@ const RecipesView: React.FC = () => {
           allRequired={false}
           closeModal={() => setFilterIsOpen(false)}
         >
-          <Filter setIsOpen={setRecipeIsOpen} setFilter={setFilter} />
+          <Filter setIsOpen={setFilterIsOpen} setFilter={setFilter} />
         </FormModal>
       )}
     </Box>

@@ -12,7 +12,7 @@ import {
   MESSAGE_RECIVED,
   DELETE_MESSAGE,
 } from './message.graphql';
-import ErrorRedirect from 'component/ErrorRedirect/errorRedirect';
+import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { formatDistance } from 'date-fns';
 import debounce from 'lodash.debounce';
 import Form from 'component/Form/Form';
@@ -24,12 +24,15 @@ import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 type RowProps = {
   _id: string;
   sender: {
+    avatar: string;
     name: string;
   };
   message: string;
   timestamp: number;
   deleteMessage: any;
 };
+
+const defaultAvatar = 'img/user-solid.svg';
 
 const Row: React.FC<RowProps> = ({
   _id,
@@ -53,8 +56,8 @@ const Row: React.FC<RowProps> = ({
         height="35px"
       >
         <img
-          src="https://www.gdansk.pl/download/2019-09/135042.jpg"
-          alt={sender.name + '_image'}
+          src={sender.avatar ? sender.avatar : defaultAvatar}
+          alt={sender.name}
         />
       </LinkIconButton>
 
@@ -72,10 +75,10 @@ const Row: React.FC<RowProps> = ({
           <Text fontSize={10}>{formatDistance(timestamp, new Date())}</Text>
         </Box>
         <Box display="flex" justifyContent={'space-between'}>
-          <Text p={4} pl={0} fontSize={10} color={'grey'}>
+          <Text p={4} pl={0} fontSize={11} color={'grey.900'}>
             {textDropDown
               ? message
-              : message.slice(0, 90) + (message.length > 90 ? '...' : '')}
+              : message.slice(0, 100) + (message.length > 100 ? '...' : '')}
           </Text>
           <IconButton
             onClick={() => deleteMessage({ variables: { id: _id } })}
@@ -104,21 +107,17 @@ const MessageView: React.FC = () => {
     by?: string;
   }>({});
 
-  const {
-    data,
-    loading,
-    subscribeToMore,
-    refetch,
-    updateQuery,
-    fetchMore,
-  } = useQuery(YOUR_MESSAGES, {
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      name: user!.name,
-      ...searchBody,
-      offset: 0,
+  const { data, loading, subscribeToMore, refetch, fetchMore } = useQuery(
+    YOUR_MESSAGES,
+    {
+      fetchPolicy: 'cache-and-network',
+      variables: {
+        name: user!.name,
+        ...searchBody,
+        offset: 0,
+      },
     },
-  });
+  );
 
   const [deleteMessage] = useMutation(DELETE_MESSAGE, {
     onError: _ => {
@@ -126,7 +125,7 @@ const MessageView: React.FC = () => {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
-    onCompleted: data => {
+    onCompleted: _data => {
       refetch();
       // TODO: update query via immer after delete
       // updateQuery: (prev, { subscriptionData }) => {
@@ -208,8 +207,8 @@ const MessageView: React.FC = () => {
   );
 
   return (
-    <Box pt={6} style={{ paddingBottom: '80px' }}>
-      <Box pl={6} pr={6} display={'flex'} justifyContent={'space-between'}>
+    <Box p={5}>
+      <Box display={'flex'} justifyContent={'space-between'}>
         <span>Message</span>
         <div>
           <Button
@@ -242,17 +241,16 @@ const MessageView: React.FC = () => {
             ) : (
               data &&
               data.messages &&
-              data.messages.map(
-                ({ _id, title, message, timestamp, sender }: any) => (
-                  <Row
-                    _id={_id}
-                    message={message}
-                    timestamp={timestamp}
-                    sender={sender}
-                    deleteMessage={deleteMessage}
-                  />
-                ),
-              )
+              data.messages.map(({ _id, message, timestamp, sender }: any) => (
+                <Row
+                  key={_id}
+                  _id={_id}
+                  message={message}
+                  timestamp={timestamp}
+                  sender={sender}
+                  deleteMessage={deleteMessage}
+                />
+              ))
             )}
             <li></li>
           </MessageList>
