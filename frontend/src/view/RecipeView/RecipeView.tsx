@@ -4,6 +4,7 @@ import {
   EditButton,
   IngredientsList,
   AuthorImage,
+  TagsHolder,
 } from './recipe.view.style';
 import { Box, Button, LinkButton, Text, IconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -232,36 +233,20 @@ const RecipeView: React.FC = () => {
               </IngredientsList>
             </Box>
           </Box>
-          <Box
+          <TagsHolder
             mt={3}
             display={'flex'}
             flexWrap={'wrap'}
             justifyContent={'center'}
-            style={{
-              borderBottomLeftRadius: '5px',
-              borderBottomRightRadius: '5px',
-              fontSize: '0.8rem',
-            }}
             p={4}
           >
-            <span
-              style={{
-                position: 'absolute',
-                fontSize: '5rem',
-                fontWeight: 'bold',
-                left: 15,
-                bottom: -10,
-                opacity: 0.05,
-              }}
-            >
-              #
-            </span>
+            <span>#</span>
             {tag.map((it: any, index: number) => (
-              <span key={index} style={{ padding: '5px', fontWeight: 600 }}>
+              <Text p={3} fontWeight={700} key={index}>
                 {it.name}
-              </span>
+              </Text>
             ))}
-          </Box>
+          </TagsHolder>
         </Box>
         <Box mt={7}>
           {subscribed ? (

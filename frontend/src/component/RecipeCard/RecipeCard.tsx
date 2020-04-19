@@ -11,7 +11,7 @@ import {
   faMoneyBill,
   faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { Card, CardDetails, TagWrapper } from './recipe.card.style';
+import { Card, CardDetails, TagWrapper } from './styles';
 import { Recipe } from 'view/RecipesView/RecipesView';
 import { PROFILE_VIEW, RECIPE_VIEW } from 'view/Route/constants.route';
 

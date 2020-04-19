@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from '../../component/RecipeCard/recipe.card.style';
+import { Card } from '../../component/RecipeCard/styles';
 import Form from '../../component/Form/Form';
 import { AuthButton, AuthSwitch, Avatar } from './login.view.style';
 import { LOGIN, CREATE_USER } from './login.graphql';

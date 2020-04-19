@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from 'style';
+import { Button, Box } from 'style';
 import Rating from 'react-rating';
 import { themeGet } from '@styled-system/theme-get';
 import { WidthProps, MarginProps, margin } from 'styled-system';
@@ -73,5 +73,20 @@ export const StyledRating = styled(Rating)`
     margin: 0 1px;
     font-size: 13px;
     color: ${themeGet('colors.primary.200')};
+  }
+`;
+
+export const TagsHolder = styled(Box)`
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  font-size: 0.8rem;
+
+  :first-of-type(span) {
+    position: absolute;
+    font-size: 5rem;
+    font-weight: bold;
+    left: 15;
+    bottom: -10;
+    opacity: 0.05;
   }
 `;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormDefault } from './form.style';
+import { FormDefault } from './styles';
 
 type Props = {
   onSubmit?: (e: React.FormEvent) => void;

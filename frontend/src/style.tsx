@@ -396,6 +396,7 @@ type TextProps = TextAlignProps &
   FontWeightProps &
   ColorProps &
   LineHeightProps &
+  WidthProps &
   PaddingProps &
   MarginProps & { variant?: 'cursive' };
 
@@ -403,7 +404,8 @@ export const Text = styled.span<TextProps>`
   font-family: ${props =>
     props.variant === 'cursive' ? 'Pacifico, cursive' : undefined};
   ${color} 
-  ${lineHeight} 
+  ${lineHeight}
+  ${width}
   ${textAlign} 
   ${fontSize} 
   ${fontWeight} 

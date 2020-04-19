@@ -6,7 +6,7 @@ import {
   faEye,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { Footer, StyledNavLink, NavList } from './navigate.style';
+import { Footer, StyledNavLink, NavList } from './styles';
 import {
   PROFILE_VIEW,
   RECIPES_VIEW,

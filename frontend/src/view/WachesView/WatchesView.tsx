@@ -43,7 +43,7 @@ const WatchesView: React.FC = () => {
   });
 
   return (
-    <Box p={5} style={{ paddingBottom: '80px' }}>
+    <Box p={5} pb={80}>
       <Box display={'flex'} justifyContent={'flex-start'}>
         <span>Watches</span>
       </Box>
