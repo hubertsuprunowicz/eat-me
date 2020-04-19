@@ -7,13 +7,13 @@ import { useAuthState } from 'utils/auth';
 import { useParams } from 'react-router-dom';
 import { USER } from './profile.graphql';
 import { useQuery } from '@apollo/react-hooks';
-import EditUserDialog from './EditUserDialog';
+import UpdateUserDialog from './UpdateUserDialog';
 import FormModal from 'component/FormModal/FormModal';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 
-const defaultAvatar = 'https://www.gdansk.pl/download/2019-09/135042.jpg';
+const defaultAvatar = 'img/user-solid.svg';
 
 const ProfileView: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -121,7 +121,7 @@ const ProfileView: React.FC = () => {
             closeModal={() => setIsOpen(false)}
             allRequired={false}
           >
-            <EditUserDialog
+            <UpdateUserDialog
               refetch={refetch}
               user={data.User[0]}
               setIsOpen={setIsOpen}

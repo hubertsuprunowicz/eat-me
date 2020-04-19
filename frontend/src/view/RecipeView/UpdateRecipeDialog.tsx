@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldError } from 'react-hook-form';
 import * as Style from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { useMutation } from '@apollo/react-hooks';
-import { Difficulty, Ingredient, Tag } from 'view/RecipesView/AddRecipeForm';
+import { Difficulty, Ingredient, Tag } from 'view/RecipesView/CreateRecipeForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from './recipe.view.style';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Recipe } from 'view/RecipesView/RecipesView';
-import { RECIPE_UPDATE } from './recipe.graphql';
+import { UPDATE_RECIPE } from './recipe.graphql';
+import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 
-type EditRecipeForm = {
+type UpdateRecipeForm = {
   id: number;
   title?: string;
   description?: string;
   image?: string;
-  time?: string;
+  time?: number;
   difficulty?: Difficulty;
-  totalCost?: string;
+  totalCost?: number;
   tag?: Tag;
   tags?: Tag[];
   ingredient?: Ingredient;
   ingredients?: Ingredient[];
+  mutationError?: FieldError;
 };
 
 type Props = { recipe: Recipe; setIsOpen: (arg: boolean) => void };
 
-const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
+const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   const [, resetComponent] = useState();
   const [paginationForm, setPaginationForm] = useState<1 | 2 | 3>(1);
   const [tags, setTags] = useState<Tag[]>(recipe.tag);
@@ -43,37 +45,49 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
     reset,
     clearError,
     watch,
-  } = useForm<EditRecipeForm>();
+  } = useForm<UpdateRecipeForm>({
+    defaultValues: {
+      description: recipe.description,
+      difficulty: recipe.difficulty,
+      image: recipe.image,
+      title: recipe.title,
+      time: recipe.time,
+      totalCost: recipe.totalCost,
+    },
+  });
 
-  const [editUser] = useMutation(RECIPE_UPDATE, {
-    onError: _ => {
-      toast.error('Something has failed', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
+  const [editUser] = useMutation(UPDATE_RECIPE, {
+    onError: error => {
+      setError(
+        'mutationError',
+        'mutationError',
+        error.graphQLErrors[0].message,
+      );
     },
     onCompleted: () => {
+      reset();
+      setIsOpen(false);
       toast.success('Message has been sent', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
   });
 
-  const onSubmit = (data: EditRecipeForm) => {
+  const onSubmit = (data: UpdateRecipeForm) => {
     editUser({
       variables: {
         id: recipe._id,
         name: data.title,
         description: data.description,
         image: data.image,
-        time: data.time ? parseInt(data.time) : undefined,
+        time: data.time ? parseInt(data.time.toString()) : undefined,
         tag: tags,
         ingredient: ingredients,
-        totalCost: data.totalCost ? parseFloat(data.totalCost) : undefined,
+        totalCost: data.totalCost
+          ? parseFloat(data.totalCost.toString())
+          : undefined,
         difficulty: data.difficulty,
       },
-    }).then(() => {
-      reset();
-      setIsOpen(false);
     });
   };
 
@@ -97,16 +111,18 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
 
     if (tag.name.length < 3) {
       setError(
-        'tags',
+        'tag',
         'tooShort',
         'This text should be at least 3 letters long',
       );
-    } else if (tags.length >= 6) {
-      setError('tags', 'tooMany', 'There is too many tags');
+    } else if (tag.name.length > 20) {
+      setError('tag', 'tooLong', 'Tag name should be at most 20 letters long');
+    } else if (tags.length > 6) {
+      setError('tag', 'tooMany', 'There should be at most 6 tags');
     } else {
-      clearError('tags');
+      clearError('tag');
       setTags([...tags, tag]);
-      setValue('tag', { name: '' });
+      setValue('tag.name', '');
     }
   };
 
@@ -116,14 +132,33 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
 
     if (ingredient.name.length < 3) {
       setError(
-        'ingredients',
+        'ingredient',
         'tooShort',
-        'This text should be at least 3 letters long',
+        'Ingredient name should be at least 3 letters long',
+      );
+    } else if (ingredient.name.length > 24) {
+      setError(
+        'ingredient',
+        'tooLong',
+        'Ingredient name should be at most 24 letters long',
+      );
+    } else if (ingredient.amount.length > 6) {
+      setError(
+        'ingredient',
+        'tooLong',
+        'Ingredient amount should be at most 6 letters long',
+      );
+    } else if (ingredients.length > 12) {
+      setError(
+        'ingredient',
+        'tooMany',
+        'There should be at most 12 ingredients',
       );
     } else {
-      clearError('ingredients');
+      clearError('ingredient');
       setIngredients([...ingredients, ingredient]);
-      setValue('ingredient', { name: '', amount: '' });
+      setValue('ingredient.name', '');
+      setValue('ingredient.amount', '');
     }
   };
 
@@ -142,9 +177,18 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           type="text"
           placeholder="Enter Title"
           name="title"
-          defaultValue={recipe.name}
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 6,
+              message: 'Title needs to be at least 6 characters long',
+            },
+            maxLength: {
+              value: 64,
+              message: 'Title must not exceed 64 characters long',
+            },
+          })}
         />
+        <ErrorMessage errors={errors} name={'title'} />
         <label htmlFor="image">
           <span>Image Link</span>
         </label>
@@ -152,20 +196,29 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           type="text"
           placeholder="Enter Image Link"
           name="image"
-          defaultValue={recipe.image}
-          ref={register}
+          ref={register({
+            minLength: {
+              value: 5,
+              message: 'Image link needs to be at least 5 characters long',
+            },
+          })}
         />
+        <ErrorMessage errors={errors} name={'image'} />
         <label htmlFor="time">
           <span>Time</span>
         </label>
         <input
           type="number"
-          placeholder="Time needed to prepare meal(minutes)"
+          placeholder="Time needed to prepare meal (minutes)"
           name="time"
-          min={5}
-          defaultValue={recipe.time.toString()}
-          ref={register}
+          ref={register({
+            min: {
+              value: 5,
+              message: 'It should take at least 5 minutes to prepare the food',
+            },
+          })}
         />
+        <ErrorMessage errors={errors} name={'time'} />
         <label htmlFor="tag">
           <span>Tags</span>
         </label>
@@ -176,8 +229,6 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             placeholder="Enter tag"
             name="tag.name"
             ref={register}
-            minLength={4}
-            maxLength={20}
           />
           <Style.IconButton
             ml={4}
@@ -188,6 +239,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </Style.IconButton>
         </Style.Box>
+        <ErrorMessage errors={errors} name={'tag.name'} />
         <Style.Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
           {tags &&
             tags.map((tag: Tag, index) => (
@@ -201,7 +253,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
               </Style.Tag>
             ))}
         </Style.Box>
-        {errors.tags && errors.tags.message}
+        <ErrorMessage errors={errors} name={'tag'} />
       </Style.Box>
       <Style.Box
         display={paginationForm === 2 ? 'flex' : 'none'}
@@ -213,11 +265,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           <span>Difficulty</span>
         </label>
         <Style.Box display={'flex'}>
-          <select
-            name="difficulty"
-            defaultValue={recipe.difficulty}
-            ref={register}
-          >
+          <select name="difficulty" ref={register}>
             <option value="EASY">Easy</option>
             <option value="MEDIUM">Medium</option>
             <option value="HARD">Hard</option>
@@ -229,42 +277,74 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         <textarea
           cols={6}
           rows={4}
-          defaultValue={recipe.description}
           placeholder="Enter Description"
           name="description"
-          ref={register}
+          ref={register({
+            min: {
+              value: 40,
+              message: 'Description needs to be at least 40 characters long',
+            },
+          })}
         />
+        <ErrorMessage errors={errors} name={'description'} />
         <label htmlFor="totalCost">
           <span>Total Cost</span>
         </label>
         <input
           type="number"
-          placeholder="Enter Total Cost"
+          placeholder="Enter Total Cost (dollars)"
           name="totalCost"
-          defaultValue={recipe.totalCost.toString()}
-          ref={register}
+          ref={register({
+            min: {
+              value: 1,
+              message: 'Overall cost should be at least 1 (dollar)',
+            },
+          })}
         />
+        <ErrorMessage errors={errors} name={'totalCost'} />
         <label htmlFor="ingredient">
           <span>Ingredients</span>
         </label>
         <Style.Box display="flex">
           <Input
+            type="text"
+            name="ingredients"
+            ref={register({
+              validate: () => {
+                if (ingredients.length < 1) return 'Ingredients are required';
+
+                if (ingredients.length > 12)
+                  return 'There should be at most 12 ingredients';
+              },
+            })}
+            hidden
+          />
+          <Input
             width={132}
             type="text"
             placeholder="Enter name"
             name="ingredient.name"
-            ref={register}
-            minLength={3}
-            maxLength={20}
+            ref={register(
+              watch('ingredient.amount') || ingredients.length < 1
+                ? {
+                    required: 'Ingredient name is required',
+                  }
+                : { required: false },
+            )}
           />
           <Input
             ml={4}
             width={55}
             type="text"
-            placeholder="amount"
+            placeholder="Amount"
             name="ingredient.amount"
-            ref={register}
-            maxLength={10}
+            ref={register(
+              watch('ingredient.name') || ingredients.length < 1
+                ? {
+                    required: 'Ingredient amount is required',
+                  }
+                : { required: false },
+            )}
           />
           <Style.IconButton
             ml={4}
@@ -275,6 +355,10 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </Style.IconButton>
         </Style.Box>
+        <ErrorMessage errors={errors} name={'ingredient'} />
+        <ErrorMessage errors={errors} name={'ingredients'} />
+        <ErrorMessage errors={errors} name={'ingredient.name'} />
+        <ErrorMessage errors={errors} name={'ingredient.amount'} />
         {ingredients &&
           ingredients.map(({ name, amount }: Ingredient, index) => (
             <Style.Box
@@ -293,7 +377,7 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             </Style.Box>
           ))}
 
-        {errors.tags && errors.tags.message}
+        <ErrorMessage errors={errors} name={'ingredient'} />
       </Style.Box>
 
       <Style.Box
@@ -358,4 +442,4 @@ const EditRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   );
 };
 
-export default EditRecipeDialog;
+export default UpdateRecipeDialog;

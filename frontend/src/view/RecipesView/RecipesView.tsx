@@ -12,7 +12,7 @@ import {
   faHeart,
 } from '@fortawesome/free-solid-svg-icons';
 import FormModal from 'component/FormModal/FormModal';
-import AddRecipeForm, { Difficulty, Tag, Ingredient } from './AddRecipeForm';
+import AddRecipeForm, { Difficulty, Tag, Ingredient } from './CreateRecipeForm';
 import { useParams } from 'react-router-dom';
 import NoRecords from 'component/NoRecords/NoRecords';
 import Filter from './Filtrer';

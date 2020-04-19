@@ -29,7 +29,6 @@ export const TagWrapper = styled.div`
 	justify-content: center;
 	margin-top: 15px;
 	width: 100%;
-	z-index: 1;
 `;
 
 export const Textarea = styled.textarea`min-height: 130px !important;`;

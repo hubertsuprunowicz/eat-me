@@ -6,6 +6,7 @@ export const USER = gql`
 			_id
 			name
 			avatar
+			email
 			description
 			recipe {
 				tag {
@@ -17,14 +18,29 @@ export const USER = gql`
 	}
 `;
 
-export const EDIT_USER = gql`
-	mutation EditUser($oldName: String!, $name: String, $password: String, $avatar: String, $description: String) {
-		editUser(
-			user: { oldName: $oldName, name: $name, password: $password, avatar: $avatar, description: $description }
+export const UPDATE_USER = gql`
+	mutation UpdateUser(
+		$oldName: String!
+		$name: String
+		$email: String
+		$password: String
+		$avatar: String
+		$description: String
+	) {
+		updateUser(
+			user: {
+				oldName: $oldName
+				name: $name
+				email: $email
+				password: $password
+				avatar: $avatar
+				description: $description
+			}
 		) {
 			_id
 			name
 			avatar
+			email
 			description
 		}
 	}

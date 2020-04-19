@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   BackgroundImage,
-  TagWrapper,
   EditButton,
   IngredientsList,
   AuthorImage,
@@ -16,17 +15,17 @@ import {
   faEyeSlash,
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import FormModal from 'component/FormModal/FormModal';
-import { RECIPES_VIEW, PROFILE_VIEW } from 'view/Route/constants.route';
-import EditRecipeDialog from './EditRecipeDialog';
+import { PROFILE_VIEW } from 'view/Route/constants.route';
+import UpdateRecipeDialog from './UpdateRecipeDialog';
 import { RECIPE, WATCHES, UNWATCHES, GET_WATCH } from './recipe.graphql';
 import Comment from 'component/Comment/Comment';
 import CommentDialog from './CommentDialog';
-import useForm from 'react-hook-form';
 import { toast } from 'react-toastify';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
+import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 
 const RecipeView: React.FC = () => {
   const [subscribed, setSubscribed] = useState<boolean>(false);
@@ -69,6 +68,20 @@ const RecipeView: React.FC = () => {
       id: id,
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      getWatch({
+        variables: {
+          subscribingUser: user!._id,
+          subscribedUser: data.Recipe[0].user._id || 0,
+        },
+      });
+    }
+
+    // Needs to load just once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const [getWatch] = useLazyQuery(GET_WATCH, {
     fetchPolicy: 'cache-and-network',
@@ -123,6 +136,7 @@ const RecipeView: React.FC = () => {
     });
   };
 
+  if (error) return <ErrorRedirect error={error} />;
   if (!data) return null;
 
   const [
@@ -374,7 +388,7 @@ const RecipeView: React.FC = () => {
             isOpen={isRecipeDialogOpen}
             closeModal={() => setIsRecipeDialogOpen(false)}
           >
-            <EditRecipeDialog
+            <UpdateRecipeDialog
               recipe={data.Recipe[0]}
               setIsOpen={setIsCommentDialogOpen}
             />

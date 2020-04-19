@@ -1,86 +1,57 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { SEND_MESSAGE, GET_USER } from './message.graphql';
 import { toast } from 'react-toastify';
 import { useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { useAuthState } from 'utils/auth';
+import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 
 type MessageForm = {
   addressee: string;
   sender: string;
   message: number;
   timestamp: number;
+  mutationError?: FieldError;
 };
-
-export function isEmpty(obj: Object) {
-  return Object.entries(obj).length === 0 && obj.constructor === Object;
-}
 
 type Props = { setIsOpen: (arg: boolean) => void };
 
 const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
   const { user } = useAuthState();
-  const {
-    getValues,
-    register,
-    setError,
-    errors,
-    triggerValidation,
-    reset,
-  } = useForm<MessageForm>();
-
-  const [getUser] = useLazyQuery(GET_USER, {
-    onError: _ => {
-      toast.error('Something has failed', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
-    },
-    onCompleted: data => {
-      if (!user) throw new Error('Not authorized exception');
-      if (data.user._id === user._id) {
-        setError('sender', 'yourself', 'you can not send message to yourself');
-        return;
-      }
-
-      const { message } = getValues();
-
-      if (!data.user) {
-        setError('addressee', 'notFound', 'provided name does not exist');
-        return;
-      }
-
-      if (!isEmpty(errors)) return;
-
-      sendMessage({
-        variables: {
-          senderID: parseInt(user._id.toString()),
-          addresseeID: parseInt(data.user._id),
-          message: message,
-          timestamp: Date.now(),
-        },
-      }).then(() => reset());
-
-      setIsOpen(false);
-    },
-  });
+  const { register, setError, errors, handleSubmit, reset } = useForm<
+    MessageForm
+  >();
 
   const [sendMessage] = useMutation(SEND_MESSAGE, {
-    onError: _ => {
-      toast.error('Something has failed', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
+    onError: error => {
+      setError(
+        'mutationError',
+        'mutationError',
+        error.graphQLErrors[0].message,
+      );
     },
     onCompleted: () => {
+      reset();
       toast.success('Message has been sent', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
   });
 
+  const onSubmit = handleSubmit(({ addressee, message }) => {
+    sendMessage({
+      variables: {
+        sender: user!.name,
+        addressee: addressee,
+        message: message,
+      },
+    });
+  });
+
   return (
-    <Form>
+    <Form onSubmit={onSubmit}>
       <Box display={'flex'} flexDirection="column" alignItems="center" p={20}>
         <label htmlFor="addressee">
           <span>Addressee</span>
@@ -90,14 +61,14 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
           placeholder="Enter Addressee"
           name="addressee"
           ref={register({
-            required: true,
+            required: 'Addressee is required',
+            validate: value => {
+              if (value === user!.name)
+                return 'You can not send message to yourself';
+            },
           })}
         />
-        {errors.addressee &&
-          errors.addressee.type === 'required' &&
-          'Your input is required'}
-        {errors.addressee && errors.addressee.message}
-        {errors.sender && errors.sender.message}
+        <ErrorMessage errors={errors} name={'addressee'} />
         <label htmlFor="message">
           <span>Message</span>
         </label>
@@ -107,12 +78,11 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
           placeholder="Enter Message"
           name="message"
           ref={register({
-            required: true,
+            required: 'Message is required',
           })}
         />
-        {errors.message &&
-          errors.message.type === 'required' &&
-          'Your input is required'}
+        <ErrorMessage errors={errors} name={'message'} />
+        <ErrorMessage errors={errors} name={'mutationError'} />
         <Box display="flex" mt={4}>
           <Button
             type="submit"
@@ -120,16 +90,6 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
             color={'secondary.500'}
             boxShadow="neumorphism"
             mr={5}
-            onClick={e => {
-              e.preventDefault();
-              triggerValidation();
-
-              return getUser({
-                variables: {
-                  name: getValues().addressee,
-                },
-              });
-            }}
           >
             Submit
           </Button>

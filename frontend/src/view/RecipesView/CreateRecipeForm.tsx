@@ -5,10 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Form from 'component/Form/Form';
 import { useMutation } from '@apollo/react-hooks';
-import { RECIPE_CREATE } from './recipes.graphql';
+import { CREATE_RECIPE } from './recipes.graphql';
 import { toast } from 'react-toastify';
 import { useAuthState } from 'utils/auth';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldError } from 'react-hook-form';
+import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -60,6 +61,7 @@ type RecipeForm = {
   ingredient: Ingredient;
   ingredients?: Ingredient[];
   totalCost: number;
+  mutationError?: FieldError;
 };
 
 type Props = { setIsOpen: (arg: boolean) => void };
@@ -82,46 +84,73 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
   const { user } = useAuthState();
 
   const handleTags = () => {
-    if (!watch('tag')) return;
+    const tag = watch('tag');
+    if (!tag) return;
 
-    if (watch('tag').name.length < 4) {
+    if (tag.name.length < 3) {
       setError(
-        'tags',
+        'tag',
         'tooShort',
-        'This text should be at least 4 letters long',
+        'This text should be at least 3 letters long',
       );
-    } else if (tags.length >= 6) {
-      setError('tags', 'tooMany', 'There is too many tags');
+    } else if (tag.name.length > 20) {
+      setError('tag', 'tooLong', 'Tag name should be at most 20 letters long');
+    } else if (tags.length > 6) {
+      setError('tag', 'tooMany', 'There should be at most 6 tags');
     } else {
-      clearError('tags');
-      setTags([...tags, watch('tag')]);
-      setValue('tag', { name: '' });
+      clearError('tag');
+      setTags([...tags, tag]);
+      setValue('tag.name', '');
     }
   };
 
   const handleIngredients = () => {
-    if (!watch('ingredient')) return;
+    const ingredient = watch('ingredient');
+    if (!ingredient) return;
 
-    if (watch('ingredient').name.length < 3) {
+    if (ingredient.name.length < 3) {
       setError(
-        'ingredients',
+        'ingredient',
         'tooShort',
-        'This text should be at least 3 letters long',
+        'Ingredient name should be at least 3 letters long',
+      );
+    } else if (ingredient.name.length > 24) {
+      setError(
+        'ingredient',
+        'tooLong',
+        'Ingredient name should be at most 24 letters long',
+      );
+    } else if (ingredient.amount.length > 6) {
+      setError(
+        'ingredient',
+        'tooLong',
+        'Ingredient amount should be at most 6 letters long',
+      );
+    } else if (ingredients.length > 12) {
+      setError(
+        'ingredient',
+        'tooMany',
+        'There should be at most 12 ingredients',
       );
     } else {
-      clearError('ingredients');
-      setIngredients([...ingredients, watch('ingredient')]);
-      setValue('ingredient', { name: '', amount: '' });
+      clearError('ingredient');
+      setIngredients([...ingredients, ingredient]);
+      setValue('ingredient.name', '');
+      setValue('ingredient.amount', '');
     }
   };
 
-  const [createRecipe] = useMutation(RECIPE_CREATE, {
-    onError: _ => {
-      toast.error('Something has failed', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
+  const [createRecipe] = useMutation(CREATE_RECIPE, {
+    onError: error => {
+      setError(
+        'mutationError',
+        'mutationError',
+        error.graphQLErrors[0].message,
+      );
     },
     onCompleted: () => {
+      reset();
+      setIsOpen(false);
       toast.success('Recipe has been added', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
@@ -137,6 +166,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     totalCost,
   }: RecipeForm) => {
     if (!user) throw new Error('Not authorized exception');
+
     createRecipe({
       variables: {
         name: title,
@@ -146,12 +176,9 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         tag: tags,
         ingredient: ingredients,
         totalCost: parseFloat(totalCost.toString()),
-        difficulty: difficulty.toUpperCase() as "EASY" | "MEDIUM" | "HARD",
+        difficulty: difficulty.toUpperCase() as 'EASY' | 'MEDIUM' | 'HARD',
         userID: user._id,
       },
-    }).then(() => {
-      reset();
-      setIsOpen(false);
     });
   };
 
@@ -185,9 +212,18 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           placeholder="Enter Title"
           name="title"
           ref={register({
-            required: true,
+            required: 'Title is required',
+            minLength: {
+              value: 6,
+              message: 'Title needs to be at least 6 characters long',
+            },
+            maxLength: {
+              value: 64,
+              message: 'Title must not exceed 64 characters long',
+            },
           })}
         />
+        <ErrorMessage errors={errors} name={'title'} />
         <label htmlFor="image">
           <span>Image Link</span>
         </label>
@@ -196,9 +232,14 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           placeholder="Enter Image Link"
           name="image"
           ref={register({
-            required: true,
+            required: 'Image link is required',
+            minLength: {
+              value: 5,
+              message: 'Image link needs to be at least 5 characters long',
+            },
           })}
         />
+        <ErrorMessage errors={errors} name={'image'} />
         <label htmlFor="time">
           <span>Time</span>
         </label>
@@ -208,9 +249,14 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           name="time"
           min={5}
           ref={register({
-            required: true,
+            required: 'Time is required',
+            min: {
+              value: 5,
+              message: 'It should take at least 5 minutes to prepare the food',
+            },
           })}
         />
+        <ErrorMessage errors={errors} name={'time'} />
         <label htmlFor="tag">
           <span>Tags</span>
         </label>
@@ -221,8 +267,6 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             placeholder="Enter tag"
             name="tag.name"
             ref={register}
-            minLength={4}
-            maxLength={20}
           />
           <IconButton
             ml={4}
@@ -233,6 +277,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </IconButton>
         </Box>
+        <ErrorMessage errors={errors} name={'tag.name'} />
         <Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
           {tags &&
             tags.map((tag: Tag, index) => (
@@ -246,7 +291,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
               </Tag>
             ))}
         </Box>
-        {errors.tags && errors.tags.message}
+        <ErrorMessage errors={errors} name={'tag'} />
       </Box>
       <Box
         display={paginationForm ? 'none' : 'flex'}
@@ -258,12 +303,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           <span>Difficulty</span>
         </label>
         <Box display={'flex'}>
-          <select
-            name="difficulty"
-            ref={register({
-              required: true,
-            })}
-          >
+          <select name="difficulty" ref={register}>
             <option value="EASY">Easy</option>
             <option value="MEDIUM">Medium</option>
             <option value="HARD">Hard</option>
@@ -278,9 +318,14 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           placeholder="Enter Description"
           name="description"
           ref={register({
-            required: true,
+            required: 'Description is required',
+            min: {
+              value: 40,
+              message: 'Description needs to be at least 40 characters long',
+            },
           })}
         />
+        <ErrorMessage errors={errors} name={'description'} />
         <label htmlFor="totalCost">
           <span>Total Cost</span>
         </label>
@@ -289,32 +334,57 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           placeholder="Enter Total Cost"
           name="totalCost"
           ref={register({
-            required: true,
+            required: 'Total cost is required',
+            min: {
+              value: 1,
+              message: 'Overall cost should be at least 1 (dollar)',
+            },
           })}
         />
+        <ErrorMessage errors={errors} name={'totalCost'} />
         <label htmlFor="ingredient">
           <span>Ingredients</span>
         </label>
         <Box display="flex">
           <Input
+            type="text"
+            name="ingredients"
+            ref={register({
+              validate: () => {
+                if (ingredients.length < 1) return 'Ingredients are required';
+
+                if (ingredients.length > 12)
+                  return 'There should be at most 12 ingredients';
+              },
+            })}
+            hidden
+          />
+          <Input
             width={132}
             type="text"
             placeholder="Enter name"
             name="ingredient.name"
-            ref={register}
-            minLength={3}
-            maxLength={20}
+            ref={register(
+              watch('ingredient.amount') || ingredients.length < 1
+                ? {
+                    required: 'Ingredient name is required',
+                  }
+                : { required: false },
+            )}
           />
           <Input
             ml={4}
             width={55}
             type="text"
-            placeholder="amount"
+            placeholder="Amount"
             name="ingredient.amount"
-            ref={register({
-              required: true,
-            })}
-            maxLength={10}
+            ref={register(
+              watch('ingredient.name') || ingredients.length < 1
+                ? {
+                    required: 'Ingredient amount is required',
+                  }
+                : { required: false },
+            )}
           />
           <IconButton
             ml={4}
@@ -325,6 +395,10 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
           </IconButton>
         </Box>
+        <ErrorMessage errors={errors} name={'ingredient'} />
+        <ErrorMessage errors={errors} name={'ingredients'} />
+        <ErrorMessage errors={errors} name={'ingredient.name'} />
+        <ErrorMessage errors={errors} name={'ingredient.amount'} />
         {ingredients &&
           ingredients.map(({ name, amount }: Ingredient, index) => {
             return (
@@ -345,13 +419,14 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             );
           })}
 
-        {errors.tags && errors.tags.message}
+        <ErrorMessage errors={errors} name={'ingredient.tag'} />
       </Box>
 
       <Box mb={6} width="100%" display="flex" justifyContent="space-between">
         <Box display="flex" justifyContent="flex-start">
           <Button
             p={5}
+            type="button"
             color={'grey.700'}
             boxShadow={paginationForm ? 'insetNeo' : 'neumorphism'}
             mr={5}
@@ -361,6 +436,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           </Button>
           <Button
             p={5}
+            type="button"
             color={'grey.700'}
             boxShadow={paginationForm ? 'neumorphism' : 'insetNeo'}
             onClick={() => setPaginationForm(!paginationForm)}

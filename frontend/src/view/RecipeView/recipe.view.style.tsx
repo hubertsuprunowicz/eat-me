@@ -65,6 +65,10 @@ export const StyledRating = styled(Rating)`
     color: ${themeGet('colors.grey.200')};
   }
 
+  .full {
+    color: ${themeGet('colors.primary.200')};
+  }
+
   span {
     margin: 0 1px;
     font-size: 13px;

@@ -1,7 +1,5 @@
 scalar Long
 
-scalar EmailAddress
-
 enum Difficulty {
 	EASY
 	NORMAL
@@ -32,7 +30,7 @@ type Query {
 
 type Mutation {
 	deleteMessage(id: ID!): Int
-	createMessage(addresseeID: Int!, senderID: Int!, title: String!, message: String!, timestamp: Long!): Message
+	createMessage(addressee: String!, sender: String!, message: String!): Message
 	createRecipe(
 		name: String!
 		description: String!
@@ -44,7 +42,7 @@ type Mutation {
 		userID: ID!
 		totalCost: Float!
 	): Recipe
-	editRecipe(
+	updateRecipe(
 		name: String
 		description: String
 		difficulty: Difficulty
@@ -57,7 +55,7 @@ type Mutation {
 	): Recipe
 	login(name: String!, password: String!): Credentials!
 	createUser(name: String!, password: String!): Credentials!
-	editUser(user: EditUserInput): User
+	updateUser(user: UpdateUserInput): User
 	createComment(input: CommentInput!): Comment
 	createWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
 	removeWatchRelationship(subscribingUser: ID!, subscribedUser: ID!): Int
@@ -91,10 +89,10 @@ type Subscribed {
 	subscribed: Boolean!
 }
 
-input EditUserInput {
+input UpdateUserInput {
 	oldName: String!
 	name: String
-	email: EmailAddress
+	email: String
 	password: String
 	avatar: String
 	description: String
@@ -112,7 +110,6 @@ input TagInput {
 input CommentInput {
 	userID: ID!
 	recipeID: ID!
-	timestamp: Long!
 	rating: Int!
 	description: String
 }
@@ -120,7 +117,7 @@ input CommentInput {
 type User {
 	id: ID
 	name: String!
-	email: EmailAddress
+	email: String
 	password: String!
 	avatar: String
 	description: String

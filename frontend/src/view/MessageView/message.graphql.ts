@@ -1,14 +1,8 @@
 import gql from 'graphql-tag';
 
 export const SEND_MESSAGE = gql`
-	mutation CreateMessage($addresseeID: Int!, $senderID: Int!, $message: String!, $timestamp: Long!) {
-		createMessage(
-			senderID: $senderID
-			addresseeID: $addresseeID
-			title: $title
-			message: $message
-			timestamp: $timestamp
-		) {
+	mutation CreateMessage($addressee: String!, $sender: String!, $message: String!) {
+		createMessage(sender: $sender, addressee: $addressee, message: $message) {
 			_id
 		}
 	}

@@ -20,7 +20,7 @@ const LoadingOverlay: React.FC<Props> = ({
         <Loader
           visible={isLoading}
           type="Grid"
-          color="#12bd8d"
+          color="#55efc4"
           height={60}
           width={60}
         />

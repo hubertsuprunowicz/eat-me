@@ -149,7 +149,7 @@ const resolvers = {
 				.run(commentQuery, {
 					rating: input.rating,
 					description: input.description,
-					timestamp: input.timestamp
+					timestamp: Date.now()
 				})
 				.then((results) => {
 					return {
@@ -176,21 +176,30 @@ const resolvers = {
 		async createMessage(_, args, context) {
 			const session = await context.driver.session();
 
-			const addresseeID = args.addresseeID;
-			const senderID = args.senderID;
+			const addresseeQuery = `MATCH (n:User{name: $addressee}) RETURN n`;
+			const isAddresseeExists = await session
+				.run(addresseeQuery, {
+					addressee: args.addressee
+				})
+				.then((result) => result.records[0]);
+
+			if (!isAddresseeExists) {
+				throw new UserInputError('User does not exist');
+			}
 
 			const messageQuery = `
-          MATCH (a:User), (b:User) WHERE ID(a) = ${addresseeID} AND ID(b) = ${senderID}
-          CREATE (b)<-[:SENT_FROM]-(c:Message{title: $title, message: $message, timestamp: $timestamp})
+          MATCH (a:User{name: $addressee}), (b:User{name: $sender})
+          CREATE (b)<-[:SENT_FROM]-(c:Message{message: $message, timestamp: $timestamp})
           -[:SENT_TO]->(a)
           RETURN ID(c), a, b
           `;
 
 			const message = await session
 				.run(messageQuery, {
-					title: args.title,
+					addressee: args.addressee,
+					sender: args.sender,
 					message: args.message,
-					timestamp: args.timestamp
+					timestamp: Date.now()
 				})
 				.then((results) => {
 					return {
@@ -212,21 +221,39 @@ const resolvers = {
 					...args,
 					_id: message.id,
 					id: message.id,
-					addressee: { ...message.addressee },
-					sender: { ...message.sender }
+					addressee: message.addressee,
+					sender: message.sender
 				}
 			});
 			return {
 				...args,
 				_id: message.id,
 				id: message.id,
-				addressee: { ...message.addressee },
-				sender: { ...message.sender }
+				addressee: message.addressee,
+				sender: message.sender
 			};
 		},
 
-		async editUser(_, { user }, context) {
+		async updateUser(_, { user }, context) {
 			const session = await context.driver.session();
+
+			const userQuery = 'MATCH (n:User{name: $name}) RETURN n';
+			const isUserExists = await session.run(userQuery, { name: user.name }).then((result) => result.records[0]);
+
+			if (isUserExists) {
+				throw new UserInputError('Existing user with the given name');
+			}
+
+			if (user.email) {
+				const emailQuery = 'MATCH (n:User{email: $email}) RETURN n';
+				const isEmailExists = await session
+					.run(emailQuery, { email: user.email })
+					.then((result) => result.records[0]);
+
+				if (isEmailExists) {
+					throw new UserInputError('Email must be unique');
+				}
+			}
 
 			let password;
 			if (user.password) password = await hash(user.password, 10);
@@ -257,9 +284,7 @@ const resolvers = {
 					};
 				});
 
-			return {
-				...userData
-			};
+			return userData;
 		},
 
 		// TODO: total refactor of this method
@@ -333,17 +358,13 @@ const resolvers = {
 			await session.run(ingredientgQuery);
 
 			pubsub.publish('newRecipeDiscover', {
-				newRecipeDiscover: {
-					...recipe
-				}
+				newRecipeDiscover: recipe
 			});
 
-			return {
-				...recipe
-			};
+			return recipe;
 		},
 
-		async editRecipe(_, args, context) {
+		async updateRecipe(_, args, context) {
 			const session = await context.driver.session();
 
 			let setter = `timestamp: ${Date.now()},`;

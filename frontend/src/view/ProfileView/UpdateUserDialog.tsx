@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { useMutation } from '@apollo/react-hooks';
-import { EDIT_USER } from './profile.graphql';
+import { UPDATE_USER } from './profile.graphql';
 import User from 'model/user';
 import { Textarea } from './styles';
-import { isEmpty } from 'view/MessageView/MessageDialog';
+import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 
 type EditUserForm = {
   name: string;
@@ -16,6 +16,7 @@ type EditUserForm = {
   email: string;
   avatar: string;
   description: string;
+  mutationError?: FieldError;
 };
 
 type Props = {
@@ -24,7 +25,11 @@ type Props = {
   setIsOpen: (arg: boolean) => void;
 };
 
-const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
+function isEmpty(obj: Object) {
+  return Object.entries(obj).length === 0 && obj.constructor === Object;
+}
+
+const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
   const [paginationForm, setPaginationForm] = useState<boolean>(true);
   const { register, setError, errors, reset, handleSubmit } = useForm<
     EditUserForm
@@ -39,13 +44,17 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
     },
   });
 
-  const [editUser] = useMutation(EDIT_USER, {
-    onError: _ => {
-      toast.error('Something has failed', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
+  const [updateUser] = useMutation(UPDATE_USER, {
+    onError: error => {
+      setError(
+        'mutationError',
+        'mutationError',
+        error.graphQLErrors[0].message,
+      );
     },
     onCompleted: () => {
+      reset();
+      setIsOpen(false);
       toast.success('Message has been sent', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
@@ -72,18 +81,16 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
     }
 
     if (!isEmpty(errors)) return;
-    editUser({
+
+    updateUser({
       variables: {
         oldName: user.name,
-        name: name,
+        name: name === user.name ? null : name,
         password: password,
-        email: email,
+        email: !user.email || email === user.email ? null : email,
         avatar: avatar,
         description: description,
       },
-    }).then(() => {
-      reset();
-      setIsOpen(false);
     });
   };
 
@@ -109,7 +116,7 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
             },
           })}
         />
-        {errors.name && errors.name.message}
+        <ErrorMessage errors={errors} name={'name'} />
         <label htmlFor="password">
           <span>Password</span>
         </label>
@@ -119,12 +126,12 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
           name="password"
           ref={register({
             minLength: {
-              value: 4,
-              message: 'Password needs to be at least 4 characters long',
+              value: 6,
+              message: 'Password needs to be at least 6 characters long',
             },
           })}
         />
-        {errors.password && errors.password.message}
+        <ErrorMessage errors={errors} name={'password'} />
         <label htmlFor="confirmPassword">
           <input
             type="password"
@@ -132,7 +139,7 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
             name="confirmPassword"
             ref={register}
           />
-          {errors.confirmPassword && errors.confirmPassword.message}
+          <ErrorMessage errors={errors} name={'confirmPassword'} />
         </label>
         <label htmlFor="email">
           <span>Email</span>
@@ -146,11 +153,13 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
               value: 4,
               message: 'Email needs to be at least 4 characters long',
             },
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: 'Email address did not pass validation',
+            },
           })}
         />
-        {errors.email && errors.email.message}
-        {errors.email && errors.email.type === 'pattern' && 'Not valid email'}
+        <ErrorMessage errors={errors} name={'email'} />
       </Box>
       <Box
         display={paginationForm ? 'none' : 'flex'}
@@ -168,11 +177,11 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
           ref={register({
             minLength: {
               value: 4,
-              message: 'Avatar needs to be at least 4 characters long',
+              message: 'Link to avatar needs to be at least 4 characters long',
             },
           })}
         />
-        {errors.avatar && errors.avatar.message}
+        <ErrorMessage errors={errors} name={'avatar'} />
         <label htmlFor="description">
           <span>Description</span>
         </label>
@@ -188,12 +197,13 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
               message: 'Description needs to be at least 4 characters long',
             },
             maxLength: {
-              value: 480,
-              message: 'Description needs to be at most 480 characters long',
+              value: 460,
+              message: 'Description needs to be at most 460 characters long',
             },
           })}
         />
-        {errors.description && errors.description.message}
+        <ErrorMessage errors={errors} name={'description'} />
+        <ErrorMessage errors={errors} name={'mutationError'} />
       </Box>
       <Box mb={6} width="100%" display="flex" justifyContent="space-between">
         <Box display="flex" justifyContent="flex-start">
@@ -241,4 +251,4 @@ const EditUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
   );
 };
 
-export default EditUserDialog;
+export default UpdateUserDialog;

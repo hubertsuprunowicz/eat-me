@@ -39,25 +39,17 @@ export const RECIPE = gql`
 	}
 `;
 
-export const COMMENT = gql`
-	mutation CreateComment($userID: ID!, $recipeID: ID!, $rating: Int!, $timestamp: Long!, $description: String) {
-		createComment(
-			input: {
-				userID: $userID
-				recipeID: $recipeID
-				rating: $rating
-				timestamp: $timestamp
-				description: $description
-			}
-		) {
+export const CREATE_COMMENT = gql`
+	mutation CreateComment($userID: ID!, $recipeID: ID!, $rating: Int!, $description: String) {
+		createComment(input: { userID: $userID, recipeID: $recipeID, rating: $rating, description: $description }) {
 			rating
 			description
 		}
 	}
 `;
 
-export const RECIPE_UPDATE = gql`
-	mutation EditRecipe(
+export const UPDATE_RECIPE = gql`
+	mutation UpdateRecipe(
 		$id: ID!
 		$name: String
 		$description: String
@@ -68,7 +60,7 @@ export const RECIPE_UPDATE = gql`
 		$tag: [TagInput]
 		$ingredient: [IngredientInput]
 	) {
-		editRecipe(
+		updateRecipe(
 			id: $id
 			name: $name
 			description: $description

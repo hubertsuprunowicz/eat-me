@@ -37,7 +37,7 @@ export const RECIPES = gql`
   }
 `;
 
-export const RECIPE_CREATE = gql`
+export const CREATE_RECIPE = gql`
   mutation CreateRecipe(
     $name: String!
     $description: String!
