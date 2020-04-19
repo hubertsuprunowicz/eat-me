@@ -2,9 +2,9 @@ import React from 'react';
 import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
-import { SEND_MESSAGE, GET_USER } from './message.graphql';
+import { CREATE_MESSAGE } from './message.graphql';
 import { toast } from 'react-toastify';
-import { useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { useAuthState } from 'utils/auth';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 
@@ -24,7 +24,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
     MessageForm
   >();
 
-  const [sendMessage] = useMutation(SEND_MESSAGE, {
+  const [sendMessage] = useMutation(CREATE_MESSAGE, {
     onError: error => {
       setError(
         'mutationError',

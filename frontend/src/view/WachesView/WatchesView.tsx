@@ -51,7 +51,7 @@ const WatchesView: React.FC = () => {
         <WatchesList>
           {data &&
             data.watchesRecipes.map((it: any) => (
-              <li key={it.id}>
+              <li key={it._id}>
                 <Link to={`${PROFILE_VIEW}/${it.user.name}`}>
                   <img src={it.image} alt={it.name + '_image'} />
                   <Text fontSize={0} fontWeight={400}>

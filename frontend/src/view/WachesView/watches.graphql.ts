@@ -3,14 +3,14 @@ import gql from 'graphql-tag';
 export const WATCHES_RECIPES = gql`
 	query watchesRecipes($id: ID!) {
 		watchesRecipes(id: $id) {
-			id
+			_id
 			name
 			description
 			difficulty
 			image
 			time
 			user {
-				id
+				_id
 				name
 			}
 		}
@@ -20,14 +20,14 @@ export const WATCHES_RECIPES = gql`
 export const RECIPE_DISCOVERD = gql`
 	subscription NewRecipeDiscover($id: ID!) {
 		newRecipeDiscover(id: $id) {
-			id
+			_id
 			name
 			description
 			difficulty
 			image
 			time
 			user {
-				id
+				_id
 				name
 			}
 		}

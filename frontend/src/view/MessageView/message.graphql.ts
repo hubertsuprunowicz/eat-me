@@ -1,18 +1,9 @@
 import gql from 'graphql-tag';
 
-export const SEND_MESSAGE = gql`
+export const CREATE_MESSAGE = gql`
 	mutation CreateMessage($addressee: String!, $sender: String!, $message: String!) {
 		createMessage(sender: $sender, addressee: $addressee, message: $message) {
 			_id
-		}
-	}
-`;
-
-export const GET_USER = gql`
-	query GetAddressee($name: String!) {
-		user(name: $name) {
-			_id
-			id
 		}
 	}
 `;
@@ -30,7 +21,6 @@ export const YOUR_MESSAGES = gql`
 			timestamp
 			sender {
 				_id
-				id
 				name
 			}
 		}
@@ -45,7 +35,6 @@ export const MESSAGE_RECIVED = gql`
 			timestamp
 			sender {
 				_id
-				id
 				name
 			}
 		}

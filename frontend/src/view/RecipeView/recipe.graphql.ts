@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 export const RECIPE = gql`
 	query Recipe($id: String!) {
 		Recipe(_id: $id) {
-			id
 			_id
 			name
 			difficulty
@@ -12,7 +11,6 @@ export const RECIPE = gql`
 			image
 			comment {
 				_id
-				id
 				rating
 				description
 				timestamp
@@ -21,17 +19,16 @@ export const RECIPE = gql`
 				}
 			}
 			tag {
-				id
+				_id
 				name
 			}
 			ingredient {
-				id
+				_id
 				name
 				amount
 			}
 			user {
 				_id
-				id
 				name
 				avatar
 			}
@@ -42,6 +39,8 @@ export const RECIPE = gql`
 export const CREATE_COMMENT = gql`
 	mutation CreateComment($userID: ID!, $recipeID: ID!, $rating: Int!, $description: String) {
 		createComment(input: { userID: $userID, recipeID: $recipeID, rating: $rating, description: $description }) {
+			_id
+			timestamp
 			rating
 			description
 		}
@@ -71,7 +70,7 @@ export const UPDATE_RECIPE = gql`
 			tag: $tag
 			ingredient: $ingredient
 		) {
-			id
+			_id
 		}
 	}
 `;

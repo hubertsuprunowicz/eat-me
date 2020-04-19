@@ -45,10 +45,9 @@ const resolvers = {
 						return {
 							...it.properties,
 							_id: it.identity.low,
-							id: it.identity.low,
 							user: {
 								...results.records[0].get(1)[index].properties,
-								id: results.records[0].get(1)[index].identity.low
+								_id: results.records[0].get(1)[index].identity.low
 							}
 						};
 					})
@@ -153,14 +152,14 @@ const resolvers = {
 				})
 				.then((results) => {
 					return {
-						id: results.records[0].get(0).identity.low,
+						_id: results.records[0].get(0).identity.low,
 						properties: results.records[0].get(0).properties
 					};
 				});
 
 			return {
 				...comment.properties,
-				id: comment.id
+				_id: comment.id
 			};
 		},
 
@@ -204,14 +203,14 @@ const resolvers = {
 				.then((results) => {
 					return {
 						...results.records[0].get(1).properties,
-						id: results.records[0].get(0).low,
+						_id: results.records[0].get(0).low,
 						addressee: {
 							...results.records[0].get(1).properties,
-							id: results.records[0].get(1).identity.low
+							_id: results.records[0].get(1).identity.low
 						},
 						sender: {
 							...results.records[0].get(2).properties,
-							id: results.records[0].get(2).identity.low
+							_id: results.records[0].get(2).identity.low
 						}
 					};
 				});
@@ -220,7 +219,6 @@ const resolvers = {
 				messageRecived: {
 					...args,
 					_id: message.id,
-					id: message.id,
 					addressee: message.addressee,
 					sender: message.sender
 				}
@@ -228,7 +226,6 @@ const resolvers = {
 			return {
 				...args,
 				_id: message.id,
-				id: message.id,
 				addressee: message.addressee,
 				sender: message.sender
 			};
@@ -279,7 +276,6 @@ const resolvers = {
 				.then((results) => {
 					return {
 						...results.records[0].get(0).properties,
-						id: results.records[0].get(0).identity.low,
 						_id: results.records[0].get(0).identity.low
 					};
 				});
@@ -322,11 +318,9 @@ const resolvers = {
 					return {
 						...results.records[0].get(0).properties,
 						user: {
-							id: results.records[0].get(1).identity.low,
-							_id: results.records[0].get(1).identity.low,
-							...results.records[0].get(1).properties
+							...results.records[0].get(1).properties,
+							_id: results.records[0].get(1).identity.low
 						},
-						id: results.records[0].get(0).identity.low,
 						_id: results.records[0].get(0).identity.low
 					};
 				});
@@ -390,7 +384,7 @@ const resolvers = {
 				.then((results) => {
 					return {
 						...results.records[0].get(0).properties,
-						id: results.records[0].get(0).identity.low
+						_id: results.records[0].get(0).identity.low
 					};
 				});
 
@@ -438,13 +432,13 @@ const resolvers = {
 				ingredient: ingredients.map((it) => {
 					return {
 						...it.properties,
-						id: it.identity.low
+						_id: it.identity.low
 					};
 				}),
 				tag: tags.map((it) => {
 					return {
 						...it.properties,
-						id: it.identity.low
+						_id: it.identity.low
 					};
 				})
 			};

@@ -4,32 +4,31 @@ export const RECIPES = gql`
   query Recipes($offset: Int, $filter: _RecipeFilter) {
     Recipe(first: 10, offset: $offset, filter: $filter) {
       _id
-      id
       name
       difficulty
       totalCost
       time
       image
       tag {
-        id
+        _id
         name
       }
       ingredient {
-        id
+        _id
         name
         amount
       }
       user {
-        id
+        _id
         name
       }
       comment {
         _id
-        id
         rating
         description
         timestamp
         user {
+          _id
           name
         }
       }

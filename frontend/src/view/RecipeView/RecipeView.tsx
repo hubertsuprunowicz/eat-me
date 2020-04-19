@@ -150,6 +150,7 @@ const RecipeView: React.FC = () => {
       comment,
       difficulty,
       totalCost,
+      user: recipeAuthor,
     },
   ] = data.Recipe || {};
 
@@ -204,17 +205,6 @@ const RecipeView: React.FC = () => {
                   </Text>
                 )}
               </div>
-
-              {user && 'user' === user.name && (
-                <EditButton
-                  mt={-3}
-                  mb={2}
-                  boxShadow={'neumorphism'}
-                  onClick={() => setIsRecipeDialogOpen(true)}
-                >
-                  <FontAwesomeIcon size={'lg'} icon={faEdit} />
-                </EditButton>
-              )}
             </Box>
             <Box mt={3} display={'flex'} justifyContent={'space-between'}>
               <span>time</span>
@@ -301,6 +291,15 @@ const RecipeView: React.FC = () => {
           >
             <FontAwesomeIcon size={'lg'} icon={faHeart} />
           </IconButton>
+          {user && recipeAuthor.name === user.name && (
+            <EditButton
+              ml={5}
+              boxShadow={'neumorphism'}
+              onClick={() => setIsRecipeDialogOpen(true)}
+            >
+              <FontAwesomeIcon size={'lg'} icon={faEdit} />
+            </EditButton>
+          )}
         </Box>
 
         <Box p={8}>

@@ -115,7 +115,6 @@ input CommentInput {
 }
 
 type User {
-	id: ID
 	name: String!
 	email: String
 	password: String!
@@ -128,7 +127,6 @@ type User {
 }
 
 type Message {
-	id: ID
 	addressee: User! @relation(name: "SENT_TO", direction: "OUT")
 	sender: User! @relation(name: "SENT_FROM", direction: "OUT")
 	message: String!
@@ -136,7 +134,6 @@ type Message {
 }
 
 type Ingredient @isAuthenticated {
-	id: ID
 	name: String!
 	amount: String
 }
@@ -147,13 +144,11 @@ type Credentials {
 }
 
 type Tag {
-	id: ID
 	name: String!
 	recipes: [Recipe] @relation(name: "HAS_TAG", direction: "IN")
 }
 
 type Recipe {
-	id: ID
 	name: String!
 	description: String!
 	difficulty: Difficulty!
@@ -170,7 +165,6 @@ type Recipe {
 }
 
 type Comment @isAuthenticated {
-	id: ID
 	timestamp: Long!
 	rating: Int!
 	description: String
