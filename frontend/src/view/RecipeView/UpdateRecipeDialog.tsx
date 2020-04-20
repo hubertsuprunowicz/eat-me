@@ -433,6 +433,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             p={5}
             color={'danger.500'}
             boxShadow="neumorphism"
+            type={'button'}
           >
             Cancel
           </Style.Button>

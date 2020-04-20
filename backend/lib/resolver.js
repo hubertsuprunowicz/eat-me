@@ -172,6 +172,15 @@ const resolvers = {
 			return 200;
 		},
 
+		async deleteRecipe(_, args, context) {
+			const session = await context.driver.session();
+			const query = `MATCH (r:Recipe) WHERE ID(r) = ${args.id} DETACH DELETE r`;
+
+			await session.run(query).then((result) => result.records);
+
+			return 200;
+		},
+
 		async createMessage(_, args, context) {
 			const session = await context.driver.session();
 

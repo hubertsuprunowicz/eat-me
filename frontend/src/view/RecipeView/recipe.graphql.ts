@@ -47,6 +47,12 @@ export const CREATE_COMMENT = gql`
 	}
 `;
 
+export const DELETE_RECIPE = gql`
+	mutation DeleteRecipe($id: ID!) {
+		deleteRecipe(id: $id)
+	}
+`;
+
 export const UPDATE_RECIPE = gql`
 	mutation UpdateRecipe(
 		$id: ID!

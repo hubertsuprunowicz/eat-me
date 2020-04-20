@@ -242,6 +242,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
             p={5}
             color={'danger.500'}
             boxShadow="neumorphism"
+            type={'button'}
           >
             Cancel
           </Button>

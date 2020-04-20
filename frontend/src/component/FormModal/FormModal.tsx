@@ -9,7 +9,6 @@ type Props = {
   title: string;
   isOpen: boolean;
   closeModal: () => void;
-  submitData?: (arg: any) => Promise<void>;
   allRequired?: boolean;
 };
 
@@ -18,7 +17,6 @@ const FormModal: React.FC<Props> = ({
   title,
   isOpen,
   closeModal,
-  submitData,
   allRequired = true,
 }) => {
   return (

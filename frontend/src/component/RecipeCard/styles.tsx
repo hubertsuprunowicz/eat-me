@@ -53,10 +53,6 @@ export const Card = styled.div<Props>`
     }
   }
 
-  & button {
-    padding: 0;
-  }
-
   > img {
     width: 100%;
     min-height: 60%;
@@ -101,6 +97,15 @@ export const RoundButton = styled(Button)`
   > :first-child {
     color: ${props => props.color};
   }
+`;
+
+export const DeleteButton = styled(Button)`
+  position: absolute;
+  top: ${themeGet('space.7')}px;
+  right: ${themeGet('space.7')}px;
+  letter-spacing: 1px;
+  color: white;
+  background-color: ${themeGet('colors.danger.700')};
 `;
 
 export const TagWrapper = styled.div`

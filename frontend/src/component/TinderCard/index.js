@@ -206,7 +206,10 @@ const TinderCard = ({ flickOnSwipe = true, children, onCardLeftScreen, className
 				handleSwipeReleased(element, speed);
 			}
 		});
-	});
+
+		// Unnecessary depth
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return React.createElement('div', { ref, className }, children);
 };

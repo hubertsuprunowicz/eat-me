@@ -11,9 +11,14 @@ import {
   faMoneyBill,
   faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { Card, CardDetails, TagWrapper } from './styles';
+import { Card, CardDetails, TagWrapper, DeleteButton } from './styles';
 import { Recipe } from 'view/RecipesView/RecipesView';
 import { PROFILE_VIEW, RECIPE_VIEW } from 'view/Route/constants.route';
+import DeleteModal from 'component/DeleteModal/DeleteModal';
+import { useMutation } from '@apollo/react-hooks';
+import { DELETE_RECIPE } from 'view/RecipeView/recipe.graphql';
+import { toast } from 'react-toastify';
+import { useAuthState } from 'utils/auth';
 
 export type Props = ItemCardProps;
 
@@ -22,34 +27,43 @@ export type ItemCardProps = {
   recipe: Recipe;
   color?: string;
   index: number;
-  onSwipe: (direction: 'left' | 'right', recipe: any) => void;
+  onSwipe: (direction: 'left' | 'right', recipe: any, index: number) => void;
+  onRefetch?: any;
 };
 
-const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
+const RecipeCard: React.FC<Props> = ({
+  id,
+  recipe,
+  onSwipe,
+  onRefetch,
+  index,
+}) => {
+  const { user } = useAuthState();
+  const [isModalOpen, setModalIsOpen] = useState<boolean>(false);
   const [swipe, setSwipe] = useState<undefined | 'left' | 'right'>();
   const {
+    _id,
     name,
     image,
     difficulty,
     time,
     tag,
-    user,
+    user: recipeAuthor,
     comment,
     totalCost,
   } = recipe;
 
   const loveItHandle = () => {
     setTimeout(() => {
-      onSwipe('right', recipe);
-    }, 400);
+      onSwipe('right', recipe, index);
+    }, 300);
     setSwipe('right');
   };
 
   const quitItHandle = () => {
     setTimeout(() => {
-      onSwipe('left', recipe);
-    }, 400);
-
+      onSwipe('left', recipe, index);
+    }, 300);
     setSwipe('left');
   };
 
@@ -62,6 +76,29 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
     ).toFixed(1);
   }
 
+  const [deleteRecipe] = useMutation(DELETE_RECIPE, {
+    onError: _ => {
+      toast.error('Something has failed', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+    onCompleted: _ => {
+      toast.success('Recipe successfully deleted', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    },
+  });
+
+  const handleDelete = () => {
+    deleteRecipe({
+      variables: {
+        id: _id,
+      },
+    });
+    setModalIsOpen(false);
+    onRefetch();
+  };
+
   return (
     <Card
       key={id}
@@ -70,11 +107,15 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
       className={swipe ? 'swipe-' + swipe : undefined}
     >
       <img src={image || '/img/food-404.jpg'} alt={name} />
+      {user && user.name === recipeAuthor.name && (
+        <DeleteButton p={4} onClick={() => setModalIsOpen(true)}>
+          Delete
+        </DeleteButton>
+      )}
       <CardDetails>
         <Tag border={'none'} bg={'secondary.600'} pr={4} pl={4}>
-          {user.name}
+          {recipeAuthor.name}
         </Tag>
-
         <h3>{name}</h3>
         <TagWrapper>
           <Tag bg={'primary.400'}>
@@ -139,7 +180,7 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
             <FontAwesomeIcon size={'lg'} icon={faTimes} />
           </IconButton>
           <LinkIconButton
-            to={`${PROFILE_VIEW}/${user.name}`}
+            to={`${PROFILE_VIEW}/${recipeAuthor.name}`}
             width="38px"
             height="38px"
             color="grey.800"
@@ -150,6 +191,13 @@ const RecipeCard: React.FC<Props> = ({ id, recipe, index, onSwipe }) => {
           </LinkIconButton>
         </Box>
       </CardDetails>
+      <DeleteModal
+        title="Recipe Delete"
+        itemName={name}
+        isOpen={isModalOpen}
+        closeModal={() => setModalIsOpen(false)}
+        onDelete={handleDelete}
+      />
     </Card>
   );
 };

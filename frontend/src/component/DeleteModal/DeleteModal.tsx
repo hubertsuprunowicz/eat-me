@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { Box, Text } from 'style';
+import { Box, Text, Button } from 'style';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { modalStyle, CloseButton } from 'component/FormModal/styles';
@@ -8,17 +8,18 @@ import { DeleteModalStyle } from './styles';
 
 type Props = {
   title: string;
+  itemName: string;
   isOpen: boolean;
   closeModal: () => void;
-  submitData?: (arg: any) => Promise<void>;
+  onDelete: any;
 };
 
 const DeleteModal: React.FC<Props> = ({
-  children,
   title,
+  itemName,
   isOpen,
   closeModal,
-  submitData,
+  onDelete,
 }) => {
   return (
     <Modal
@@ -41,8 +42,31 @@ const DeleteModal: React.FC<Props> = ({
             <FontAwesomeIcon size={'lg'} icon={faTimes} />
           </CloseButton>
         </Box>
-        <Box>
-          <Text></Text>
+        <Box mt={8} mb={8}>
+          <Text textAlign={'center'}>
+            Are you sure to delete <Text color={'danger.700'}>{itemName}</Text>?
+          </Text>
+        </Box>
+        <Box display="flex" justifyContent="flex-end">
+          <Button
+            type="submit"
+            onClick={onDelete}
+            p={5}
+            color={'danger.700'}
+            boxShadow="neumorphism"
+            mr={5}
+          >
+            Delete
+          </Button>
+          <Button
+            onClick={closeModal}
+            p={5}
+            color={'grey.800'}
+            boxShadow="neumorphism"
+            type={'button'}
+          >
+            Cancel
+          </Button>
         </Box>
       </DeleteModalStyle>
     </Modal>

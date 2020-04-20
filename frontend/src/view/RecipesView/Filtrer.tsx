@@ -3,6 +3,7 @@ import { Box, Button, Text } from 'style';
 import Form from 'component/Form/Form';
 import { RecipeFilter } from './RecipesView';
 import { useForm } from 'react-hook-form';
+import { useAuthState } from 'utils/auth';
 
 type RecipeFilterForm = {
   [key in
@@ -17,16 +18,24 @@ type RecipeFilterForm = {
 type Props = {
   setIsOpen: (arg: boolean) => void;
   setFilter: (arg: RecipeFilter) => void;
+  onParticularUser?: string;
 };
 
-const Filter: React.FC<Props> = ({ setIsOpen, setFilter }) => {
+const Filter: React.FC<Props> = ({
+  setIsOpen,
+  setFilter,
+  onParticularUser,
+}) => {
   const { register, watch } = useForm<RecipeFilterForm>();
+  const { user } = useAuthState();
   const filter = watch();
 
   const handleFilter = () => {
     if (!filter) return;
     const tagObject = filter['tag'] ? { name: filter['tag'] } : undefined;
     setFilter({
+      user: onParticularUser ? { name: onParticularUser } : undefined,
+      user_not: onParticularUser ? undefined : { name: user!.name },
       difficulty: filter['difficulty']
         ? (filter['difficulty'] as 'EASY' | 'MEDIUM' | 'HARD')
         : undefined,

@@ -99,6 +99,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
             p={5}
             color={'danger.500'}
             boxShadow="neumorphism"
+            type={'button'}
           >
             Cancel
           </Button>

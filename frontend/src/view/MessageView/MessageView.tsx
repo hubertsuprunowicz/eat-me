@@ -20,6 +20,7 @@ import NoRecords from 'component/NoRecords/NoRecords';
 import { toast } from 'react-toastify';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
+import DeleteModal from 'component/DeleteModal/DeleteModal';
 
 type RowProps = {
   _id: string;
@@ -42,6 +43,16 @@ const Row: React.FC<RowProps> = ({
   deleteMessage,
 }) => {
   const [textDropDown, setTextDropDown] = useState<boolean>(false);
+  const [isModalOpen, setModalIsOpen] = useState<boolean>(false);
+
+  const handleDelete = () => {
+    deleteMessage({
+      variables: {
+        id: _id,
+      },
+    });
+    setModalIsOpen(false);
+  };
 
   return (
     <li
@@ -81,7 +92,7 @@ const Row: React.FC<RowProps> = ({
               : message.slice(0, 100) + (message.length > 100 ? '...' : '')}
           </Text>
           <IconButton
-            onClick={() => deleteMessage({ variables: { id: _id } })}
+            onClick={() => setModalIsOpen(true)}
             boxShadow="neumorphism"
             width="33px"
             height="33px"
@@ -92,6 +103,13 @@ const Row: React.FC<RowProps> = ({
           </IconButton>
         </Box>
       </Box>
+      <DeleteModal
+        title="Message Delete"
+        itemName={'this message'}
+        isOpen={isModalOpen}
+        closeModal={() => setModalIsOpen(false)}
+        onDelete={handleDelete}
+      />
     </li>
   );
 };
@@ -127,11 +145,6 @@ const MessageView: React.FC = () => {
     },
     onCompleted: _data => {
       refetch();
-      // TODO: update query via immer after delete
-      // updateQuery: (prev, { subscriptionData }) => {
-      //   return produce(prev, draft => {
-      //     draft = data
-      //   });
     },
   });
 
