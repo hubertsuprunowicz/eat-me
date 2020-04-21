@@ -19,6 +19,7 @@ import Badge from 'component/Badge/Badge';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import { useAuthState } from 'utils/auth';
 import { useRecipesQuery, Recipe, Difficulty } from 'model/generated/graphql';
+import { useRecipes } from 'utils/recipes.context';
 
 export type RecipeFilter = {
   name_not_in?: string[];
@@ -40,8 +41,8 @@ const RecipesView: React.FC = () => {
   const [allRecipes, setAllRecipes] = useState<boolean>(true);
   const [firstFromPoll, setFirstFromPoll] = useState<number>(0);
   const [filter, setFilter] = useState<RecipeFilter>();
-  const [lovedList, setLovedList] = useState<Recipe[]>([]);
   const { user } = useAuthState();
+  const [state, dispatch] = useRecipes();
   const { loading, error, data, fetchMore, refetch } = useRecipesQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -64,7 +65,10 @@ const RecipesView: React.FC = () => {
 
   useEffect(() => {
     setFilter((old) => {
-      return { ...old, name_not_in: lovedList.map((it) => it.name) };
+      return {
+        ...old,
+        name_not_in: Object.values(state.recipes).map((it) => it.name),
+      };
     });
 
     // Unnecessary depth
@@ -94,7 +98,7 @@ const RecipesView: React.FC = () => {
     index: number,
   ) => {
     if (!allRecipes) {
-      if (direction === 'left') handleRemoveLovedOnLeft(index);
+      if (direction === 'left') handleRemoveLovedOnLeft(recipe);
 
       return;
     }
@@ -103,32 +107,35 @@ const RecipesView: React.FC = () => {
     if (direction === 'right') handleAddToLovedOnRight(recipe);
   };
 
-  const handleRemoveLovedOnLeft = (index: number) => {
-    setLovedList((old) => {
-      const temp = old;
-      temp.splice(index, 1);
-      return temp;
+  const handleRemoveLovedOnLeft = (recipe: Recipe) => {
+    dispatch({
+      type: 'RemoveLovedRecipe',
+      payload: { recipe: recipe },
     });
   };
 
   const handleAddToLovedOnRight = (recipe: Recipe) => {
-    setLovedList((old) => [...old, recipe]);
+    dispatch({
+      type: 'AddLovedRecipe',
+      payload: { recipe: recipe },
+    });
   };
 
   const handleCardLeftScreen = (
     index: number,
     direction?: 'left' | 'right',
+    recipe?: Recipe,
   ) => {
     const counter = Math.abs(recipes.length - index);
     const currentRecipe = recipes[index - 1];
     const nextRecipe = recipes[index - 2];
 
-    if (direction === 'right' && allRecipes && !!recipes[index]) {
-      handleAddToLovedOnRight(recipes[index] as Recipe);
+    if (direction === 'right' && allRecipes && recipe) {
+      handleAddToLovedOnRight(recipe);
     }
 
-    if (direction === 'left' && !allRecipes) {
-      handleRemoveLovedOnLeft(index);
+    if (direction === 'left' && !allRecipes && recipe) {
+      handleRemoveLovedOnLeft(recipe);
     }
 
     if (currentRecipe || nextRecipe || !allRecipes) return;
@@ -173,27 +180,27 @@ const RecipesView: React.FC = () => {
         boxShadow="neumorphism"
       >
         <FontAwesomeIcon size={'xs'} icon={faHeart} /> Loved list
-        <Badge backgroundColor={'danger.500'}>{lovedList.length}</Badge>
+        <Badge backgroundColor={'danger.500'}>
+          {Object.values(state.recipes).length}
+        </Badge>
       </Styled.Button>
       <LoadingOverlay height={'80vh'} isLoading={loading}>
         {!allRecipes &&
-          lovedList.map((recipe: Recipe, index: number) => (
+          state.recipes &&
+          Object.values(state.recipes).map((recipe: Recipe, index: number) => (
             <TinderCard
-              key={recipe._id ? recipe._id : ''}
+              key={recipe._id ?? ''}
               preventSwipe={['up', 'down']}
               onCardLeftScreen={(direction: 'left' | 'right') =>
-                handleCardLeftScreen(index, direction)
+                handleCardLeftScreen(index, direction, recipe)
               }
             >
               <RecipeCard
-                id={recipe._id ? recipe._id : ''}
+                id={recipe._id ?? ''}
                 recipe={recipe}
                 index={index}
                 onSwipe={handleSwipe}
-                onRefetch={() => {
-                  refetch();
-                  lovedList.pop();
-                }}
+                onRefetch={refetch}
               />
             </TinderCard>
           ))}
@@ -205,7 +212,7 @@ const RecipesView: React.FC = () => {
             key={recipe._id ?? ''}
             preventSwipe={['up', 'down']}
             onCardLeftScreen={(direction: 'left' | 'right') =>
-              handleCardLeftScreen(index, direction)
+              handleCardLeftScreen(index, direction, recipe)
             }
           >
             <RecipeCard

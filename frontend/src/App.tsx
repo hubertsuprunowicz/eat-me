@@ -23,6 +23,7 @@ import { Authorization, AuthProvider } from 'utils/auth';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RecipeView from 'view/RecipeView/RecipeView';
+import { RecipesProvider } from 'utils/recipes.context';
 
 toast.configure();
 
@@ -64,21 +65,23 @@ const App: React.FC = () => {
         <ToastContainer className="toast-size" />
         <Router>
           <AuthProvider>
-            <Switch>
-              <Route path={LOGIN_VIEW}>{loginView}</Route>
-              <Route path={RECIPE_VIEW + '/:id'}>{recipeView}</Route>
-              <Route path={PROFILE_VIEW + '/:username'}>{profileView}</Route>
-              <Route path={PROFILE_VIEW}>{profileView}</Route>
-              <Route path={RECIPES_VIEW + '/:username'}>
-                {recipesCardView}
-              </Route>
-              <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
-              <Route path={WATCHES_VIEW}>{watchesView}</Route>
-              <Route path={MESSAGE_VIEW}>{messageView}</Route>
-              <Route path={ERROR_VIEW}>{errorView}</Route>
-              <Route path={''}>{recipesCardView}</Route>
-            </Switch>
-            <Navigate />
+            <RecipesProvider>
+              <Switch>
+                <Route path={LOGIN_VIEW}>{loginView}</Route>
+                <Route path={RECIPE_VIEW + '/:id'}>{recipeView}</Route>
+                <Route path={PROFILE_VIEW + '/:username'}>{profileView}</Route>
+                <Route path={PROFILE_VIEW}>{profileView}</Route>
+                <Route path={RECIPES_VIEW + '/:username'}>
+                  {recipesCardView}
+                </Route>
+                <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
+                <Route path={WATCHES_VIEW}>{watchesView}</Route>
+                <Route path={MESSAGE_VIEW}>{messageView}</Route>
+                <Route path={ERROR_VIEW}>{errorView}</Route>
+                <Route path={''}>{recipesCardView}</Route>
+              </Switch>
+              <Navigate />
+            </RecipesProvider>
           </AuthProvider>
         </Router>
       </Main>
