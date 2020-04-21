@@ -17,16 +17,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuthState } from 'utils/auth';
 import { useParams } from 'react-router-dom';
-import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import FormModal from 'component/FormModal/FormModal';
+import Comment from 'component/Comment/Comment';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
 import UpdateRecipeDialog from './UpdateRecipeDialog';
-import { RECIPE, WATCHES, UNWATCHES, GET_WATCH } from './recipe.graphql';
-import Comment from 'component/Comment/Comment';
 import CommentDialog from './CommentDialog';
 import { toast } from 'react-toastify';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
+import * as Model from 'model/generated/graphql';
+
+const defaultAvatar = 'img/user-solid.svg';
 
 const RecipeView: React.FC = () => {
   const [subscribed, setSubscribed] = useState<boolean>(false);
@@ -37,8 +38,8 @@ const RecipeView: React.FC = () => {
   const { id } = useParams();
   const { user } = useAuthState();
 
-  const [addWatches] = useMutation(WATCHES, {
-    onError: _ => {
+  const [createWatches] = Model.useCreateWatchMutation({
+    onError: (_) => {
       toast.error('Something has failed', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
@@ -50,8 +51,8 @@ const RecipeView: React.FC = () => {
     },
   });
 
-  const [removeWatches] = useMutation(UNWATCHES, {
-    onError: _ => {
+  const [removeWatches] = Model.useRemoveWatchMutation({
+    onError: (_) => {
       toast.error('Something has failed', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
@@ -63,19 +64,19 @@ const RecipeView: React.FC = () => {
     },
   });
 
-  const { loading, error, data } = useQuery(RECIPE, {
+  const { loading, error, data } = Model.useRecipeQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
-      id: id,
+      id: id ?? '',
     },
   });
 
   useEffect(() => {
-    if (data) {
+    if (data && data.Recipe && user) {
       getWatch({
         variables: {
-          subscribingUser: user!._id,
-          subscribedUser: data.Recipe[0].user._id || 0,
+          subscribingUser: user._id ?? '',
+          subscribedUser: data.Recipe[0]?.user._id ?? '',
         },
       });
     }
@@ -84,76 +85,71 @@ const RecipeView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  const [getWatch] = useLazyQuery(GET_WATCH, {
+  const [getWatch] = Model.useGetWatchLazyQuery({
     fetchPolicy: 'cache-and-network',
-    onCompleted: data => {
+    onCompleted: (data) => {
       setSubscribed(data.getWatch.subscribed);
     },
   });
 
-  function alreadyVoted() {
-    return comment.findIndex((it: any) => it.user.name === user!.name);
-  }
+  const alreadyVoted = (comments: Model.Comment[]) => {
+    return comments.findIndex((it) => it.user.name === user!.name);
+  };
 
-  // TODO: return number, solution: add model with graphql:codegen
-  function totalRating() {
-    return (
-      comment.reduce(
-        (acc: number, curr: { rating: number }) => acc + curr.rating,
-        0,
-      ) / comment.length
-    ).toFixed(1);
-  }
+  const totalRating = (comments: Model.Comment[]) => {
+    const rating =
+      comments.reduce((acc, curr) => acc + curr.rating, 0) / comments.length;
+
+    return parseFloat(rating.toFixed(1));
+  };
 
   const handleSubscribe = () => {
-    addWatches({
+    if (!data?.Recipe?.[0]) return;
+
+    createWatches({
       variables: {
-        subscribingUser: user!._id,
-        subscribedUser: data.Recipe[0].user._id || 0,
+        subscribingUser: user?._id ?? '',
+        subscribedUser: data.Recipe[0].user._id ?? '',
       },
     }).then(() => {
       getWatch({
         variables: {
-          subscribingUser: user!._id,
-          subscribedUser: data.Recipe[0].user._id || 0,
+          subscribingUser: user?._id ?? '',
+          subscribedUser: data?.Recipe?.[0]?.user._id ?? '',
         },
       });
     });
   };
 
   const handleUnsubscribe = () => {
+    if (!data?.Recipe?.[0]) return;
+
     removeWatches({
       variables: {
-        subscribingUser: user!._id,
-        subscribedUser: data.Recipe[0].user._id || 0,
+        subscribingUser: user?._id ?? '',
+        subscribedUser: data?.Recipe[0].user._id ?? '',
       },
     }).then(() => {
       getWatch({
         variables: {
-          subscribingUser: user!._id,
-          subscribedUser: data.Recipe[0].user._id || 0,
+          subscribingUser: user?._id ?? '',
+          subscribedUser: data?.Recipe?.[0]?.user._id ?? '',
         },
       });
     });
   };
 
   if (error) return <ErrorRedirect error={error} />;
-  if (!data) return null;
+  if (!data || !data.Recipe) return null;
 
-  const [
-    {
-      name,
-      image,
-      description,
-      time,
-      tag,
-      ingredient,
-      comment,
-      difficulty,
-      totalCost,
-      user: recipeAuthor,
-    },
-  ] = data.Recipe || {};
+  // TODO: 404
+  if (!data.Recipe[0]) return null;
+
+  const recipe = data.Recipe[0];
+  const alreadyVotedData =
+    alreadyVoted(recipe?.comment as Model.Comment[]) ?? undefined;
+  const totalRatingData =
+    totalRating(recipe?.comment as Model.Comment[]) ?? undefined;
 
   return (
     <LoadingOverlay isLoading={loading}>
@@ -163,7 +159,7 @@ const RecipeView: React.FC = () => {
         alignItems={'center'}
         mb={100}
       >
-        <BackgroundImage src={image} alt={name} />
+        <BackgroundImage src={recipe.image} alt={recipe.name} />
 
         <Box
           mt={-70}
@@ -182,10 +178,8 @@ const RecipeView: React.FC = () => {
           position={'relative'}
         >
           <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
-            {name}
+            {recipe.name}
           </Text>
-          {/* TODO: change 'user' to name of recipe author */}
-
           <Box display={'flex'} flexDirection={'column'} width={'80%'}>
             <Box
               mt={6}
@@ -196,33 +190,30 @@ const RecipeView: React.FC = () => {
               <div>
                 <FontAwesomeIcon icon={faStar} />
                 {'  '}
-                {totalRating() ? (
-                  <Text fontSize={3} fontWeight={700}>
-                    {totalRating()} / 5
-                  </Text>
-                ) : (
-                  <Text fontSize={3} fontWeight={700}>
-                    No ratings, be first!
-                  </Text>
-                )}
+
+                <Text fontSize={3} fontWeight={700}>
+                  {totalRatingData
+                    ? totalRatingData / 5.0
+                    : 'No ratings... be first!'}
+                </Text>
               </div>
             </Box>
             <Box mt={3} display={'flex'} justifyContent={'space-between'}>
               <span>time</span>
-              <span>{time}min</span>
+              <span>{recipe.time}min</span>
             </Box>
             <Box mt={3} display={'flex'} justifyContent={'space-between'}>
               <span>total cost</span>
-              <span>{totalCost}$</span>
+              <span>{recipe.totalCost}$</span>
             </Box>
             <Box mt={3} display={'flex'} justifyContent={'space-between'}>
               <span>difficulty</span>
-              <span>{difficulty.toLowerCase()}</span>
+              <span>{recipe.difficulty.toLowerCase()}</span>
             </Box>
             <Text mt={3}>ingredients</Text>
             <Box display={'flex'} justifyContent={'space-between'}>
               <IngredientsList>
-                {ingredient.map((it: any, index: number) => (
+                {recipe.ingredient.map((it, index) => (
                   <li key={index}>
                     <Box display={'flex'} justifyContent={'space-between'}>
                       <span>{it.name}</span>
@@ -241,7 +232,7 @@ const RecipeView: React.FC = () => {
             p={4}
           >
             <span>#</span>
-            {tag.map((it: any, index: number) => (
+            {recipe.tag.map((it, index) => (
               <Text p={3} fontWeight={700} key={index}>
                 {it.name}
               </Text>
@@ -276,7 +267,7 @@ const RecipeView: React.FC = () => {
           >
             <FontAwesomeIcon size={'lg'} icon={faHeart} />
           </IconButton>
-          {user && recipeAuthor.name === user.name && (
+          {user && recipe.user.name === user.name && (
             <EditButton
               ml={5}
               boxShadow={'neumorphism'}
@@ -298,7 +289,9 @@ const RecipeView: React.FC = () => {
               How to do it?
             </Text>
           </Box>
-          <Text lineHeight={'21px'}>{description}</Text>
+          <Text lineHeight={'21px'}>
+            {(recipe as Model.Recipe).description ?? ''}
+          </Text>
         </Box>
         <Box p={8}>
           <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
@@ -311,26 +304,28 @@ const RecipeView: React.FC = () => {
               flexDirection={'column'}
               justifyContent={'space-between'}
             >
-              <span>{data.Recipe[0].user.name}</span>
+              <span>{recipe.user.name}</span>
               <LinkButton
-                to={`${PROFILE_VIEW}/${data.Recipe[0].user.name}`}
+                to={`${PROFILE_VIEW}/${recipe.user.name}`}
                 color={'warn.600'}
               >
                 More
               </LinkButton>
             </Box>
-            <AuthorImage src={data.Recipe[0].user.avatar} />
+            <AuthorImage src={recipe.user.avatar ?? defaultAvatar} />
           </Box>
         </Box>
-        {alreadyVoted() !== -1 && (
+        {alreadyVotedData && alreadyVotedData !== -1 && (
           <Box>
             <span>
               Your rating of this recipe is{' '}
-              <Text fontWeight={700}>{comment[alreadyVoted()].rating}/5</Text>
+              <Text fontWeight={700}>
+                {(recipe?.comment?.[alreadyVotedData]?.rating as number) / 5.0}
+              </Text>
             </span>
           </Box>
         )}
-        {alreadyVoted() === -1 && (
+        {alreadyVotedData && alreadyVotedData !== -1 && (
           <Box display="flex" alignItems="center">
             <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
               Leave your feedback{' '}
@@ -354,16 +349,18 @@ const RecipeView: React.FC = () => {
           flexWrap={'wrap'}
           p={8}
         >
-          {comment.map(({ timestamp, description, rating, user, _id }: any) => (
-            <Comment
-              key={_id}
-              rating={rating}
-              username={user.name}
-              timestamp={timestamp}
-            >
-              {description}
-            </Comment>
-          ))}
+          {recipe.comment &&
+            recipe.comment.length > 0 &&
+            recipe.comment.map((it) => (
+              <Comment
+                key={it?._id ?? ''}
+                rating={it!.rating}
+                username={it!.user.name}
+                timestamp={it!.timestamp}
+              >
+                {it?.description}
+              </Comment>
+            ))}
         </Box>
         {isRecipeDialogOpen && user && (
           <FormModal
@@ -373,7 +370,7 @@ const RecipeView: React.FC = () => {
             closeModal={() => setIsRecipeDialogOpen(false)}
           >
             <UpdateRecipeDialog
-              recipe={data.Recipe[0]}
+              recipe={data.Recipe[0] as Model.Recipe}
               setIsOpen={setIsCommentDialogOpen}
             />
           </FormModal>
@@ -387,8 +384,8 @@ const RecipeView: React.FC = () => {
             closeModal={() => setIsCommentDialogOpen(false)}
           >
             <CommentDialog
-              userID={user._id}
-              recipe={data.Recipe[0]}
+              userID={user?._id ?? ''}
+              recipe={data.Recipe[0] as Model.Recipe}
               setIsOpen={setIsCommentDialogOpen}
             />
           </FormModal>

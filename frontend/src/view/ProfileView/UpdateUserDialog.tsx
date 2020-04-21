@@ -3,11 +3,9 @@ import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
-import { useMutation } from '@apollo/react-hooks';
-import { UPDATE_USER } from './profile.graphql';
-import User from 'model/user';
 import { Textarea } from './styles';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
+import { User, useUpdateUserMutation } from 'model/generated/graphql';
 
 type EditUserForm = {
   name: string;
@@ -44,7 +42,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
     },
   });
 
-  const [updateUser] = useMutation(UPDATE_USER, {
+  const [updateUser] = useUpdateUserMutation({
     onError: error => {
       setError(
         'mutationError',

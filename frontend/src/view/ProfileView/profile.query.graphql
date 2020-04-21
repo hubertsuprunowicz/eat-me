@@ -1,0 +1,15 @@
+query GetUser($name: String!) {
+  User(name: $name) {
+    _id
+    name
+    avatar
+    email
+    description
+    recipe {
+      tag {
+        _id
+        name
+      }
+    }
+  }
+}

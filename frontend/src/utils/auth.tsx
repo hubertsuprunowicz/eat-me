@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { Redirect } from 'react-router-dom';
 import { LOGIN_VIEW } from 'view/Route/constants.route';
-
-type User = {
-  _id: number;
-  name: string;
-};
+import { User } from 'model/generated/graphql';
 
 type Action =
   | { type: 'login'; token: string; user: User | undefined }
   | { type: 'logout' };
+
 type Dispatch = (action: Action) => void;
+
 type State = {
   login: boolean;
   token: string | undefined;
   user: User | undefined;
 };
+
 type AuthProviderProps = { children: React.ReactNode };
 
 const AuthStateContext = React.createContext<State | undefined>(undefined);

@@ -1,0 +1,13 @@
+mutation DeleteMessage($id: ID!) {
+  deleteMessage(id: $id)
+}
+
+mutation CreateMessage(
+  $addressee: String!
+  $sender: String!
+  $message: String!
+) {
+  createMessage(sender: $sender, addressee: $addressee, message: $message) {
+    _id
+  }
+}

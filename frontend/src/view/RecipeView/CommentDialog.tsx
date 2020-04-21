@@ -3,10 +3,9 @@ import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { StyledRating } from './recipe.view.style';
-import { useMutation } from '@apollo/react-hooks';
-import { CREATE_COMMENT } from './recipe.graphql';
 import { toast } from 'react-toastify';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
+import { Recipe, useCreateCommentMutation } from 'model/generated/graphql';
 
 type CommmentForm = {
   rating: number;
@@ -15,7 +14,11 @@ type CommmentForm = {
   mutationError?: FieldError;
 };
 
-type Props = { userID: number; recipe: any; setIsOpen: (arg: boolean) => void };
+type Props = {
+  userID: string;
+  recipe: Recipe;
+  setIsOpen: (arg: boolean) => void;
+};
 
 const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
   const [rating, setRating] = useState<number>(0);
@@ -23,8 +26,8 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
     CommmentForm
   >();
 
-  const [createComment] = useMutation(CREATE_COMMENT, {
-    onError: error => {
+  const [createComment] = useCreateCommentMutation({
+    onError: (error) => {
       setError(
         'mutationError',
         'mutationError',
@@ -46,14 +49,15 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
       return;
     }
 
-    createComment({
-      variables: {
-        userID: userID,
-        recipeID: recipe._id,
-        rating: rating,
-        description: description,
-      },
-    });
+    if (recipe)
+      createComment({
+        variables: {
+          userID: userID.toString(),
+          recipeID: recipe._id as string,
+          rating: rating,
+          description: description,
+        },
+      });
   };
 
   return (
@@ -63,7 +67,7 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
           initialRating={rating}
           emptySymbol={'fas fa-star fa-1x empty'}
           fullSymbol={'fas fa-star fa-1x full'}
-          onChange={value => setRating(value)}
+          onChange={(value) => setRating(value)}
         />
 
         <ErrorMessage errors={errors} name={'rating'} />

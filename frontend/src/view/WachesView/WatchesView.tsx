@@ -2,43 +2,52 @@ import React from 'react';
 import { Box, Text } from 'style';
 import { WatchesList } from './styles';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
-import { RECIPE_DISCOVERD, WATCHES_RECIPES } from './watches.graphql';
 import { useAuthState } from 'utils/auth';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
+import {
+  useWatchesRecipesQuery,
+  NewRecipeDiscoverDocument,
+} from 'model/generated/graphql';
 
 const WatchesView: React.FC = () => {
   const { user } = useAuthState();
-  const { data, loading, subscribeToMore } = useQuery(WATCHES_RECIPES, {
+  const { data, loading, subscribeToMore } = useWatchesRecipesQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { id: user!._id },
+    variables: { id: user?._id ?? '' },
   });
 
   subscribeToMore({
-    document: RECIPE_DISCOVERD,
-    variables: { id: user!._id },
-    onError: err => {
+    document: NewRecipeDiscoverDocument,
+    variables: { id: user?._id ?? '' },
+    onError: (err) => {
       return <ErrorRedirect error={err.message} />;
     },
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) return prev.messages;
-
-      // Needed due to multiple resubscriptions
-      if (
-        prev.watchesRecipes.length > 0 &&
-        prev.watchesRecipes[prev.watchesRecipes.length - 1].id ===
-          subscriptionData.data.newRecipeDiscover.id
-      )
-        return prev.watchesRecipes;
-
+    updateQuery: (prev, { subscriptionData }: any) => {
+      console.log(prev, subscriptionData);
       return {
         watchesRecipes: [
           ...prev.watchesRecipes,
-          subscriptionData.data.newRecipeDiscover,
+          subscriptionData.data.watchesRecipes,
         ],
       };
+      // if (!subscriptionData.data) return prev.messages;
+
+      // // Needed due to multiple resubscriptions
+      // if (
+      //   prev.watchesRecipes.length > 0 &&
+      //   prev.watchesRecipes[prev.watchesRecipes.length - 1].id ===
+      //     subscriptionData.data.newRecipeDiscover.id
+      // )
+      //   return prev.watchesRecipes;
+
+      // return {
+      //   watchesRecipes: [
+      //     ...prev.watchesRecipes,
+      //     subscriptionData.data.newRecipeDiscover,
+      //   ],
+      // };
     },
   });
 
@@ -50,8 +59,8 @@ const WatchesView: React.FC = () => {
       <LoadingOverlay isLoading={loading}>
         <WatchesList>
           {data &&
-            data.watchesRecipes.map((it: any) => (
-              <li key={it._id}>
+            data.watchesRecipes.map((it) => (
+              <li key={it._id ?? ''}>
                 <Link to={`${PROFILE_VIEW}/${it.user.name}`}>
                   <img src={it.image} alt={it.name + '_image'} />
                   <Text fontSize={0} fontWeight={400}>

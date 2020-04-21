@@ -2,16 +2,15 @@ import React from 'react';
 import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
-import { CREATE_MESSAGE } from './message.graphql';
 import { toast } from 'react-toastify';
-import { useMutation } from '@apollo/react-hooks';
 import { useAuthState } from 'utils/auth';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
+import { useCreateMessageMutation } from 'model/generated/graphql';
 
 type MessageForm = {
   addressee: string;
   sender: string;
-  message: number;
+  message: string;
   timestamp: number;
   mutationError?: FieldError;
 };
@@ -24,8 +23,8 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
     MessageForm
   >();
 
-  const [sendMessage] = useMutation(CREATE_MESSAGE, {
-    onError: error => {
+  const [sendMessage] = useCreateMessageMutation({
+    onError: (error) => {
       setError(
         'mutationError',
         'mutationError',
@@ -62,7 +61,7 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
           name="addressee"
           ref={register({
             required: 'Addressee is required',
-            validate: value => {
+            validate: (value) => {
               if (value === user!.name)
                 return 'You can not send message to yourself';
             },

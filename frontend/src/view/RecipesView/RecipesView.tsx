@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
 import { useQuery } from '@apollo/react-hooks';
-import User from '../../model/user';
-import { Box, Button } from '../../style';
-import { RECIPES } from './recipes.graphql';
+import * as Styled from '../../style';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -12,7 +10,7 @@ import {
   faHeart,
 } from '@fortawesome/free-solid-svg-icons';
 import FormModal from 'component/FormModal/FormModal';
-import AddRecipeForm, { Difficulty, Tag, Ingredient } from './CreateRecipeForm';
+import AddRecipeForm from './CreateRecipeForm';
 import { useParams } from 'react-router-dom';
 import NoRecords from 'component/NoRecords/NoRecords';
 import Filter from './Filtrer';
@@ -20,6 +18,7 @@ import TinderCard from 'component/TinderCard';
 import Badge from 'component/Badge/Badge';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import { useAuthState } from 'utils/auth';
+import { useRecipesQuery, Recipe, Difficulty } from 'model/generated/graphql';
 
 export type RecipeFilter = {
   name_not_in?: string[];
@@ -29,24 +28,9 @@ export type RecipeFilter = {
   totalCost_lte?: number;
   time_gte?: number;
   time_lte?: number;
-  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  difficulty?: Difficulty;
   tag?: { name?: string };
   comment?: { rating_gte?: number; rating_lte?: number };
-};
-
-export type Recipe = {
-  _id: string;
-  title: string;
-  name: string;
-  difficulty: Difficulty;
-  description?: string;
-  totalCost: number;
-  time: number;
-  image: string;
-  tag: Tag[];
-  ingredient: Ingredient[];
-  user: User;
-  comment: any;
 };
 
 const RecipesView: React.FC = () => {
@@ -56,9 +40,9 @@ const RecipesView: React.FC = () => {
   const [allRecipes, setAllRecipes] = useState<boolean>(true);
   const [firstFromPoll, setFirstFromPoll] = useState<number>(0);
   const [filter, setFilter] = useState<RecipeFilter>();
-  const [lovedList, setLovedList] = useState<any[]>([]);
+  const [lovedList, setLovedList] = useState<Recipe[]>([]);
   const { user } = useAuthState();
-  const { loading, error, data, fetchMore, refetch } = useQuery(RECIPES, {
+  const { loading, error, data, fetchMore, refetch } = useRecipesQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
       offset: 0,
@@ -79,8 +63,8 @@ const RecipesView: React.FC = () => {
   }, [username]);
 
   useEffect(() => {
-    setFilter(old => {
-      return { ...old, name_not_in: lovedList.map(it => it.name) };
+    setFilter((old) => {
+      return { ...old, name_not_in: lovedList.map((it) => it.name) };
     });
 
     // Unnecessary depth
@@ -95,7 +79,7 @@ const RecipesView: React.FC = () => {
         },
         updateQuery: (_prev, { fetchMoreResult }) => {
           return {
-            Recipe: fetchMoreResult.Recipe,
+            Recipe: fetchMoreResult?.Recipe,
           };
         },
       });
@@ -106,7 +90,7 @@ const RecipesView: React.FC = () => {
 
   const handleSwipe = (
     direction: 'left' | 'right',
-    recipe: any,
+    recipe: Recipe,
     index: number,
   ) => {
     if (!allRecipes) {
@@ -120,15 +104,15 @@ const RecipesView: React.FC = () => {
   };
 
   const handleRemoveLovedOnLeft = (index: number) => {
-    setLovedList(old => {
+    setLovedList((old) => {
       const temp = old;
       temp.splice(index, 1);
       return temp;
     });
   };
 
-  const handleAddToLovedOnRight = (recipe: any) => {
-    setLovedList(old => [...old, recipe]);
+  const handleAddToLovedOnRight = (recipe: Recipe) => {
+    setLovedList((old) => [...old, recipe]);
   };
 
   const handleCardLeftScreen = (
@@ -139,8 +123,8 @@ const RecipesView: React.FC = () => {
     const currentRecipe = recipes[index - 1];
     const nextRecipe = recipes[index - 2];
 
-    if (direction === 'right' && allRecipes) {
-      handleAddToLovedOnRight(recipes[index]);
+    if (direction === 'right' && allRecipes && !!recipes[index]) {
+      handleAddToLovedOnRight(recipes[index] as Recipe);
     }
 
     if (direction === 'left' && !allRecipes) {
@@ -153,12 +137,12 @@ const RecipesView: React.FC = () => {
   };
 
   if (error) return <ErrorRedirect error={error} />;
-  if (!data) return null;
+  if (!data || !data.Recipe) return null;
 
   const recipes = data.Recipe;
   return (
-    <Box>
-      <Box
+    <Styled.Box>
+      <Styled.Box
         pl={5}
         pr={5}
         mt={5}
@@ -167,19 +151,22 @@ const RecipesView: React.FC = () => {
       >
         <span>Recipes</span>
         <div>
-          <Button
+          <Styled.Button
             boxShadow="neumorphism"
             mr={4}
             onClick={() => setRecipeIsOpen(true)}
           >
             <FontAwesomeIcon size={'xs'} icon={faPlusCircle} /> Recipe
-          </Button>
-          <Button boxShadow="neumorphism" onClick={() => setFilterIsOpen(true)}>
+          </Styled.Button>
+          <Styled.Button
+            boxShadow="neumorphism"
+            onClick={() => setFilterIsOpen(true)}
+          >
             <FontAwesomeIcon size={'xs'} icon={faFilter} /> Filter
-          </Button>
+          </Styled.Button>
         </div>
-      </Box>
-      <Button
+      </Styled.Box>
+      <Styled.Button
         onClick={() => setAllRecipes(!allRecipes)}
         ml={4}
         color={allRecipes ? 'grey.500' : 'danger.500'}
@@ -187,19 +174,19 @@ const RecipesView: React.FC = () => {
       >
         <FontAwesomeIcon size={'xs'} icon={faHeart} /> Loved list
         <Badge backgroundColor={'danger.500'}>{lovedList.length}</Badge>
-      </Button>
+      </Styled.Button>
       <LoadingOverlay height={'80vh'} isLoading={loading}>
         {!allRecipes &&
           lovedList.map((recipe: Recipe, index: number) => (
             <TinderCard
-              key={recipe._id}
+              key={recipe._id ? recipe._id : ''}
               preventSwipe={['up', 'down']}
               onCardLeftScreen={(direction: 'left' | 'right') =>
                 handleCardLeftScreen(index, direction)
               }
             >
               <RecipeCard
-                id={recipe._id}
+                id={recipe._id ? recipe._id : ''}
                 recipe={recipe}
                 index={index}
                 onSwipe={handleSwipe}
@@ -212,16 +199,17 @@ const RecipesView: React.FC = () => {
           ))}
       </LoadingOverlay>
       {allRecipes &&
-        recipes.map((recipe: Recipe, index: number) => (
+        recipes &&
+        (recipes as Recipe[]).map((recipe, index) => (
           <TinderCard
-            key={recipe._id}
+            key={recipe._id ?? ''}
             preventSwipe={['up', 'down']}
             onCardLeftScreen={(direction: 'left' | 'right') =>
               handleCardLeftScreen(index, direction)
             }
           >
             <RecipeCard
-              id={recipe._id}
+              id={recipe._id ?? ''}
               recipe={recipe}
               index={index}
               onSwipe={handleSwipe}
@@ -256,7 +244,7 @@ const RecipesView: React.FC = () => {
           />
         </FormModal>
       )}
-    </Box>
+    </Styled.Box>
   );
 };
 

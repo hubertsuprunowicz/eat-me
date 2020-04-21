@@ -1,0 +1,29 @@
+query watchesRecipes($id: ID!) {
+  watchesRecipes(id: $id) {
+    _id
+    name
+    description
+    difficulty
+    image
+    time
+    user {
+      _id
+      name
+    }
+  }
+}
+
+subscription NewRecipeDiscover($id: ID!) {
+  newRecipeDiscover(id: $id) {
+    _id
+    name
+    description
+    difficulty
+    image
+    time
+    user {
+      _id
+      name
+    }
+  }
+}

@@ -1,0 +1,46 @@
+mutation CreateComment($userID: ID!, $recipeID: ID!, $rating: Int!, $description: String) {
+	createComment(input: { userID: $userID, recipeID: $recipeID, rating: $rating, description: $description }) {
+		_id
+		timestamp
+		rating
+		description
+	}
+}
+
+mutation DeleteRecipe($id: ID!) {
+	deleteRecipe(id: $id)
+}
+
+mutation UpdateRecipe(
+	$id: ID!
+	$name: String
+	$description: String
+	$image: String
+	$time: Int
+	$totalCost: Float
+	$difficulty: Difficulty
+	$tag: [TagInput]
+	$ingredient: [IngredientInput]
+) {
+	updateRecipe(
+		id: $id
+		name: $name
+		description: $description
+		image: $image
+		time: $time
+		totalCost: $totalCost
+		difficulty: $difficulty
+		tag: $tag
+		ingredient: $ingredient
+	) {
+		_id
+	}
+}
+
+mutation CreateWatch($subscribingUser: ID!, $subscribedUser: ID!) {
+	createWatchRelationship(subscribingUser: $subscribingUser, subscribedUser: $subscribedUser)
+}
+
+mutation RemoveWatch($subscribingUser: ID!, $subscribedUser: ID!) {
+	removeWatchRelationship(subscribingUser: $subscribingUser, subscribedUser: $subscribedUser)
+}

@@ -6,12 +6,6 @@ import { MessageList, ListWrapper } from './styles';
 import FormModal from 'component/FormModal/FormModal';
 import MessageDialog from './MessageDialog';
 import { useAuthState } from 'utils/auth';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import {
-  YOUR_MESSAGES,
-  MESSAGE_RECIVED,
-  DELETE_MESSAGE,
-} from './message.graphql';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { formatDistance } from 'date-fns';
 import debounce from 'lodash.debounce';
@@ -21,13 +15,18 @@ import { toast } from 'react-toastify';
 import { PROFILE_VIEW } from 'view/Route/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import DeleteModal from 'component/DeleteModal/DeleteModal';
+import {
+  useDeleteMessageMutation,
+  useYourMessagesQuery,
+  OnMessageRecivedDocument,
+  Message,
+  User,
+  YourMessagesQuery,
+} from 'model/generated/graphql';
 
 type RowProps = {
   _id: string;
-  sender: {
-    avatar: string;
-    name: string;
-  };
+  sender: User;
   message: string;
   timestamp: number;
   deleteMessage: any;
@@ -125,25 +124,28 @@ const MessageView: React.FC = () => {
     by?: string;
   }>({});
 
-  const { data, loading, subscribeToMore, refetch, fetchMore } = useQuery(
-    YOUR_MESSAGES,
-    {
-      fetchPolicy: 'cache-and-network',
-      variables: {
-        name: user!.name,
-        ...searchBody,
-        offset: 0,
-      },
+  const {
+    data,
+    loading,
+    subscribeToMore,
+    refetch,
+    fetchMore,
+  } = useYourMessagesQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: {
+      name: user!.name,
+      ...searchBody,
+      offset: 0,
     },
-  );
+  });
 
-  const [deleteMessage] = useMutation(DELETE_MESSAGE, {
-    onError: _ => {
+  const [deleteMessage] = useDeleteMessageMutation({
+    onError: (_) => {
       toast.error('Something has failed', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
-    onCompleted: _data => {
+    onCompleted: (_data) => {
       refetch();
     },
   });
@@ -157,29 +159,26 @@ const MessageView: React.FC = () => {
     200,
     { maxWait: 250 },
   );
-
   subscribeToMore({
-    document: MESSAGE_RECIVED,
+    document: OnMessageRecivedDocument,
     variables: { id: user!._id },
-    onError: err => {
-      return <ErrorRedirect error={err.message} />;
+    onError: (error) => {
+      return <ErrorRedirect error={error.message} />;
     },
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) return prev.messages;
+    // Any typing due to different types of query and subscription
+    updateQuery: (prev: any, { subscriptionData }: any) => {
+      if (!subscriptionData.data) return prev.Message;
 
       // Needed due to multiple resubscriptions
       if (
-        prev.messages.length > 0 &&
-        prev.messages[prev.messages.length - 1]._id ===
+        prev.Message.length > 0 &&
+        prev.Message[prev.Message.length - 1]._id ===
           subscriptionData.data.messageRecived._id
       )
-        return prev.messages;
+        return prev.Message;
 
       return {
-        messages: [
-          ...prev.messages,
-          { ...subscriptionData.data.messageRecived },
-        ],
+        Message: [...prev.Message, { ...subscriptionData.data.messageRecived }],
       };
     },
   });
@@ -202,14 +201,18 @@ const MessageView: React.FC = () => {
           },
 
           updateQuery: (prev, { fetchMoreResult }) => {
+            if (!prev || !prev.Message) return prev as YourMessagesQuery;
+            if (!fetchMoreResult || !fetchMoreResult.Message)
+              return prev as YourMessagesQuery;
+
             setOffset(offset + 10);
-            if (fetchMoreResult.messages.length < 1) {
+            if (fetchMoreResult.Message.length < 1) {
               setOffset(-1);
               return prev;
             }
 
             return {
-              messages: [...prev.messages, ...fetchMoreResult.messages],
+              Message: [...prev.Message, ...fetchMoreResult.Message],
             };
           },
         });
@@ -247,20 +250,20 @@ const MessageView: React.FC = () => {
       <LoadingOverlay height={'70vh'} isLoading={loading}>
         <ListWrapper>
           <MessageList onScroll={onScroll} ref={wrapperRef as any}>
-            {data && data.messages && data.messages.length < 1 ? (
+            {data && data.Message && data.Message.length < 1 ? (
               <NoRecords>
                 Sorry, there is no messages to show. Come back later :)
               </NoRecords>
             ) : (
               data &&
-              data.messages &&
-              data.messages.map(({ _id, message, timestamp, sender }: any) => (
+              data.Message &&
+              (data.Message as Message[]).map((it) => (
                 <Row
-                  key={_id}
-                  _id={_id}
-                  message={message}
-                  timestamp={timestamp}
-                  sender={sender}
+                  key={it._id ?? ''}
+                  _id={it._id ?? ''}
+                  message={it.message}
+                  timestamp={it.timestamp}
+                  sender={it.sender}
                   deleteMessage={deleteMessage}
                 />
               ))

@@ -4,6 +4,7 @@ import Form from 'component/Form/Form';
 import { RecipeFilter } from './RecipesView';
 import { useForm } from 'react-hook-form';
 import { useAuthState } from 'utils/auth';
+import { Difficulty } from 'model/generated/graphql';
 
 type RecipeFilterForm = {
   [key in
@@ -37,7 +38,7 @@ const Filter: React.FC<Props> = ({
       user: onParticularUser ? { name: onParticularUser } : undefined,
       user_not: onParticularUser ? undefined : { name: user!.name },
       difficulty: filter['difficulty']
-        ? (filter['difficulty'] as 'EASY' | 'MEDIUM' | 'HARD')
+        ? (filter['difficulty'] as Difficulty)
         : undefined,
       tag: tagObject,
       time_gte: filter['time.from']

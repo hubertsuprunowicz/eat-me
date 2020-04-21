@@ -11,7 +11,7 @@ const resolvers = {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator('messageRecived'),
 				(payload, variables) => {
-					return payload.messageRecived.addresseeID.toString() === variables.id;
+					return payload.messageRecived.addressee._id.toString() === variables.id;
 				}
 			)
 		},
@@ -85,7 +85,10 @@ const resolvers = {
 				throw new Error('No such user found');
 			}
 
-			const userParams = user[0].get(0).properties;
+			const userParams = {
+				_id: user[0].get(0).identity.low,
+				...user[0].get(0).properties
+			};
 
 			const valid = await compare(args.password, userParams.password);
 
@@ -93,7 +96,7 @@ const resolvers = {
 				throw new Error('Invalid password');
 			}
 
-			const token = sign({ userID: userParams.id }, process.env.JWT_SECRET);
+			const token = sign({ userID: userParams._id }, process.env.JWT_SECRET);
 			const userID = user[0].get(0).identity.low;
 			const userName = user[0].get(0).properties.name;
 
@@ -117,12 +120,13 @@ const resolvers = {
 				throw new UserInputError('Existing user with the given name');
 			}
 
-			const query = 'CREATE (n:User{name:$name, password:$password}) RETURN n';
+			const query = 'CREATE (n:User{name:$name, password:$password, timestamp: $timestamp}) RETURN n';
 
 			const user = await session.run(query, { name: args.name, password }).then((results) => {
 				return {
 					_id: results.records[0].get(0).identity.low,
-					name: results.records[0].get(0).properties.name
+					name: results.records[0].get(0).properties.name,
+					timestamp: Date.now()
 				};
 			});
 
@@ -159,7 +163,7 @@ const resolvers = {
 
 			return {
 				...comment.properties,
-				_id: comment.id
+				_id: comment._id
 			};
 		},
 
@@ -199,8 +203,8 @@ const resolvers = {
           MATCH (a:User{name: $addressee}), (b:User{name: $sender})
           CREATE (b)<-[:SENT_FROM]-(c:Message{message: $message, timestamp: $timestamp})
           -[:SENT_TO]->(a)
-          RETURN ID(c), a, b
-          `;
+          RETURN c, a, b
+		  `;
 
 			const message = await session
 				.run(messageQuery, {
@@ -211,8 +215,8 @@ const resolvers = {
 				})
 				.then((results) => {
 					return {
-						...results.records[0].get(1).properties,
-						_id: results.records[0].get(0).low,
+						...results.records[0].get(0).properties,
+						_id: results.records[0].get(0).identity.low,
 						addressee: {
 							...results.records[0].get(1).properties,
 							_id: results.records[0].get(1).identity.low
@@ -226,15 +230,15 @@ const resolvers = {
 
 			pubsub.publish('messageRecived', {
 				messageRecived: {
-					...args,
-					_id: message.id,
+					...message,
+					_id: message._id,
 					addressee: message.addressee,
 					sender: message.sender
 				}
 			});
 			return {
-				...args,
-				_id: message.id,
+				...message,
+				_id: message._id,
 				addressee: message.addressee,
 				sender: message.sender
 			};
@@ -336,25 +340,27 @@ const resolvers = {
 
 			// FIXME: such spaghetti...
 			let tagQueryBuilder = `
-        MATCH (a:Recipe) WHERE ID(a) = ${recipe.id}
+        MATCH (a:Recipe) WHERE ID(a) = ${recipe._id}
         CREATE 
       `;
 
 			for (let i = 0; i < args.tag.length; i++) {
-				tagQueryBuilder += `(${String.fromCharCode(98 + i)}:Tag{name:'${args.tag[i].name}'})<-[:HAS_TAG]-(a) `;
+				tagQueryBuilder += `(${String.fromCharCode(98 + i)}:Tag{name:'${args.tag[i]
+					.name}', timestamp: ${Date.now()}})<-[:HAS_TAG]-(a) `;
 			}
 
 			const tagQuery = tagQueryBuilder.split(') (').join('), (');
 			await session.run(tagQuery);
 
 			let ingredientQueryBuilder = `
-        MATCH (a:Recipe) WHERE ID(a) = ${recipe.id}
+        MATCH (a:Recipe) WHERE ID(a) = ${recipe._id}
         CREATE 
       `;
 
 			for (let i = 0; i < args.ingredient.length; i++) {
 				ingredientQueryBuilder += `(${String.fromCharCode(98 + i)}:Ingredient{name:'${args.ingredient[i]
-					.name}', amount: '${args.ingredient[i].amount}'})<-[:HAS_INGREDIENT]-(a) `;
+					.name}', amount: '${args.ingredient[i]
+					.amount}', timestamp: ${Date.now()}})<-[:HAS_INGREDIENT]-(a) `;
 			}
 
 			const ingredientgQuery = ingredientQueryBuilder.replace(') (', '), (');

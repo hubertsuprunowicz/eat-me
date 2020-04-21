@@ -1,0 +1,19 @@
+mutation Login($name: String!, $password: String!) {
+  login(name: $name, password: $password) {
+    token
+    user {
+      _id
+      name
+    }
+  }
+}
+
+mutation CreateUser($name: String!, $password: String!) {
+  createUser(name: $name, password: $password) {
+    token
+    user {
+      _id
+      name
+    }
+  }
+}

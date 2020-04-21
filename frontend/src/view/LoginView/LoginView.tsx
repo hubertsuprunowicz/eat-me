@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card } from '../../component/RecipeCard/styles';
 import Form from '../../component/Form/Form';
 import { AuthButton, AuthSwitch, Avatar } from './login.view.style';
-import { LOGIN, CREATE_USER } from './login.graphql';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 import { RECIPES_VIEW } from 'view/Route/constants.route';
@@ -10,6 +9,11 @@ import { Box, Button } from 'style';
 import { useAuthDispatch } from 'utils/auth';
 import { useForm, FieldError } from 'react-hook-form';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
+import {
+  useLoginMutation,
+  useCreateUserMutation,
+  User,
+} from 'model/generated/graphql';
 
 type FormData = {
   username: string;
@@ -27,31 +31,31 @@ const LoginView: React.FC = () => {
     FormData
   >();
 
-  const [login] = useMutation(LOGIN, {
-    onError: error =>
+  const [login] = useLoginMutation({
+    onError: (error) =>
       setError('queryError', 'queryError', error.graphQLErrors[0].message),
-    onCompleted: data => {
+    onCompleted: (data) => {
       authDispatch({
         type: 'login',
         token: data.login.token,
-        user: data.login.user,
+        user: data.login.user as User,
       });
       history.push(RECIPES_VIEW);
     },
   });
 
-  const [createUser] = useMutation(CREATE_USER, {
-    onError: error =>
+  const [createUser] = useCreateUserMutation({
+    onError: (error) =>
       setError(
         'mutationError',
         'mutationError',
         error.graphQLErrors[0].message,
       ),
-    onCompleted: data => {
+    onCompleted: (data) => {
       authDispatch({
         type: 'login',
         token: data.createUser.token,
-        user: data.createUser.user,
+        user: data.createUser.user as User,
       });
       history.push(RECIPES_VIEW);
     },

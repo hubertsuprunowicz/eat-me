@@ -3,14 +3,18 @@ import { useForm, FieldError } from 'react-hook-form';
 import * as Style from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
-import { useMutation } from '@apollo/react-hooks';
-import { Difficulty, Ingredient, Tag } from 'view/RecipesView/CreateRecipeForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Input } from './recipe.view.style';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Recipe } from 'view/RecipesView/RecipesView';
-import { UPDATE_RECIPE } from './recipe.graphql';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
+import {
+  useUpdateRecipeMutation,
+  Difficulty,
+  Tag,
+  Ingredient,
+  Recipe,
+  Maybe,
+} from 'model/generated/graphql';
 
 type UpdateRecipeForm = {
   id: number;
@@ -50,14 +54,14 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
       description: recipe.description,
       difficulty: recipe.difficulty,
       image: recipe.image,
-      title: recipe.title,
+      title: recipe.name,
       time: recipe.time,
       totalCost: recipe.totalCost,
     },
   });
 
-  const [editUser] = useMutation(UPDATE_RECIPE, {
-    onError: error => {
+  const [editUser] = useUpdateRecipeMutation({
+    onError: (error) => {
       setError(
         'mutationError',
         'mutationError',
@@ -76,7 +80,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
   const onSubmit = (data: UpdateRecipeForm) => {
     editUser({
       variables: {
-        id: recipe._id,
+        id: recipe._id ? recipe._id : '',
         name: data.title,
         description: data.description,
         image: data.image,
@@ -93,14 +97,14 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
 
   const removeIngredient = (index: number) => {
     const temp = ingredients;
-    temp.splice(index, 1);
+    if (temp) temp.splice(index, 1);
     setIngredients(temp);
     resetComponent({});
   };
 
   const removeTag = (index: number) => {
     const temp = tags;
-    temp.splice(index, 1);
+    if (temp) temp.splice(index, 1);
     setTags(temp);
     resetComponent({});
   };
@@ -148,7 +152,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         'tooLong',
         'Ingredient amount should be at most 6 letters long',
       );
-    } else if (ingredients.length > 12) {
+    } else if (ingredients?.length > 12) {
       setError(
         'ingredient',
         'tooMany',
@@ -242,7 +246,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         <ErrorMessage errors={errors} name={'tag.name'} />
         <Style.Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
           {tags &&
-            tags.map((tag: Tag, index) => (
+            tags?.map((tag: Tag, index) => (
               <Style.Tag
                 bg={'primary.300'}
                 key={tag.name + Math.random() * tag.name.length}

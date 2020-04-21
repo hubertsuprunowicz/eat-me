@@ -1,54 +1,19 @@
 import React, { useState, memo } from 'react';
-import { Box, IconButton, Tag, Button } from 'style';
+import * as Styled from 'style';
 import { Input } from './recipes.view.style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Form from 'component/Form/Form';
-import { useMutation } from '@apollo/react-hooks';
-import { CREATE_RECIPE } from './recipes.graphql';
 import { toast } from 'react-toastify';
 import { useAuthState } from 'utils/auth';
 import { useForm, FieldError } from 'react-hook-form';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
-
-export type Difficulty = 'easy' | 'medium' | 'hard';
-
-export type Ingredient = {
-  name: string;
-  amount: string;
-};
-
-export type Tag = {
-  name: string;
-};
-
-const Ingredient: React.FC<Ingredient & {
-  index: number;
-  ingredients: Ingredient[];
-}> = ({ name, amount, index, ingredients }) => {
-  return (
-    <Box
-      width="100%"
-      display="flex"
-      flexWrap={'wrap'}
-      justifyContent="space-between"
-      key={name + Math.random() * name.length}
-    >
-      <Box>{name}</Box>
-      <div>
-        <Box>{amount}</Box>
-        <Button
-          type="button"
-          onClick={function() {
-            ingredients.splice(index, 1);
-          }}
-        >
-          -
-        </Button>
-      </div>
-    </Box>
-  );
-};
+import {
+  Ingredient,
+  Difficulty,
+  Tag,
+  useCreateRecipeMutation,
+} from 'model/generated/graphql';
 
 type RecipeForm = {
   title: string;
@@ -140,8 +105,8 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
     }
   };
 
-  const [createRecipe] = useMutation(CREATE_RECIPE, {
-    onError: error => {
+  const [createRecipe] = useCreateRecipeMutation({
+    onError: (error) => {
       setError(
         'mutationError',
         'mutationError',
@@ -176,8 +141,8 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         tag: tags,
         ingredient: ingredients,
         totalCost: parseFloat(totalCost.toString()),
-        difficulty: difficulty.toUpperCase() as 'EASY' | 'MEDIUM' | 'HARD',
-        userID: user._id,
+        difficulty: difficulty.toUpperCase() as Difficulty,
+        userID: user._id ? user._id : '',
       },
     });
   };
@@ -198,7 +163,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Box
+      <Styled.Box
         display={paginationForm ? 'flex' : 'none'}
         flexDirection="column"
         alignItems="center"
@@ -260,7 +225,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         <label htmlFor="tag">
           <span>Tags</span>
         </label>
-        <Box display="flex">
+        <Styled.Box display="flex">
           <Input
             type="text"
             width={210}
@@ -268,32 +233,32 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             name="tag.name"
             ref={register}
           />
-          <IconButton
+          <Styled.IconButton
             ml={4}
             boxShadow="insetNeo"
             type="button"
             onClick={handleTags}
           >
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
-          </IconButton>
-        </Box>
+          </Styled.IconButton>
+        </Styled.Box>
         <ErrorMessage errors={errors} name={'tag.name'} />
-        <Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
+        <Styled.Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
           {tags &&
             tags.map((tag: Tag, index) => (
-              <Tag
+              <Styled.Tag
                 bg={'primary.300'}
                 key={tag.name + Math.random() * tag.name.length}
                 cursor={'pointer'}
                 onClick={() => removeTag(index)}
               >
                 {tag.name} <FontAwesomeIcon icon={faTimes} />
-              </Tag>
+              </Styled.Tag>
             ))}
-        </Box>
+        </Styled.Box>
         <ErrorMessage errors={errors} name={'tag'} />
-      </Box>
-      <Box
+      </Styled.Box>
+      <Styled.Box
         display={paginationForm ? 'none' : 'flex'}
         flexDirection="column"
         alignItems="center"
@@ -302,13 +267,13 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         <label htmlFor="difficulty">
           <span>Difficulty</span>
         </label>
-        <Box display={'flex'}>
+        <Styled.Box display={'flex'}>
           <select name="difficulty" ref={register}>
             <option value="EASY">Easy</option>
             <option value="MEDIUM">Medium</option>
             <option value="HARD">Hard</option>
           </select>
-        </Box>
+        </Styled.Box>
         <label htmlFor="description">
           <span>Description</span>
         </label>
@@ -345,7 +310,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         <label htmlFor="ingredient">
           <span>Ingredients</span>
         </label>
-        <Box display="flex">
+        <Styled.Box display="flex">
           <Input
             type="text"
             name="ingredients"
@@ -386,15 +351,15 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
                 : { required: false },
             )}
           />
-          <IconButton
+          <Styled.IconButton
             ml={4}
             boxShadow="insetNeo"
             type="button"
             onClick={handleIngredients}
           >
             <FontAwesomeIcon size={'1x'} icon={faPlus} />
-          </IconButton>
-        </Box>
+          </Styled.IconButton>
+        </Styled.Box>
         <ErrorMessage errors={errors} name={'ingredient'} />
         <ErrorMessage errors={errors} name={'ingredients'} />
         <ErrorMessage errors={errors} name={'ingredient.name'} />
@@ -402,7 +367,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         {ingredients &&
           ingredients.map(({ name, amount }: Ingredient, index) => {
             return (
-              <Box
+              <Styled.Box
                 width="100%"
                 display="flex"
                 flexWrap={'wrap'}
@@ -411,20 +376,25 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
                 cursor={'pointer'}
                 onClick={() => removeIngredient(index)}
               >
-                <Box>{name}</Box>
+                <Styled.Box>{name}</Styled.Box>
                 <div>
-                  <Box>{amount}</Box>
+                  <Styled.Box>{amount}</Styled.Box>
                 </div>
-              </Box>
+              </Styled.Box>
             );
           })}
 
         <ErrorMessage errors={errors} name={'ingredient.tag'} />
-      </Box>
+      </Styled.Box>
 
-      <Box mb={6} width="100%" display="flex" justifyContent="space-between">
-        <Box display="flex" justifyContent="flex-start">
-          <Button
+      <Styled.Box
+        mb={6}
+        width="100%"
+        display="flex"
+        justifyContent="space-between"
+      >
+        <Styled.Box display="flex" justifyContent="flex-start">
+          <Styled.Button
             p={5}
             type="button"
             color={'grey.700'}
@@ -433,8 +403,8 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             onClick={() => setPaginationForm(!paginationForm)}
           >
             1
-          </Button>
-          <Button
+          </Styled.Button>
+          <Styled.Button
             p={5}
             type="button"
             color={'grey.700'}
@@ -442,10 +412,10 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             onClick={() => setPaginationForm(!paginationForm)}
           >
             2
-          </Button>
-        </Box>
-        <Box display="flex" justifyContent="flex-end">
-          <Button
+          </Styled.Button>
+        </Styled.Box>
+        <Styled.Box display="flex" justifyContent="flex-end">
+          <Styled.Button
             type="submit"
             p={5}
             color={'secondary.500'}
@@ -453,8 +423,8 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             mr={5}
           >
             Submit
-          </Button>
-          <Button
+          </Styled.Button>
+          <Styled.Button
             onClick={() => setIsOpen(false)}
             p={5}
             color={'danger.500'}
@@ -462,9 +432,9 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             type={'button'}
           >
             Cancel
-          </Button>
-        </Box>
-      </Box>
+          </Styled.Button>
+        </Styled.Box>
+      </Styled.Box>
     </Form>
   );
 };

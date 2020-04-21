@@ -5,18 +5,17 @@ export const ListWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	height: -webkit-fill-available;
 `;
 
 export const MessageList = styled.ul`
 	overflow-y: auto;
 	width: 100%;
 	position: absolute;
+	height: 80vh;
 
 	text-decoration: none;
 	padding: 0;
 	overflow-y: auto;
-	padding-bottom: 40px;
 
 	& ${LinkIconButton} {
 		display: flex;
