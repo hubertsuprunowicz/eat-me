@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BackgroundImage, TagWrapper, TagText } from './styles';
-import { Box, Tag, Button, LinkButton, Text } from 'style';
-import { useAuthState } from 'utils/auth';
+import { Box, Tag, Button, LinkButton, Text, IconButton } from 'style';
+import { useAuthState, useAuthDispatch } from 'utils/auth';
 import { useParams } from 'react-router-dom';
 import UpdateUserDialog from './UpdateUserDialog';
 import FormModal from 'component/FormModal/FormModal';
@@ -9,6 +9,8 @@ import { RECIPES_VIEW } from 'view/Route/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { useGetUserQuery, User } from 'model/generated/graphql';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const defaultAvatar = 'img/user-solid.svg';
 
@@ -16,6 +18,7 @@ const ProfileView: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { username } = useParams();
   const { user } = useAuthState();
+  const dispatch = useAuthDispatch();
 
   const getName = () => {
     if (username && username !== '') return username;
@@ -30,6 +33,12 @@ const ProfileView: React.FC = () => {
       name: getName(),
     },
   });
+
+  const handleLogout = () => {
+    dispatch({
+      type: 'logout',
+    });
+  };
 
   if (error) return <ErrorRedirect error={error} />;
   if (!data) return null;
@@ -85,14 +94,17 @@ const ProfileView: React.FC = () => {
                     Favourites!
                   </TagText>
                   <TagWrapper>
-                    {userData.recipe.slice(0, 3).map((it) => (
-                      <Tag
-                        key={it?.tag[0]._id ? it?.tag[0]._id : ''}
-                        bg={'primary.500'}
-                      >
-                        {it?.tag[0].name}
-                      </Tag>
-                    ))}
+                    {userData.recipe.slice(0, 3).map((it) => {
+                      if (it?.tag && it.tag.length > 0)
+                        return (
+                          <Tag
+                            key={it?.tag[0]._id ? it?.tag[0]._id : ''}
+                            bg={'primary.500'}
+                          >
+                            {it?.tag[0].name}
+                          </Tag>
+                        );
+                    })}
                   </TagWrapper>
                 </>
               )}
@@ -111,9 +123,19 @@ const ProfileView: React.FC = () => {
                   Edit Profile
                 </Button>
               ))}
-            <LinkButton to={`${RECIPES_VIEW}/${getName()}`} color={'warn.600'}>
+            <LinkButton
+              to={`${RECIPES_VIEW}/${getName()}`}
+              mr={4}
+              color={'warn.600'}
+            >
               Recipes
             </LinkButton>
+            {(user && user.name === username) ||
+              (!username && (
+                <IconButton boxShadow={'neumorphism'} onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faSignOutAlt} />
+                </IconButton>
+              ))}
           </Box>
 
           {data && (

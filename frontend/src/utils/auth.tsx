@@ -33,6 +33,7 @@ function authReducer(_: State, action: Action) {
       };
     }
     case 'logout': {
+      sessionStorage.removeItem('token');
       return {
         login: false,
         token: undefined,
