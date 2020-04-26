@@ -46,6 +46,7 @@ export const WatchesList = styled.ul`
 	img {
 		object-fit: cover;
 		border-radius: ${themeGet('radii.0')}px;
+		min-height: 160px;
 		height: 160px;
 		width: 100%;
 	}

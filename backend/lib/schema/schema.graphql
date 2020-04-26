@@ -118,7 +118,6 @@ type User {
 	friends: [User] @relation(name: "WATCHES", direction: "OUT")
 	recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
 	timestamp: Long
-	# @cypher(statement: "MATCH (this)-[:POSTS]->(r:Recipe) RETURN r")
 }
 
 type Message {
@@ -158,10 +157,8 @@ type Recipe {
 	time: Int!
 	tag: [Tag!]! @relation(name: "HAS_TAG", direction: "OUT")
 	user: User! @relation(name: "POSTS", direction: "IN")
-	# @cypher(statement: "MATCH (this)<-[:POSTS]-(u:User) RETURN u")
 	ingredient: [Ingredient!]! @relation(name: "HAS_INGREDIENT", direction: "OUT")
 	comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
-	# @cypher(statement: "MATCH (this)<-[:HAS]-(u:User) RETURN u")
 	timestamp: Long
 }
 

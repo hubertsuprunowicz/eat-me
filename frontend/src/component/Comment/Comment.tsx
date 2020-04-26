@@ -26,7 +26,9 @@ const Comment: React.FC<Props> = ({
           <i>{formatDistance(timestamp, new Date())}</i>
         </Text>
       </Box>
-      <Text mb={6}>{children}</Text>
+      <Text fontSize={10} mb={6}>
+        {children}
+      </Text>
       <Box
         position={'absolute'}
         display={'flex'}

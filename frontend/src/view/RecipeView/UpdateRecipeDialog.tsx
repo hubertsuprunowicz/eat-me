@@ -223,6 +223,16 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           })}
         />
         <ErrorMessage errors={errors} name={'time'} />
+        <Input
+          type="text"
+          name="tags"
+          ref={register({
+            validate: () => {
+              if (tags.length < 1) return 'Tags are required';
+            },
+          })}
+          hidden
+        />
         <label htmlFor="tag">
           <span>Tags</span>
         </label>
@@ -258,6 +268,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             ))}
         </Style.Box>
         <ErrorMessage errors={errors} name={'tag'} />
+        <ErrorMessage errors={errors} name={'tags'} />
       </Style.Box>
       <Style.Box
         display={paginationForm === 2 ? 'flex' : 'none'}

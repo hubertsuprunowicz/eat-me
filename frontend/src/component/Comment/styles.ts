@@ -4,6 +4,7 @@ export const StyledComment = styled.div`
 	position: relative;
 	margin: 10px;
 	padding: 6px 15px;
+	padding-bottom: 15px;
 	border-radius: 5px;
 	max-width: 35%;
 	height: 100%;

@@ -79,6 +79,10 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
               value: 6,
               message: 'Description needs to be at least 6 characters long',
             },
+            maxLength: {
+              value: 300,
+              message: 'Description needs to be at most 300 characters long',
+            },
           })}
         />
         <ErrorMessage errors={errors} name={'description'} />

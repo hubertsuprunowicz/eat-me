@@ -2144,4 +2144,4 @@ export function useNewRecipeDiscoverSubscription(baseOptions?: ApolloReactHooks.
 export type NewRecipeDiscoverSubscriptionHookResult = ReturnType<typeof useNewRecipeDiscoverSubscription>;
 export type NewRecipeDiscoverSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewRecipeDiscoverSubscription>;
 
-// Generated in 2020-04-21T21:53:20+02:00
+// Generated in 2020-04-26T19:44:51+02:00

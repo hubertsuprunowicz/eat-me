@@ -40,7 +40,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 
   if (networkError) {
-    console.error(`[Network error]: `, networkError);
+    console.error(`[Network error]: ${networkError.message}`);
   }
 });
 
@@ -67,7 +67,7 @@ const link = ApolloLink.from([new RetryLink(), errorLink, authLink, prelink]);
 
 const client = new ApolloClient({
   link: link,
-  cache: new InMemoryCache({ addTypename: false }),
+  cache: new InMemoryCache({ addTypename: true }),
 });
 
 ReactDOM.render(

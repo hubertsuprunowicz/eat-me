@@ -18,8 +18,12 @@ const resolvers = {
 		newRecipeDiscover: {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator('newRecipeDiscover'),
-				(_payload, _variables) => {
-					return true;
+				(payload, variables) => {
+					console.log(payload.newRecipeDiscover.subscribers.find((it) => it.toString()));
+					if (payload.newRecipeDiscover.subscribers && payload.newRecipeDiscover.subscribers.length > 0)
+						return !!payload.newRecipeDiscover.subscribers.find((it) => it.toString() === variables.id);
+
+					return false;
 				}
 			)
 		}
@@ -122,13 +126,14 @@ const resolvers = {
 
 			const query = 'CREATE (n:User{name:$name, password:$password, timestamp: $timestamp}) RETURN n';
 
-			const user = await session.run(query, { name: args.name, password }).then((results) => {
-				return {
-					_id: results.records[0].get(0).identity.low,
-					name: results.records[0].get(0).properties.name,
-					timestamp: Date.now()
-				};
-			});
+			const user = await session
+				.run(query, { name: args.name, password: password, timestamp: Date.now() })
+				.then((results) => {
+					return {
+						_id: results.records[0].get(0).identity.low,
+						name: results.records[0].get(0).properties.name
+					};
+				});
 
 			const token = sign({ userId: user._id }, process.env.JWT_SECRET);
 
@@ -363,11 +368,16 @@ const resolvers = {
 					.amount}', timestamp: ${Date.now()}})<-[:HAS_INGREDIENT]-(a) `;
 			}
 
-			const ingredientgQuery = ingredientQueryBuilder.replace(') (', '), (');
+			const ingredientgQuery = ingredientQueryBuilder.split(') (').join('), (');
 			await session.run(ingredientgQuery);
 
+			const subsribingUserQuery = `MATCH (a:User), (b:User) WHERE id(a) = ${userID} MATCH (a)<-[:WATCHES]-(b) RETURN collect(ID(b))`;
+			const subscribingUsers = await session.run(subsribingUserQuery).then((results) => {
+				return results.records[0].get(0).map((it) => it.low);
+			});
+
 			pubsub.publish('newRecipeDiscover', {
-				newRecipeDiscover: recipe
+				newRecipeDiscover: { ...recipe, subscribers: subscribingUsers }
 			});
 
 			return recipe;

@@ -222,6 +222,16 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           })}
         />
         <ErrorMessage errors={errors} name={'time'} />
+        <Input
+          type="text"
+          name="tags"
+          ref={register({
+            validate: () => {
+              if (tags.length < 1) return 'Tags are required';
+            },
+          })}
+          hidden
+        />
         <label htmlFor="tag">
           <span>Tags</span>
         </label>
@@ -257,6 +267,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             ))}
         </Styled.Box>
         <ErrorMessage errors={errors} name={'tag'} />
+        <ErrorMessage errors={errors} name={'tags'} />
       </Styled.Box>
       <Styled.Box
         display={paginationForm ? 'none' : 'flex'}
