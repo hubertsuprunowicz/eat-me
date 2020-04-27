@@ -70,7 +70,7 @@ const ProfileView: React.FC = () => {
             boxShadow={'spread'}
             position={'relative'}
           >
-            <Text variant={'cursive'} color={'grey.900'} mt={-20} fontSize={40}>
+            <Text color={'grey.800'} mt={-20} fontSize={30}>
               {userData.name}
             </Text>
             <Text fontSize={0} margin={0}>

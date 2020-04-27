@@ -3,12 +3,11 @@ const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
 const neo4j = require('neo4j-driver');
 const dotenv = require('dotenv');
-const { makeAugmentedSchema, augmentSchema, augmentTypeDefs } = require('neo4j-graphql-js');
+const { makeAugmentedSchema } = require('neo4j-graphql-js');
 const bodyParser = require('body-parser');
 const { IsAuthenticatedDirective, HasScopeDirective } = require('graphql-auth-directives');
 const cors = require('cors');
 const resolvers = require('./lib/resolver');
-const create = require('./seed/index');
 const typeDefs = require('./lib/schema/graphql-schema');
 dotenv.config();
 
@@ -32,17 +31,10 @@ const schema = makeAugmentedSchema({
 
 const driver = neo4j.driver(
 	process.env.NEO4J_URI || 'bolt://localhost:7687',
-	neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD || 'letmein')
+	neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD)
 );
 
-// create.users();
-// create.recipes();
-// create.tags();
-// create.comments();
-// opinions
-// messages
-
-const checkErrorHeaderMiddleware = async (req, res, next) => {
+const checkErrorHeaderMiddleware = async (req, _res, next) => {
 	req.error = req.headers['x-error'];
 	next();
 };
@@ -75,10 +67,6 @@ const server = new ApolloServer({
 			return true;
 		}
 		throw new Error('Missing auth token!');
-	},
-	subscriptions: {
-		onConnect: (connectionParams, webSocket, context) => {},
-		onDisconnect: (webSocket, context) => {}
 	}
 });
 

@@ -246,9 +246,7 @@ const MessageView: React.FC = () => {
         <ListWrapper>
           <MessageList onScroll={onScroll} ref={wrapperRef as any}>
             {data && data.Message && data.Message.length < 1 ? (
-              <NoRecords>
-                Sorry, there is no messages to show. Come back later :)
-              </NoRecords>
+              <NoRecords>Sorry, no messages were found.</NoRecords>
             ) : (
               data &&
               data.Message &&

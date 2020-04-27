@@ -10,6 +10,7 @@ import {
   useWatchesRecipesQuery,
   NewRecipeDiscoverDocument,
 } from 'model/generated/graphql';
+import NoRecords from 'component/NoRecords/NoRecords';
 
 const WatchesView: React.FC = () => {
   const { user } = useAuthState();
@@ -51,7 +52,7 @@ const WatchesView: React.FC = () => {
       </Box>
       <LoadingOverlay isLoading={loading}>
         <WatchesList>
-          {data &&
+          {data && data.watchesRecipes.length > 0 ? (
             data.watchesRecipes.map((it) => (
               <li key={it._id ?? ''}>
                 <Link to={`${RECIPE_VIEW}/${it._id}`}>
@@ -66,7 +67,19 @@ const WatchesView: React.FC = () => {
                   </div>
                 </Link>
               </li>
-            ))}
+            ))
+          ) : (
+            <>
+              <NoRecords
+                mt={8}
+                infomation={
+                  'Watches View is place with recipes created by subscribed users'
+                }
+              >
+                Sorry, no watches were found.
+              </NoRecords>
+            </>
+          )}
         </WatchesList>
       </LoadingOverlay>
     </Box>

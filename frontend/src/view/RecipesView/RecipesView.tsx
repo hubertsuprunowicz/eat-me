@@ -219,7 +219,7 @@ const RecipesView: React.FC = () => {
             />
           </TinderCard>
         ))}
-      {!loading && <NoRecords>Sorry, there is no more recipes...</NoRecords>}
+      {!loading && <NoRecords mt={8}>Sorry, no recipes were found.</NoRecords>}
       {recipeIsOpen && (
         <FormModal
           title="Add Recipe"
