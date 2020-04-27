@@ -1,7 +1,18 @@
 # eat-me
 
-### test
-  Node
-  Npm
-  Neo4j - Graph 3.5.6
+### Configuration
+  * Node
+  * Npm
+  * Neo4j - Graph 3.5.6
   
+### Build and run
+  ```
+  cd frontend
+  npm install
+  
+  cd backend
+  npm install
+  
+  cd electron
+  npm install
+  ```
