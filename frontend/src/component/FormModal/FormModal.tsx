@@ -40,7 +40,7 @@ const FormModal: React.FC<Props> = ({
             mt={6}
             onClick={closeModal}
             borderRadius={0}
-            boxShadow="insetNeo"
+            boxShadow="insetNeumorphism"
           >
             <FontAwesomeIcon size={'lg'} icon={faTimes} />
           </CloseButton>

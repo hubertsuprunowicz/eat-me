@@ -76,7 +76,12 @@ const Filter: React.FC<Props> = ({
         <label htmlFor="title">
           <span>Price</span>
         </label>
-        <Box display="flex" alignItems="baseline">
+        <Box
+          display="flex"
+          width={'100%'}
+          justifyContent={'space-between'}
+          alignItems="baseline"
+        >
           <input
             type="number"
             placeholder="From i.e. 20"
@@ -96,7 +101,12 @@ const Filter: React.FC<Props> = ({
         <label htmlFor="title">
           <span>Time</span>
         </label>
-        <Box display="flex" alignItems="baseline">
+        <Box
+          display="flex"
+          width={'100%'}
+          justifyContent={'space-between'}
+          alignItems="baseline"
+        >
           <input
             type="number"
             placeholder="From i.e. 30"
@@ -120,8 +130,7 @@ const Filter: React.FC<Props> = ({
             type="button"
             onClick={handleFilter}
             p={5}
-            color={'secondary.500'}
-            boxShadow="neumorphism"
+            variant={'secondary'}
             mr={5}
           >
             Search
@@ -130,8 +139,7 @@ const Filter: React.FC<Props> = ({
             type="button"
             onClick={() => setIsOpen(false)}
             p={5}
-            color={'danger.500'}
-            boxShadow="neumorphism"
+            variant={'danger'}
           >
             Cancel
           </Button>

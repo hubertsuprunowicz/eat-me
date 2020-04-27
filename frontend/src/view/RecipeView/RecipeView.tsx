@@ -5,7 +5,7 @@ import {
   IngredientsList,
   AuthorImage,
   TagsHolder,
-} from './recipe.view.style';
+} from './styles';
 import { Box, Button, LinkButton, Text, IconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,7 +19,7 @@ import { useAuthState } from 'utils/auth';
 import { useParams } from 'react-router-dom';
 import FormModal from 'component/FormModal/FormModal';
 import Comment from 'component/Comment/Comment';
-import { PROFILE_VIEW } from 'view/Route/constants.route';
+import { PROFILE_VIEW } from 'utils/constants.route';
 import UpdateRecipeDialog from './UpdateRecipeDialog';
 import CommentDialog from './CommentDialog';
 import { toast } from 'react-toastify';
@@ -97,6 +97,8 @@ const RecipeView: React.FC = () => {
   };
 
   const totalRating = (comments: Model.Comment[]) => {
+    if (comments.length < 1) return 0;
+
     const rating =
       comments.reduce((acc, curr) => acc + curr.rating, 0) / comments.length;
 
@@ -243,36 +245,21 @@ const RecipeView: React.FC = () => {
           {subscribed ? (
             <IconButton
               ml={5}
-              color={'secondary.500'}
-              boxShadow={'neumorphism'}
+              variant={'secondary'}
               onClick={handleUnsubscribe}
             >
               <FontAwesomeIcon size={'lg'} icon={faEyeSlash} />
             </IconButton>
           ) : (
-            <IconButton
-              ml={5}
-              color={'secondary.500'}
-              boxShadow={'neumorphism'}
-              onClick={handleSubscribe}
-            >
+            <IconButton ml={5} variant={'secondary'} onClick={handleSubscribe}>
               <FontAwesomeIcon size={'lg'} icon={faEye} />
             </IconButton>
           )}
-          <IconButton
-            ml={5}
-            color={'danger.500'}
-            boxShadow={'neumorphism'}
-            onClick={handleSubscribe}
-          >
+          <IconButton ml={5} variant={'danger'} onClick={handleSubscribe}>
             <FontAwesomeIcon size={'lg'} icon={faHeart} />
           </IconButton>
           {user && recipe.user.name === user.name && (
-            <EditButton
-              ml={5}
-              boxShadow={'neumorphism'}
-              onClick={() => setIsRecipeDialogOpen(true)}
-            >
+            <EditButton ml={5} onClick={() => setIsRecipeDialogOpen(true)}>
               <FontAwesomeIcon size={'lg'} icon={faEdit} />
             </EditButton>
           )}
@@ -330,13 +317,7 @@ const RecipeView: React.FC = () => {
             <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
               Leave your feedback{' '}
             </Text>
-            <Button
-              color={'grey.900'}
-              ml={4}
-              p={5}
-              boxShadow={'neumorphism'}
-              onClick={() => setIsCommentDialogOpen(true)}
-            >
+            <Button ml={4} p={5} onClick={() => setIsCommentDialogOpen(true)}>
               <Text fontSize="1.3rem">here!</Text>
             </Button>
           </Box>

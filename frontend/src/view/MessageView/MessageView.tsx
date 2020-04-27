@@ -12,7 +12,7 @@ import debounce from 'lodash.debounce';
 import Form from 'component/Form/Form';
 import NoRecords from 'component/NoRecords/NoRecords';
 import { toast } from 'react-toastify';
-import { PROFILE_VIEW } from 'view/Route/constants.route';
+import { PROFILE_VIEW } from 'utils/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import DeleteModal from 'component/DeleteModal/DeleteModal';
 import {
@@ -92,10 +92,9 @@ const Row: React.FC<RowProps> = ({
           </Text>
           <IconButton
             onClick={() => setModalIsOpen(true)}
-            boxShadow="neumorphism"
             width="33px"
             height="33px"
-            color="danger.500"
+            variant="danger"
             borderRadius="50%"
           >
             <FontAwesomeIcon icon={faTimes} />
@@ -227,11 +226,7 @@ const MessageView: React.FC = () => {
       <Box display={'flex'} justifyContent={'space-between'}>
         <span>Message</span>
         <div>
-          <Button
-            boxShadow="neumorphism"
-            mr={4}
-            onClick={() => setIsOpen(true)}
-          >
+          <Button mr={4} onClick={() => setIsOpen(true)}>
             <FontAwesomeIcon size={'xs'} icon={faPlusCircle} /> Message
           </Button>
         </div>

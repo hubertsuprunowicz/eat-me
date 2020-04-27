@@ -27,7 +27,7 @@ const warnColor = {
   '200': '#EEE8AA',
   '300': '#F0E68C	',
   '400': '#DAA520',
-  '500': '#FFD700	',
+  '500': '#FF8C00	',
   '600': '#FFA500	',
   '700': '#FF8C00	',
   '800': '#CD853F	',
@@ -79,12 +79,10 @@ const others = {
     spread: '3px 4px 25px -4px rgba(0, 0, 0, 0.36)',
     neumorphism:
       'inset 0 0 15px rgba(55, 84, 170,0), inset 0 0 20px rgba(255, 255, 255,0), 7px 7px 15px rgba(55, 84, 170,.15), -7px -7px 20px rgba(255, 255, 255,1), inset 0px 0px 4px rgba(255, 255, 255,.2)',
-    // '9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5)',
-    insetNeo:
+    insetNeumorphism:
       'inset 3px 3px 7px rgba(146, 161, 191, 0.30), inset -3px -3px 7px #FFFFFF',
-    // 'inset 3px 3px 3px rgba(0,0,0,0.2), inset -3px -4px 4px rgba(255,255,255,0.4)',
-    // insetNeo:
-    //   'inset 7px 7px 15px rgba(55, 84, 170,.15), inset -7px -7px 20px rgba(255, 255, 255,1), 0px 0px 4px rgba(255, 255, 255,.2)',
+    clearInset:
+      'inset 7px 7px 15px rgba(55, 84, 170,.15), inset -7px -7px 20px rgba(255, 255, 255,1),  0px 0px 4px rgba(255, 255, 255,.2)',
   },
   radii: [8, 10],
 };

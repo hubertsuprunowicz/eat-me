@@ -12,7 +12,7 @@ import {
   RECIPES_VIEW,
   WATCHES_VIEW,
   MESSAGE_VIEW,
-} from 'view/Route/constants.route';
+} from 'utils/constants.route';
 
 const Navigate: React.FC = ({ children }) => {
   return (

@@ -1,6 +1,6 @@
 import React, { useState, memo } from 'react';
 import * as Styled from 'style';
-import { Input } from './recipes.view.style';
+import { Input } from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Form from 'component/Form/Form';
@@ -244,8 +244,9 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             ref={register}
           />
           <Styled.IconButton
+            height={'45px'}
             ml={4}
-            boxShadow="insetNeo"
+            boxShadow="clearInset"
             type="button"
             onClick={handleTags}
           >
@@ -336,7 +337,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             hidden
           />
           <Input
-            width={132}
+            width={145}
             type="text"
             placeholder="Enter name"
             name="ingredient.name"
@@ -350,7 +351,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           />
           <Input
             ml={4}
-            width={55}
+            width={58}
             type="text"
             placeholder="Amount"
             name="ingredient.amount"
@@ -363,8 +364,9 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             )}
           />
           <Styled.IconButton
+            height={'45px'}
             ml={4}
-            boxShadow="insetNeo"
+            boxShadow="clearInset"
             type="button"
             onClick={handleIngredients}
           >
@@ -408,8 +410,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           <Styled.Button
             p={5}
             type="button"
-            color={'grey.700'}
-            boxShadow={paginationForm ? 'insetNeo' : 'neumorphism'}
+            boxShadow={paginationForm ? 'clearInset' : 'neumorphism'}
             mr={5}
             onClick={() => setPaginationForm(!paginationForm)}
           >
@@ -418,28 +419,20 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           <Styled.Button
             p={5}
             type="button"
-            color={'grey.700'}
-            boxShadow={paginationForm ? 'neumorphism' : 'insetNeo'}
+            boxShadow={paginationForm ? 'neumorphism' : 'clearInset'}
             onClick={() => setPaginationForm(!paginationForm)}
           >
             2
           </Styled.Button>
         </Styled.Box>
         <Styled.Box display="flex" justifyContent="flex-end">
-          <Styled.Button
-            type="submit"
-            p={5}
-            color={'secondary.500'}
-            boxShadow="neumorphism"
-            mr={5}
-          >
+          <Styled.Button type="submit" p={5} variant="secondary" mr={5}>
             Submit
           </Styled.Button>
           <Styled.Button
             onClick={() => setIsOpen(false)}
             p={5}
-            color={'danger.500'}
-            boxShadow="neumorphism"
+            variant="danger"
             type={'button'}
           >
             Cancel

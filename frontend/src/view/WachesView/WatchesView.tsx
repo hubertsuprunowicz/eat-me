@@ -4,7 +4,7 @@ import { WatchesList } from './styles';
 import { Link } from 'react-router-dom';
 import { useAuthState } from 'utils/auth';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
-import { RECIPE_VIEW } from 'view/Route/constants.route';
+import { RECIPE_VIEW } from 'utils/constants.route';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import {
   useWatchesRecipesQuery,

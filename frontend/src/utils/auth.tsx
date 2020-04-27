@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Redirect } from 'react-router-dom';
-import { LOGIN_VIEW } from 'view/Route/constants.route';
+import { LOGIN_VIEW } from 'utils/constants.route';
 import { User } from 'model/generated/graphql';
 
 type Action =

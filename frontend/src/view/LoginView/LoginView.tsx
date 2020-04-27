@@ -4,7 +4,7 @@ import Form from '../../component/Form/Form';
 import { AuthButton, AuthSwitch, Avatar } from './login.view.style';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
-import { RECIPES_VIEW } from 'view/Route/constants.route';
+import { RECIPES_VIEW } from 'utils/constants.route';
 import { Box, Button } from 'style';
 import { useAuthDispatch } from 'utils/auth';
 import { useForm, FieldError } from 'react-hook-form';
@@ -77,7 +77,7 @@ const LoginView: React.FC = () => {
   });
 
   return (
-    <Card height={'80vh'}>
+    <Card mt={'20%'}>
       <Form onSubmit={onSubmit}>
         <Avatar src={'img/user-solid.svg'} />
         <Box display="flex" flexDirection="column" alignItems="center" p={20}>
@@ -139,25 +139,11 @@ const LoginView: React.FC = () => {
           <ErrorMessage errors={errors} name={'queryError'} />
 
           {loginForm ? (
-            <Button
-              color="grey.800"
-              boxShadow="neumorphism"
-              mt={6}
-              width="80px"
-              height="35px"
-              type="submit"
-            >
+            <Button mt={6} type="submit">
               Login
             </Button>
           ) : (
-            <Button
-              color="grey.800"
-              boxShadow="neumorphism"
-              mt={6}
-              width="80px"
-              height="35px"
-              type="submit"
-            >
+            <Button mt={6} type="submit">
               Register
             </Button>
           )}

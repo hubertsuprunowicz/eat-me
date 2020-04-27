@@ -12,7 +12,7 @@ import {
   faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { Card, CardDetails, TagWrapper, DeleteButton } from './styles';
-import { PROFILE_VIEW, RECIPE_VIEW } from 'view/Route/constants.route';
+import { PROFILE_VIEW, RECIPE_VIEW } from 'utils/constants.route';
 import DeleteModal from 'component/DeleteModal/DeleteModal';
 import { toast } from 'react-toastify';
 import { useAuthState } from 'utils/auth';
@@ -69,15 +69,14 @@ const RecipeCard: React.FC<Props> = ({
     setSwipe('left');
   };
 
-  function totalRating() {
-    if (comment)
-      return ((
-        comment.reduce((acc, curr) => acc + (curr as Comment).rating, 0) /
-        comment.length
-      ).toFixed(1) as unknown) as number;
+  const totalRating = (comments: Comment[]) => {
+    if (comments.length < 1) return 0;
 
-    return 0;
-  }
+    const rating =
+      comments.reduce((acc, curr) => acc + curr.rating, 0) / comments.length;
+
+    return parseFloat(rating.toFixed(1));
+  };
 
   const [deleteRecipe] = useDeleteRecipeMutation({
     onError: (_) => {
@@ -108,23 +107,28 @@ const RecipeCard: React.FC<Props> = ({
       key={id}
       cursor="pointer"
       height={'70vh'}
+      mt={'10%'}
       className={swipe ? 'swipe-' + swipe : undefined}
     >
       <img src={image || '/img/food-404.jpg'} alt={name} />
       {user && user.name === recipeAuthor?.name && (
-        <DeleteButton p={4} onClick={() => setModalIsOpen(true)}>
+        <DeleteButton
+          type={'button'}
+          p={4}
+          onClick={() => setModalIsOpen(true)}
+        >
           Delete
         </DeleteButton>
       )}
       <CardDetails>
-        <Tag border={'none'} bg={'secondary.600'} pr={4} pl={4}>
+        <Tag m={0} border={'none'} bg={'secondary.600'}>
           {recipeAuthor?.name}
         </Tag>
         <h3>{name}</h3>
         <TagWrapper>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faStar} />
-            {totalRating()}
+            {comment ? totalRating(comment as Comment[]) : 0}
           </Tag>
           <Tag bg={'primary.400'}>
             <FontAwesomeIcon icon={faClock} />
@@ -144,25 +148,22 @@ const RecipeCard: React.FC<Props> = ({
             </Tag>
           ))}
         </TagWrapper>
-        <Box>
+        <Box display="flex">
           <LinkIconButton
             to={`${RECIPE_VIEW}/${id}`}
-            color="black"
-            width="38px"
-            height="38px"
+            type="button"
             ml={4}
             mr={4}
           >
-            <FontAwesomeIcon size={'sm'} icon={faSignInAlt} />
+            <FontAwesomeIcon size={'1x'} icon={faSignInAlt} />
           </LinkIconButton>
           <IconButton
             id="swipeRight"
-            boxShadow="neumorphism"
+            color="secondary.700"
             onClick={loveItHandle}
+            width="42px"
+            height="42px"
             type="button"
-            width="38px"
-            height="38px"
-            color="secondary.600"
             borderRadius="50%"
             ml={4}
             mr={4}
@@ -171,12 +172,11 @@ const RecipeCard: React.FC<Props> = ({
           </IconButton>
           <IconButton
             id="swipeLeft"
-            boxShadow="neumorphism"
             onClick={quitItHandle}
             type="button"
-            width="38px"
-            height="38px"
             color="danger.900"
+            width="42px"
+            height="42px"
             borderRadius="50%"
             ml={4}
             mr={4}
@@ -185,13 +185,11 @@ const RecipeCard: React.FC<Props> = ({
           </IconButton>
           <LinkIconButton
             to={`${PROFILE_VIEW}/${recipeAuthor?.name}`}
-            width="38px"
-            height="38px"
-            color="grey.800"
+            type="button"
             ml={4}
             mr={4}
           >
-            <FontAwesomeIcon size={'sm'} icon={faUser} />
+            <FontAwesomeIcon size={'1x'} icon={faUser} />
           </LinkIconButton>
         </Box>
       </CardDetails>

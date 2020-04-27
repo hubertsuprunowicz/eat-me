@@ -158,17 +158,10 @@ const RecipesView: React.FC = () => {
       >
         <span>Recipes</span>
         <div>
-          <Styled.Button
-            boxShadow="neumorphism"
-            mr={4}
-            onClick={() => setRecipeIsOpen(true)}
-          >
+          <Styled.Button mr={4} onClick={() => setRecipeIsOpen(true)}>
             <FontAwesomeIcon size={'xs'} icon={faPlusCircle} /> Recipe
           </Styled.Button>
-          <Styled.Button
-            boxShadow="neumorphism"
-            onClick={() => setFilterIsOpen(true)}
-          >
+          <Styled.Button onClick={() => setFilterIsOpen(true)}>
             <FontAwesomeIcon size={'xs'} icon={faFilter} /> Filter
           </Styled.Button>
         </div>
@@ -176,8 +169,7 @@ const RecipesView: React.FC = () => {
       <Styled.Button
         onClick={() => setAllRecipes(!allRecipes)}
         ml={4}
-        color={allRecipes ? 'grey.500' : 'danger.500'}
-        boxShadow="neumorphism"
+        variant={allRecipes ? 'regular' : 'danger'}
       >
         <FontAwesomeIcon size={'xs'} icon={faHeart} /> Loved list
         <Badge backgroundColor={'danger.500'}>

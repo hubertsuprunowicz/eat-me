@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
-import { StyledRating } from './recipe.view.style';
+import { StyledRating } from './styles';
 import { toast } from 'react-toastify';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 import { Recipe, useCreateCommentMutation } from 'model/generated/graphql';
@@ -89,21 +89,14 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
         <ErrorMessage errors={errors} name={'mutationError'} />
       </Box>
       <Box mb={6} width="100%" display="flex" justifyContent="flex-end">
-        <Button
-          type="submit"
-          p={5}
-          color={'secondary.500'}
-          boxShadow="neumorphism"
-          mr={5}
-        >
+        <Button type="submit" p={5} variant={'secondary'} mr={5}>
           Submit
         </Button>
         <Button
           onClick={() => setIsOpen(false)}
           p={5}
           type="button"
-          color={'danger.500'}
-          boxShadow="neumorphism"
+          variant={'danger'}
         >
           Cancel
         </Button>

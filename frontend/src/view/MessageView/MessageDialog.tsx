@@ -83,21 +83,14 @@ const MessageDialog: React.FC<Props> = ({ setIsOpen }) => {
         <ErrorMessage errors={errors} name={'message'} />
         <ErrorMessage errors={errors} name={'mutationError'} />
         <Box display="flex" mt={4}>
-          <Button
-            type="submit"
-            p={5}
-            color={'secondary.500'}
-            boxShadow="neumorphism"
-            mr={5}
-          >
+          <Button type="submit" p={5} variant="secondary" mr={5}>
             Submit
           </Button>
 
           <Button
             onClick={() => setIsOpen(false)}
             p={5}
-            color={'danger.500'}
-            boxShadow="neumorphism"
+            variant="danger"
             type={'button'}
           >
             Cancel

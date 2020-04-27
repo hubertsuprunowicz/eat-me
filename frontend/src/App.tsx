@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navigate from './component/Navigate/Navigate';
 import RecipesView from './view/RecipesView/RecipesView';
-import { Main } from './style';
 import LoginView from './view/LoginView/LoginView';
 import { ThemeProvider } from 'styled-components';
 import {
@@ -13,7 +12,7 @@ import {
   MESSAGE_VIEW,
   ERROR_VIEW,
   RECIPE_VIEW,
-} from 'view/Route/constants.route';
+} from 'utils/constants.route';
 import ProfileView from 'view/ProfileView/ProfileView';
 import { theme } from 'utils/theme';
 import WatchesView from 'view/WachesView/WatchesView';
@@ -24,67 +23,81 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RecipeView from 'view/RecipeView/RecipeView';
 import { RecipesProvider } from 'utils/recipes.context';
+import GlobalStyle from 'utils/GlobalStyles';
+import Page from 'utils/Page';
 
 toast.configure();
 
-const loginView = <LoginView />;
-
 const recipesCardView = (
   <Authorization>
-    <RecipesView />
+    <Page>
+      <RecipesView />
+    </Page>
   </Authorization>
 );
 const profileView = (
   <Authorization>
-    <ProfileView />
+    <Page>
+      <ProfileView />
+    </Page>
   </Authorization>
 );
 const watchesView = (
   <Authorization>
-    <WatchesView />
+    <Page>
+      <WatchesView />
+    </Page>
   </Authorization>
 );
 const messageView = (
   <Authorization>
-    <MessageView />
+    <Page>
+      <MessageView />
+    </Page>
   </Authorization>
 );
 
 const recipeView = (
   <Authorization>
-    <RecipeView />
+    <Page>
+      <RecipeView />
+    </Page>
   </Authorization>
 );
 
+const loginView = (
+  <Page>
+    <LoginView />
+  </Page>
+);
 const errorView = <ErrorView />;
 
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Main>
-        <ToastContainer className="toast-size" />
-        <Router>
-          <AuthProvider>
-            <RecipesProvider>
-              <Switch>
-                <Route path={LOGIN_VIEW}>{loginView}</Route>
-                <Route path={RECIPE_VIEW + '/:id'}>{recipeView}</Route>
-                <Route path={PROFILE_VIEW + '/:username'}>{profileView}</Route>
-                <Route path={PROFILE_VIEW}>{profileView}</Route>
-                <Route path={RECIPES_VIEW + '/:username'}>
-                  {recipesCardView}
-                </Route>
-                <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
-                <Route path={WATCHES_VIEW}>{watchesView}</Route>
-                <Route path={MESSAGE_VIEW}>{messageView}</Route>
-                <Route path={ERROR_VIEW}>{errorView}</Route>
-                <Route path={''}>{recipesCardView}</Route>
-              </Switch>
-              <Navigate />
-            </RecipesProvider>
-          </AuthProvider>
-        </Router>
-      </Main>
+      <ToastContainer className="toast-size" />
+      <Router>
+        <AuthProvider>
+          <RecipesProvider>
+            <Switch>
+              <Route path={LOGIN_VIEW}>{loginView}</Route>
+              <Route path={RECIPE_VIEW + '/:id'}>{recipeView}</Route>
+              <Route path={PROFILE_VIEW + '/:username'}>{profileView}</Route>
+              <Route path={PROFILE_VIEW}>{profileView}</Route>
+              <Route path={RECIPES_VIEW + '/:username'}>
+                {recipesCardView}
+              </Route>
+              <Route path={RECIPES_VIEW}>{recipesCardView}</Route>
+              <Route path={WATCHES_VIEW}>{watchesView}</Route>
+              <Route path={MESSAGE_VIEW}>{messageView}</Route>
+              <Route path={ERROR_VIEW}>{errorView}</Route>
+              <Route path={''}>{recipesCardView}</Route>
+            </Switch>
+            <GlobalStyle />
+            <Navigate />
+          </RecipesProvider>
+        </AuthProvider>
+      </Router>
     </ThemeProvider>
   );
 };

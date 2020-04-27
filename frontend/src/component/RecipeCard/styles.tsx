@@ -1,31 +1,27 @@
 import styled from 'styled-components';
-import { Button } from '../../style';
-import { HeightProps, height } from 'styled-system';
+import { Button, Box } from '../../style';
+import { height } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
-
-const CARD_PADDING = '10px';
-const CARD_MARGIN = '25px';
 
 type CursorProps = {
   cursor?: string;
 };
 
-type Props = HeightProps & CursorProps;
-
-export const Card = styled.div<Props>`
+export const Card = styled(Box)<CursorProps>`
   ${height}
   position: absolute;
   box-shadow: ${themeGet('shadows.neumorphism')};
-  cursor: ${props => props.cursor};
+  cursor: ${(props) => props.cursor};
   max-width: 400px;
-  width: calc(100% - ${CARD_PADDING} * 2 - ${CARD_MARGIN} * 2);
+  width: 80%;
   border-radius: ${themeGet('radii.1')}px;
   background-color: white;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-content: space-between;
-  padding: ${CARD_PADDING};
-  margin: ${CARD_MARGIN};
+  padding: 10px;
+  margin-left: 10%;
 
   &.swipe-left {
     animation: swipeLeft 0.4s ease-out forwards;
@@ -95,7 +91,7 @@ export const RoundButton = styled(Button)`
   }
 
   > :first-child {
-    color: ${props => props.color};
+    color: ${(props) => props.color};
   }
 `;
 

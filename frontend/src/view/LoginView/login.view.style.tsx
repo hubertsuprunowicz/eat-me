@@ -29,7 +29,8 @@ export const AuthSwitch = styled.div`
 type Props = {
   active: boolean;
 };
-export const AuthButton = styled(Button)<Props>`
+export const AuthButton = styled('button')<Props>`
+  cursor: pointer;
   width: 40%;
   height: 50px;
   margin-bottom: 20px;

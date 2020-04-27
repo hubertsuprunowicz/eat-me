@@ -5,7 +5,7 @@ import { useAuthState, useAuthDispatch } from 'utils/auth';
 import { useParams } from 'react-router-dom';
 import UpdateUserDialog from './UpdateUserDialog';
 import FormModal from 'component/FormModal/FormModal';
-import { RECIPES_VIEW } from 'view/Route/constants.route';
+import { RECIPES_VIEW } from 'utils/constants.route';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { useGetUserQuery, User } from 'model/generated/graphql';
@@ -111,29 +111,28 @@ const ProfileView: React.FC = () => {
             </Box>
           </Box>
 
-          <Box mt={5}>
+          <Box display="flex" mt={7}>
             {(user && user.name === username) ||
               (!username && (
                 <Button
-                  color={'secondary.600'}
+                  variant="secondary"
                   onClick={() => setIsOpen(true)}
-                  mr={4}
-                  boxShadow={'neumorphism'}
+                  mr={5}
                 >
                   Edit Profile
                 </Button>
               ))}
             <LinkButton
               to={`${RECIPES_VIEW}/${getName()}`}
-              mr={4}
-              color={'warn.600'}
+              mr={5}
+              variant="warn"
             >
               Recipes
             </LinkButton>
             {(user && user.name === username) ||
               (!username && (
-                <IconButton boxShadow={'neumorphism'} onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faSignOutAlt} />
+                <IconButton onClick={handleLogout}>
+                  <FontAwesomeIcon size={'1x'} icon={faSignOutAlt} />
                 </IconButton>
               ))}
           </Box>

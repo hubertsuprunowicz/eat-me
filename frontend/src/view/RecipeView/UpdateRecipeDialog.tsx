@@ -4,7 +4,7 @@ import * as Style from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input } from './recipe.view.style';
+import { Input } from './styles';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 import {
@@ -245,13 +245,12 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             ref={register}
           />
           <Style.IconButton
+            height={'45px'}
             ml={4}
-            boxShadow="insetNeo"
+            boxShadow="insetNeumorphism"
             type="button"
             onClick={handleTags}
-          >
-            <FontAwesomeIcon size={'1x'} icon={faPlus} />
-          </Style.IconButton>
+          ></Style.IconButton>
         </Style.Box>
         <ErrorMessage errors={errors} name={'tag.name'} />
         <Style.Box mt={4} mb={2} display="flex" flexWrap={'wrap'}>
@@ -362,8 +361,9 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             )}
           />
           <Style.IconButton
+            height={'45px'}
             ml={4}
-            boxShadow="insetNeo"
+            boxShadow="insetNeumorphism"
             type="button"
             onClick={handleIngredients}
           >
@@ -405,8 +405,9 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           <Style.Button
             p={5}
             type="button"
-            color={'grey.700'}
-            boxShadow={paginationForm === 1 ? 'insetNeo' : 'neumorphism'}
+            boxShadow={
+              paginationForm === 1 ? 'insetNeumorphism' : 'neumorphism'
+            }
             mr={4}
             onClick={() => setPaginationForm(1)}
           >
@@ -415,8 +416,9 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           <Style.Button
             p={5}
             type="button"
-            color={'grey.700'}
-            boxShadow={paginationForm === 2 ? 'insetNeo' : 'neumorphism'}
+            boxShadow={
+              paginationForm === 2 ? 'insetNeumorphism' : 'neumorphism'
+            }
             mr={4}
             onClick={() => setPaginationForm(2)}
           >
@@ -424,9 +426,10 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           </Style.Button>
           <Style.Button
             p={5}
-            color={'grey.700'}
             type="button"
-            boxShadow={paginationForm === 3 ? 'insetNeo' : 'neumorphism'}
+            boxShadow={
+              paginationForm === 3 ? 'insetNeumorphism' : 'neumorphism'
+            }
             onClick={() => setPaginationForm(3)}
           >
             3
@@ -437,8 +440,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             type="submit"
             onClick={handleSubmit(onSubmit)}
             p={5}
-            color={'secondary.500'}
-            boxShadow="neumorphism"
+            variant={'secondary'}
             mr={5}
           >
             Submit
@@ -446,8 +448,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           <Style.Button
             onClick={() => setIsOpen(false)}
             p={5}
-            color={'danger.500'}
-            boxShadow="neumorphism"
+            variant={'danger'}
             type={'button'}
           >
             Cancel

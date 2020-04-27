@@ -64,42 +64,28 @@ import {
 import { themeGet } from '@styled-system/theme-get';
 import { Link, LinkProps } from 'react-router-dom';
 
-export const Main = styled.main`
-  background: white;
-  width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-
-  .toast-size {
-    width: 220px;
-    height: 100px;
-  }
-
-  ::-webkit-input-placeholder {
-    font-family: 'Raleway', sans-serif;
-  }
-
-  * {
-    font-family: 'Raleway', sans-serif;
-    font-weight: 500;
-    outline: none !important;
-  }
-
-  *:focus {
-    outline: none !important;
-  }
-
-  a,
-  button {
-    font-size: 13px;
-  }
-`;
+// TODO: move all to separete components
 
 type Variant = {
-  variant?: 'primary' | 'secondary' | 'warn' | 'danger' | 'grey' | undefined;
+  variant?: 'primary' | 'secondary' | 'warn' | 'danger' | 'regular' | undefined;
 };
+
+const styleButton = (name: string) => ({
+  outline: 'none',
+  border: 'none',
+  boxShadow: 'neumorphism',
+  color: name !== 'regular' ? `${name}.500` : 'grey.800',
+  fill: name !== 'regular' ? `${name}.500` : 'grey.800',
+  '&:hover, &:active': {
+    transition: 'box-shadow 250ms ease-in-out',
+    color: name !== 'regular' ? `${name}.700` : 'black',
+    cursor: 'pointer',
+    boxShadow: 'clearInset',
+  },
+  '&:disabled': {
+    opacity: 0.5,
+  },
+});
 
 type ButtonProps = ColorProps &
   SpaceProps &
@@ -115,32 +101,28 @@ type ButtonProps = ColorProps &
   FontWeightProps;
 
 export const Button = styled('button')<ButtonProps>`
-  cursor: pointer;
-  border: none;
   position: relative;
-  outline: none;
   text-decoration: none;
   text-align: center;
   font-weight: 700;
-  color: ${themeGet('colors.grey.700')};
   background-color: white;
   border-radius: ${themeGet('radii.0')}px;
   padding: 8px;
   letter-spacing: 1px;
-  /* text-shadow: 4px 4px 8px rgb(163,177,198,1), -4px -4px 8px rgba(255,255,255, 1); */
-
   & svg {
-    margin-left: 2px;
-    margin-right: 2px;
-  }
-
-  :hover {
-    /* TODO: hover background color via variant */
-  };
-
-  :focus {
-    /* box-shadow: ${themeGet('shadows.insetNeo')}; */
-  };
+      margin-left: 2px;
+      margin-right: 2px;
+    };
+  ${variant({
+    variants: {
+      primary: styleButton('primary'),
+      secondary: styleButton('secondary'),
+      danger: styleButton('danger'),
+      success: styleButton('success'),
+      warn: styleButton('warn'),
+      regular: styleButton('regular'),
+    },
+  })}
   ${fontWeight}
   ${boxShadow}
   ${color}
@@ -152,49 +134,38 @@ export const Button = styled('button')<ButtonProps>`
   ${borderWidth}
   ${borderColor}
   ${borderRadius}
-  ${variant({
-    prop: 'variant',
-    scale: 'buttons',
-    variants: {
-      primary: {
-        color: 'white',
-        bg: 'white',
-      },
-      secondary: {
-        color: 'white',
-        bg: 'white',
-      },
-    },
-  })}
 `;
+
+Button.defaultProps = {
+  variant: 'regular',
+  height: '38px',
+};
 
 export const LinkButton = styled(Link)<LinkProps & ButtonProps>`
-cursor: pointer;
-  border: none;
-  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
   text-align: center;
   font-weight: 700;
-  color: ${themeGet('colors.grey.700')};
   background-color: white;
   border-radius: ${themeGet('radii.0')}px;
   padding: 8px;
   letter-spacing: 1px;
-  box-shadow: ${themeGet('shadows.neumorphism')};
-  /* text-shadow: 4px 4px 8px rgb(163,177,198,1), -4px -4px 8px rgba(255,255,255, 1); */
-
   & svg {
-    margin-left: 2px;
-    margin-right: 2px;
-  }
-
-  :hover {
-    /* TODO: hover background color via variant */
-  };
-
-  :focus {
-    /* box-shadow: ${themeGet('shadows.insetNeo')}; */
-  };
+      margin-left: 2px;
+      margin-right: 2px;
+    };
+  ${variant({
+    variants: {
+      primary: styleButton('primary'),
+      secondary: styleButton('secondary'),
+      danger: styleButton('danger'),
+      success: styleButton('success'),
+      warn: styleButton('warn'),
+      regular: styleButton('regular'),
+    },
+  })}
   ${fontWeight}
   ${color}
   ${fontSize}
@@ -206,21 +177,12 @@ cursor: pointer;
   ${borderColor}
   ${boxShadow}
   ${borderRadius}
-  ${variant({
-    prop: 'variant',
-    scale: 'buttons',
-    variants: {
-      primary: {
-        color: 'white',
-        bg: 'white',
-      },
-      secondary: {
-        color: 'white',
-        bg: 'white',
-      },
-    },
-  })}
 `;
+
+LinkButton.defaultProps = {
+  variant: 'regular',
+  height: '38px',
+};
 
 type IconButtonProps = WidthProps &
   HeightProps &
@@ -232,61 +194,55 @@ type IconButtonProps = WidthProps &
   BoxShadowProps;
 
 export const IconButton = styled(Button)<IconButtonProps>(
-  {
-    border: 'none',
-    backgroundColor: 'white',
-    cursor: 'pointer',
-  },
+  variant({
+    variants: {
+      primary: styleButton('primary'),
+      secondary: styleButton('secondary'),
+      danger: styleButton('danger'),
+      success: styleButton('success'),
+      warn: styleButton('warn'),
+      regular: styleButton('regular'),
+    },
+  }),
   color,
   width,
   height,
   space,
   boxShadow,
   borderRadius,
-  variant({
-    prop: 'variant',
-    scale: 'buttons',
-    variants: {
-      primary: {
-        color: 'white',
-        bg: 'white',
-      },
-      secondary: {
-        color: 'white',
-        bg: 'white',
-      },
-    },
-  }),
 );
+
+IconButton.defaultProps = {
+  variant: 'regular',
+  width: '38px',
+  height: '38px',
+};
 
 export const LinkIconButton = styled(LinkButton)<IconButtonProps>(
   {
-    border: 'none',
-    backgroundColor: 'white',
-    cursor: 'pointer',
     borderRadius: '50%',
-    boxShadow:
-      'inset 0 0 15px rgba(55, 84, 170,0), inset 0 0 20px rgba(255, 255, 255,0), 7px 7px 15px rgba(55, 84, 170,.15), -7px -7px 20px rgba(255, 255, 255,1), inset 0px 0px 4px rgba(255, 255, 255,.2)',
   },
+  variant({
+    variants: {
+      primary: styleButton('primary'),
+      secondary: styleButton('secondary'),
+      danger: styleButton('danger'),
+      success: styleButton('success'),
+      warn: styleButton('warn'),
+      regular: styleButton('regular'),
+    },
+  }),
   color,
   width,
   height,
   space,
-  variant({
-    prop: 'variant',
-    scale: 'buttons',
-    variants: {
-      primary: {
-        color: 'white',
-        bg: 'white',
-      },
-      secondary: {
-        color: 'white',
-        bg: 'white',
-      },
-    },
-  }),
 );
+
+LinkIconButton.defaultProps = {
+  variant: 'regular',
+  width: '38px',
+  height: '38px',
+};
 
 type Props = ColorProps &
   WidthProps &
@@ -339,7 +295,7 @@ export const Box = styled.div<Props>`
   ${borderRadius}
   ${boxShadow}
   ${width}
-  cursor: ${props => props.cursor}
+  cursor: ${(props) => props.cursor}
 `;
 
 type TagProps = WidthProps &
@@ -354,10 +310,11 @@ type TagProps = WidthProps &
   };
 
 export const Tag = styled.div<TagProps>`
-cursor: ${props => props.cursor};
+cursor: ${(props) => props.cursor};
 border-radius: 10px;
-border: ${props => (props.border === 'none' ? undefined : '5px double white')};
-margin: 3px 5px 3px 5px;
+border: ${(props) =>
+  props.border === 'none' ? undefined : '5px double white'};
+margin: 3px 5px;
 padding: 8px;
 color: white;
 font-size: 0.75em;
@@ -374,21 +331,6 @@ ${height}
 ${space}
 ${boxShadow}
 ${borderRadius}
-
-${variant({
-  prop: 'variant',
-  scale: 'tags',
-  variants: {
-    primary: {
-      color: 'white',
-      bg: 'white',
-    },
-    secondary: {
-      color: 'white',
-      bg: 'white',
-    },
-  },
-})}
 `;
 
 type TextProps = TextAlignProps &
@@ -401,8 +343,8 @@ type TextProps = TextAlignProps &
   MarginProps & { variant?: 'cursive' };
 
 export const Text = styled.span<TextProps>`
-  font-family: ${props =>
-    props.variant === 'cursive' ? 'Pacifico, cursive' : undefined};
+  font-family: ${(props) =>
+    props.variant === 'cursive' ? 'Caveat, cursive' : undefined};
   ${color} 
   ${lineHeight}
   ${width}

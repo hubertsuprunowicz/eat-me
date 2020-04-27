@@ -43,7 +43,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
   });
 
   const [updateUser] = useUpdateUserMutation({
-    onError: error => {
+    onError: (error) => {
       setError(
         'mutationError',
         'mutationError',
@@ -208,8 +208,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
           <Button
             type="button"
             p={5}
-            color={'grey.700'}
-            boxShadow={paginationForm ? 'insetNeo' : 'neumorphism'}
+            boxShadow={paginationForm ? 'clearInset' : 'neumorphism'}
             mr={5}
             onClick={() => setPaginationForm(!paginationForm)}
           >
@@ -218,28 +217,20 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
           <Button
             type="button"
             p={5}
-            color={'grey.700'}
-            boxShadow={paginationForm ? 'neumorphism' : 'insetNeo'}
+            boxShadow={paginationForm ? 'neumorphism' : 'clearInset'}
             onClick={() => setPaginationForm(!paginationForm)}
           >
             2
           </Button>
         </Box>
         <Box display="flex" justifyContent="flex-end">
-          <Button
-            type="submit"
-            p={5}
-            color={'secondary.500'}
-            boxShadow="neumorphism"
-            mr={5}
-          >
+          <Button type="submit" p={5} variant={'secondary'} mr={5}>
             Submit
           </Button>
           <Button
             onClick={() => setIsOpen(false)}
             p={5}
-            color={'danger.500'}
-            boxShadow="neumorphism"
+            variant={'danger'}
             type={'button'}
           >
             Cancel

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import { Button, LinkIconButton } from '../../style';
 import { themeGet } from '@styled-system/theme-get';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export const NavList = styled.ul`
 	display: flex;
@@ -45,7 +44,7 @@ export const StyledNavLink = styled(NavLink)`
     color: ${themeGet('colors.primary.500')};
     background-color: white;
 
-    transition: box-shadow 399ms ease-in-out;
+    transition: box-shadow 250ms ease-in-out;
     box-shadow: 
       inset 7px 7px 15px rgba(55, 84, 170,.15),
       inset -7px -7px 20px rgba(255, 255, 255,1),
@@ -53,11 +52,7 @@ export const StyledNavLink = styled(NavLink)`
   }
 
   :hover {
-    transition: box-shadow 399ms ease-in-out;
-    color: ${themeGet('colors.primary.500')};
-    /* box-shadow: ${themeGet('shadows.neumorphism')}; */
-    /* box-shadow: ${themeGet('shadows.insetNeo')}; */
-
+    transition: box-shadow 250ms ease-in-out;
     box-shadow: 
       inset 7px 7px 15px rgba(55, 84, 170,.15),
       inset -7px -7px 20px rgba(255, 255, 255,1),

@@ -1,6 +1,6 @@
 import React from 'react';
 import { LinkButton, Box, Text } from 'style';
-import { RECIPES_VIEW } from 'view/Route/constants.route';
+import { RECIPES_VIEW } from 'utils/constants.route';
 
 const ErrorView: React.FC = () => {
   return (

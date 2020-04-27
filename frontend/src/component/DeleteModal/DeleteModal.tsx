@@ -37,7 +37,7 @@ const DeleteModal: React.FC<Props> = ({
             mt={6}
             onClick={closeModal}
             borderRadius={0}
-            boxShadow="insetNeo"
+            boxShadow="clearInset"
           >
             <FontAwesomeIcon size={'lg'} icon={faTimes} />
           </CloseButton>
@@ -52,8 +52,7 @@ const DeleteModal: React.FC<Props> = ({
             type="submit"
             onClick={onDelete}
             p={5}
-            color={'danger.700'}
-            boxShadow="neumorphism"
+            variant="danger"
             mr={5}
           >
             Delete
