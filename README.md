@@ -9,8 +9,6 @@
 ##### Neo4j
 1. Open Neo4j Desktop
 1. Add new project
-1. Plugins
-   1. Install Apoc
 1. Start Project
    1. Install APOC plugin via ``Add Plugin``
    1. Click play button
