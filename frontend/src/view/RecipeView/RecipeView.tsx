@@ -102,7 +102,7 @@ const RecipeView: React.FC = () => {
     const rating =
       comments.reduce((acc, curr) => acc + curr.rating, 0) / comments.length;
 
-    return parseFloat(rating.toFixed(1));
+    return rating.toFixed(1);
   };
 
   const handleSubscribe = () => {
@@ -149,9 +149,8 @@ const RecipeView: React.FC = () => {
 
   const recipe = data.Recipe[0];
   const alreadyVotedData =
-    alreadyVoted(recipe?.comment as Model.Comment[]) ?? undefined;
-  const totalRatingData =
-    totalRating(recipe?.comment as Model.Comment[]) ?? undefined;
+    alreadyVoted(recipe?.comment as Model.Comment[]) ?? 0;
+  const totalRatingData = totalRating(recipe?.comment as Model.Comment[]) ?? 0;
 
   return (
     <LoadingOverlay isLoading={loading}>
@@ -195,7 +194,7 @@ const RecipeView: React.FC = () => {
 
                 <Text fontSize={3} fontWeight={700}>
                   {totalRatingData
-                    ? totalRatingData / 5.0
+                    ? totalRatingData + '/ 5.0'
                     : 'No ratings... be first!'}
                 </Text>
               </div>
@@ -293,8 +292,10 @@ const RecipeView: React.FC = () => {
             >
               <span>{recipe.user.name}</span>
               <LinkButton
+                height={'33px'}
+                width={'63px'}
                 to={`${PROFILE_VIEW}/${recipe.user.name}`}
-                color={'warn.600'}
+                variant={'warn'}
               >
                 More
               </LinkButton>
@@ -302,6 +303,7 @@ const RecipeView: React.FC = () => {
             <AuthorImage src={recipe.user.avatar ?? defaultAvatar} />
           </Box>
         </Box>
+
         {alreadyVotedData && alreadyVotedData !== -1 && (
           <Box>
             <span>
@@ -312,12 +314,12 @@ const RecipeView: React.FC = () => {
             </span>
           </Box>
         )}
-        {alreadyVotedData && alreadyVotedData !== -1 && (
+        {alreadyVotedData && alreadyVotedData === -1 && (
           <Box display="flex" alignItems="center">
             <Text fontSize="1.5rem" fontWeight={700} textAlign="center">
               Leave your feedback{' '}
             </Text>
-            <Button ml={4} p={5} onClick={() => setIsCommentDialogOpen(true)}>
+            <Button ml={4} onClick={() => setIsCommentDialogOpen(true)}>
               <Text fontSize="1.3rem">here!</Text>
             </Button>
           </Box>
@@ -330,12 +332,13 @@ const RecipeView: React.FC = () => {
           flexWrap={'wrap'}
           p={8}
         >
-          {recipe.comment &&
+          {recipe &&
+            recipe.comment &&
             recipe.comment.length > 0 &&
             recipe.comment.map((it) => (
               <Comment
                 key={it?._id ?? ''}
-                rating={it!.rating}
+                rating={it?.rating ?? 0}
                 username={it!.user.name}
                 timestamp={it!.timestamp}
               >

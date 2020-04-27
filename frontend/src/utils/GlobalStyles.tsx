@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
 
   span, button, h1, h2, h3, h4, h5, h6, p, div {
     font-family: 'Raleway', sans-serif;
+    white-space: pre-wrap;
   }
 
   ::-webkit-input-placeholder {

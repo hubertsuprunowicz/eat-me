@@ -19,14 +19,22 @@ const Comment: React.FC<Props> = ({
 }) => {
   return (
     <StyledComment>
-      <FontAwesomeIcon size={'lg'} icon={faQuoteRight} />
-      <Box ml={4} display={'flex'} flexDirection={'column'} textAlign={'right'}>
-        <Text fontSize="0.6rem">{username}</Text>
-        <Text fontSize="0.5rem">
-          <i>{formatDistance(timestamp, new Date())}</i>
-        </Text>
+      <Box display={'flex'}>
+        <FontAwesomeIcon size={'lg'} icon={faQuoteRight} />
+        <Box
+          ml={4}
+          display={'flex'}
+          flexDirection={'column'}
+          textAlign={'right'}
+        >
+          <Text fontSize="0.6rem">{username}</Text>
+          <Text fontSize="0.5rem">
+            <i>{formatDistance(timestamp, new Date())}</i>
+          </Text>
+        </Box>
       </Box>
-      <Text fontSize={10} mb={6}>
+
+      <Text fontSize={10} m={3} mb={6}>
         {children}
       </Text>
       <Box

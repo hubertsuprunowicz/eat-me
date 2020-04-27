@@ -453,7 +453,7 @@ export type Recipe = {
   user: User;
   ingredient: Array<Ingredient>;
   comment?: Maybe<Array<Maybe<Comment>>>;
-  timestamp?: Maybe<Scalars['Long']>;
+  timestamp: Scalars['Long'];
 };
 
 
@@ -499,7 +499,7 @@ export type Tag = {
   _id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   recipes: Array<Recipe>;
-  timestamp?: Maybe<Scalars['Long']>;
+  timestamp: Scalars['Long'];
 };
 
 
@@ -522,7 +522,7 @@ export type User = {
   comment?: Maybe<Array<Maybe<Comment>>>;
   friends?: Maybe<Array<Maybe<User>>>;
   recipe?: Maybe<Array<Maybe<Recipe>>>;
-  timestamp?: Maybe<Scalars['Long']>;
+  timestamp: Scalars['Long'];
 };
 
 
@@ -613,7 +613,7 @@ export type Ingredient = {
   _id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   amount: Scalars['String'];
-  timestamp?: Maybe<Scalars['Long']>;
+  timestamp: Scalars['Long'];
 };
 
 export enum _SubscribedOrdering {
@@ -1281,7 +1281,7 @@ export type RecipeQuery = (
       & Pick<Comment, '_id' | 'rating' | 'description' | 'timestamp'>
       & { user: (
         { __typename?: 'User' }
-        & Pick<User, 'name'>
+        & Pick<User, '_id' | 'name'>
       ) }
     )>>>, tag: Array<(
       { __typename?: 'Tag' }
@@ -1881,6 +1881,7 @@ export const RecipeDocument = gql`
       description
       timestamp
       user {
+        _id
         name
       }
     }
@@ -2144,4 +2145,4 @@ export function useNewRecipeDiscoverSubscription(baseOptions?: ApolloReactHooks.
 export type NewRecipeDiscoverSubscriptionHookResult = ReturnType<typeof useNewRecipeDiscoverSubscription>;
 export type NewRecipeDiscoverSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewRecipeDiscoverSubscription>;
 
-// Generated in 2020-04-26T19:44:51+02:00
+// Generated in 2020-04-27T23:07:08+02:00

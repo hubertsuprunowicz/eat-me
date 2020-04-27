@@ -53,7 +53,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
     onCompleted: () => {
       reset();
       setIsOpen(false);
-      toast.success('Message has been sent', {
+      toast.success('User updated successfuly', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
       refetch();
@@ -85,7 +85,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
         oldName: user.name,
         name: name === user.name ? null : name,
         password: password,
-        email: !user.email || email === user.email ? null : email,
+        email: user.email || email === user.email ? null : email,
         avatar: avatar,
         description: description,
       },
@@ -186,6 +186,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
         <Textarea
           cols={6}
           rows={8}
+          wrap="hard"
           className={'widder'}
           placeholder="Enter Description"
           name="description"
@@ -195,8 +196,8 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
               message: 'Description needs to be at least 4 characters long',
             },
             maxLength: {
-              value: 460,
-              message: 'Description needs to be at most 460 characters long',
+              value: 360,
+              message: 'Description needs to be at most 360 characters long',
             },
           })}
         />

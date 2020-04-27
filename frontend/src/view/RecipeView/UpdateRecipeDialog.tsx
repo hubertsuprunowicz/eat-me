@@ -146,13 +146,13 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         'tooLong',
         'Ingredient name should be at most 24 letters long',
       );
-    } else if (ingredient.amount.length > 6) {
+    } else if (ingredient.amount.length > 15) {
       setError(
         'ingredient',
         'tooLong',
         'Ingredient amount should be at most 6 letters long',
       );
-    } else if (ingredients?.length > 12) {
+    } else if (ingredients?.length > 14) {
       setError(
         'ingredient',
         'tooMany',
@@ -291,6 +291,7 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         <textarea
           cols={6}
           rows={4}
+          wrap="hard"
           placeholder="Enter Description"
           name="description"
           ref={register({

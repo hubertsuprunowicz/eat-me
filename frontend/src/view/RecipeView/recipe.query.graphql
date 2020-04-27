@@ -13,6 +13,7 @@ query Recipe($id: ID!) {
 			description
 			timestamp
 			user {
+				_id
 				name
 			}
 		}
