@@ -85,7 +85,7 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
         oldName: user.name,
         name: name === user.name ? null : name,
         password: password,
-        email: user.email || email === user.email ? null : email,
+        email: !email || email === user.email ? null : email,
         avatar: avatar,
         description: description,
       },

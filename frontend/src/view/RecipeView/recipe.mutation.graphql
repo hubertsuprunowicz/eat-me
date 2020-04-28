@@ -34,6 +34,12 @@ mutation UpdateRecipe(
 		ingredient: $ingredient
 	) {
 		_id
+		name
+		description
+		difficulty
+		image
+		totalCost
+		time
 	}
 }
 

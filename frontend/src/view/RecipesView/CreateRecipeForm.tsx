@@ -85,17 +85,17 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
         'tooLong',
         'Ingredient name should be at most 24 letters long',
       );
-    } else if (ingredient.amount.length > 15) {
+    } else if (ingredient.amount.length > 18) {
       setError(
         'ingredient',
         'tooLong',
-        'Ingredient amount should be at most 6 letters long',
+        'Ingredient amount should be at most 18 letters long',
       );
     } else if (ingredients.length > 14) {
       setError(
         'ingredient',
         'tooMany',
-        'There should be at most 12 ingredients',
+        'There should be at most 14 ingredients',
       );
     } else {
       clearError('ingredient');
@@ -331,8 +331,8 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
               validate: () => {
                 if (ingredients.length < 1) return 'Ingredients are required';
 
-                if (ingredients.length > 12)
-                  return 'There should be at most 12 ingredients';
+                if (ingredients.length > 14)
+                  return 'There should be at most 14 ingredients';
               },
             })}
             hidden
@@ -343,7 +343,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             placeholder="Enter name"
             name="ingredient.name"
             ref={register(
-              watch('ingredient.amount') || ingredients.length < 1
+              watch('ingredient.amount') && ingredients.length < 1
                 ? {
                     required: 'Ingredient name is required',
                   }
@@ -357,7 +357,7 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
             placeholder="Amount"
             name="ingredient.amount"
             ref={register(
-              watch('ingredient.name') || ingredients.length < 1
+              watch('ingredient.name') && ingredients.length < 1
                 ? {
                     required: 'Ingredient amount is required',
                   }

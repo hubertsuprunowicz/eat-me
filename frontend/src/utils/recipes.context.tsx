@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Redirect } from 'react-router-dom';
-import { LOGIN_VIEW } from 'utils/constants.route';
 import produce from 'immer';
-import { User, Recipe } from 'model/generated/graphql';
+import { Recipe } from 'model/generated/graphql';
 
 type LovedRevipeAction = {
   type: 'AddLovedRecipe' | 'RemoveLovedRecipe';

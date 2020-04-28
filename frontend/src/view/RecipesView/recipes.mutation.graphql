@@ -21,5 +21,11 @@ mutation CreateRecipe(
 		userID: $userID
 	) {
 		_id
+		name
+		description
+		difficulty
+		image
+		totalCost
+		time
 	}
 }

@@ -19,7 +19,7 @@ const Comment: React.FC<Props> = ({
 }) => {
   return (
     <StyledComment>
-      <Box display={'flex'}>
+      <Box display={'flex'} justifyContent="space-between">
         <FontAwesomeIcon size={'lg'} icon={faQuoteRight} />
         <Box
           ml={4}
@@ -27,8 +27,10 @@ const Comment: React.FC<Props> = ({
           flexDirection={'column'}
           textAlign={'right'}
         >
-          <Text fontSize="0.6rem">{username}</Text>
-          <Text fontSize="0.5rem">
+          <Text className={'pre-text'} fontSize="0.6rem">
+            {username}
+          </Text>
+          <Text mt={3} fontSize="0.5rem">
             <i>{formatDistance(timestamp, new Date())}</i>
           </Text>
         </Box>

@@ -19,7 +19,6 @@ const resolvers = {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator('newRecipeDiscover'),
 				(payload, variables) => {
-					console.log(payload.newRecipeDiscover.subscribers.find((it) => it.toString()));
 					if (payload.newRecipeDiscover.subscribers && payload.newRecipeDiscover.subscribers.length > 0)
 						return !!payload.newRecipeDiscover.subscribers.find((it) => it.toString() === variables.id);
 
@@ -419,7 +418,7 @@ const resolvers = {
 			const ingredientQuery = `MATCH (a:Recipe) WHERE ID(a) = ${args.id}
 									WITH $ingredients AS payload, a
 									UNWIND payload AS ingredient
-									MERGE (a)-[:HAS_INGREDIENT]->(c:Ingredient{name: ingredient.name, amount: ingredient.amount})
+									MERGE (a)-[:HAS_INGREDIENT]->(c:Ingredient{name: ingredient.name, amount: ingredient.amount, timestamp: ${Date.now()}})
 									RETURN collect(c)
 									`;
 
@@ -439,7 +438,7 @@ const resolvers = {
 			const tagQuery = `MATCH (a:Recipe) WHERE ID(a) = ${args.id}
 							WITH $tags AS payload, a
 							UNWIND payload AS tag
-							MERGE (a)-[:HAS_TAG]->(c:Tag{name: tag.name})
+							MERGE (a)-[:HAS_TAG]->(c:Tag{name: tag.name, timestamp: ${Date.now()}})
 							RETURN collect(c)`;
 
 			const tags = await session.run(tagRemove).then(async () => {

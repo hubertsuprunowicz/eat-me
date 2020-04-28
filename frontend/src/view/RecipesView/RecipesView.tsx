@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import RecipeCard from '../../component/RecipeCard/RecipeCard';
-import { useQuery } from '@apollo/react-hooks';
 import * as Styled from '../../style';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

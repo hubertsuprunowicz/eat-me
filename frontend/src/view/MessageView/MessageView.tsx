@@ -2,7 +2,7 @@ import React, { useState, useRef, UIEventHandler } from 'react';
 import { Box, Button, Text, IconButton, LinkIconButton } from 'style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { MessageList, ListWrapper } from './styles';
+import { MessageList, ListWrapper, PointedBox } from './styles';
 import FormModal from 'component/FormModal/FormModal';
 import MessageDialog from './MessageDialog';
 import { useAuthState } from 'utils/auth';
@@ -84,7 +84,7 @@ const Row: React.FC<RowProps> = ({
           </Text>
           <Text fontSize={10}>{formatDistance(timestamp, new Date())}</Text>
         </Box>
-        <Box display="flex" justifyContent={'space-between'}>
+        <PointedBox display="flex">
           <Text p={4} pl={0} fontSize={11} color={'grey.900'}>
             {textDropDown
               ? message
@@ -99,7 +99,7 @@ const Row: React.FC<RowProps> = ({
           >
             <FontAwesomeIcon icon={faTimes} />
           </IconButton>
-        </Box>
+        </PointedBox>
       </Box>
       <DeleteModal
         title="Message Delete"

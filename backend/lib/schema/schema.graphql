@@ -117,7 +117,7 @@ type User {
 	comment: [Comment] @relation(name: "COMMENTS", direction: "OUT")
 	friends: [User] @relation(name: "WATCHES", direction: "OUT")
 	recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
-	timestamp: Long
+	timestamp: Long!
 }
 
 type Message {
@@ -132,7 +132,7 @@ type Ingredient @isAuthenticated {
 	_id: ID!
 	name: String!
 	amount: String!
-	timestamp: Long
+	timestamp: Long!
 }
 
 type Credentials {
@@ -144,7 +144,7 @@ type Tag {
 	_id: ID!
 	name: String!
 	recipes: [Recipe!]! @relation(name: "HAS_TAG", direction: "IN")
-	timestamp: Long
+	timestamp: Long!
 }
 
 type Recipe {
@@ -159,10 +159,10 @@ type Recipe {
 	user: User! @relation(name: "POSTS", direction: "IN")
 	ingredient: [Ingredient!]! @relation(name: "HAS_INGREDIENT", direction: "OUT")
 	comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
-	timestamp: Long
+	timestamp: Long!
 }
 
-type Comment @isAuthenticated {
+type Comment {
 	_id: ID!
 	timestamp: Long!
 	rating: Int!

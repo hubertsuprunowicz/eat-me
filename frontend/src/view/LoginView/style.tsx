@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Button } from '../../style';
 import { themeGet } from '@styled-system/theme-get';
 
 export const Avatar = styled.img`

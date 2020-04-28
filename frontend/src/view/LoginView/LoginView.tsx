@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '../../component/RecipeCard/styles';
 import Form from '../../component/Form/Form';
-import { AuthButton, AuthSwitch, Avatar } from './login.view.style';
-import { useMutation } from '@apollo/react-hooks';
+import { AuthButton, AuthSwitch, Avatar } from './style';
 import { useHistory } from 'react-router-dom';
 import { RECIPES_VIEW } from 'utils/constants.route';
 import { Box, Button } from 'style';

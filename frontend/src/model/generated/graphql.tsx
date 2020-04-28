@@ -1240,7 +1240,7 @@ export type UpdateRecipeMutation = (
   { __typename?: 'Mutation' }
   & { updateRecipe: (
     { __typename?: 'Recipe' }
-    & Pick<Recipe, '_id'>
+    & Pick<Recipe, '_id' | 'name' | 'description' | 'difficulty' | 'image' | 'totalCost' | 'time'>
   ) }
 );
 
@@ -1327,7 +1327,7 @@ export type CreateRecipeMutation = (
   { __typename?: 'Mutation' }
   & { createRecipe: (
     { __typename?: 'Recipe' }
-    & Pick<Recipe, '_id'>
+    & Pick<Recipe, '_id' | 'name' | 'description' | 'difficulty' | 'image' | 'totalCost' | 'time'>
   ) }
 );
 
@@ -1767,6 +1767,12 @@ export const UpdateRecipeDocument = gql`
     mutation UpdateRecipe($id: ID!, $name: String, $description: String, $image: String, $time: Int, $totalCost: Float, $difficulty: Difficulty, $tag: [TagInput], $ingredient: [IngredientInput]) {
   updateRecipe(id: $id, name: $name, description: $description, image: $image, time: $time, totalCost: $totalCost, difficulty: $difficulty, tag: $tag, ingredient: $ingredient) {
     _id
+    name
+    description
+    difficulty
+    image
+    totalCost
+    time
   }
 }
     `;
@@ -1966,6 +1972,12 @@ export const CreateRecipeDocument = gql`
     mutation CreateRecipe($name: String!, $description: String!, $image: String!, $time: Int!, $difficulty: Difficulty!, $tag: [TagInput!]!, $totalCost: Float!, $ingredient: [IngredientInput!]!, $userID: ID!) {
   createRecipe(name: $name, description: $description, image: $image, time: $time, difficulty: $difficulty, tag: $tag, totalCost: $totalCost, ingredient: $ingredient, userID: $userID) {
     _id
+    name
+    description
+    difficulty
+    image
+    totalCost
+    time
   }
 }
     `;
@@ -2145,4 +2157,4 @@ export function useNewRecipeDiscoverSubscription(baseOptions?: ApolloReactHooks.
 export type NewRecipeDiscoverSubscriptionHookResult = ReturnType<typeof useNewRecipeDiscoverSubscription>;
 export type NewRecipeDiscoverSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewRecipeDiscoverSubscription>;
 
-// Generated in 2020-04-27T23:07:08+02:00
+// Generated in 2020-04-28T20:09:57+02:00

@@ -67,7 +67,7 @@ const link = ApolloLink.from([new RetryLink(), errorLink, authLink, prelink]);
 
 const client = new ApolloClient({
   link: link,
-  cache: new InMemoryCache({ addTypename: true }),
+  cache: new InMemoryCache({ addTypename: false }),
 });
 
 ReactDOM.render(

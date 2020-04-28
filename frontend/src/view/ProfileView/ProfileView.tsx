@@ -56,7 +56,7 @@ const ProfileView: React.FC = () => {
 
           <Box
             mt={-130}
-            p={7}
+            p={8}
             borderRadius={0}
             width={'80%'}
             backgroundColor={'white'}
@@ -70,10 +70,10 @@ const ProfileView: React.FC = () => {
             boxShadow={'spread'}
             position={'relative'}
           >
-            <Text color={'grey.800'} mt={-20} fontSize={30}>
+            <Text color={'grey.800'} fontSize={24}>
               {userData.name}
             </Text>
-            <Text fontSize={0} margin={0}>
+            <Text fontSize={0} m={0} mt={4}>
               {userData.description}
             </Text>
             <Box
@@ -83,30 +83,33 @@ const ProfileView: React.FC = () => {
               pr={3}
               pl={3}
             >
-              {userData.recipe && userData.recipe.length > 0 && (
-                <>
-                  <TagText
-                    color={'grey.300'}
-                    fontWeight={700}
-                    fontSize={65}
-                    variant={'cursive'}
-                  >
-                    Favourites!
-                  </TagText>
-                  <TagWrapper>
-                    {userData.recipe.slice(0, 3).map((it) => {
-                      if (it?.tag && it.tag.length > 0)
-                        return (
-                          <Tag
-                            key={it?.tag[0]._id ? it?.tag[0]._id : ''}
-                            bg={'primary.500'}
-                          >
-                            {it?.tag[0].name}
-                          </Tag>
-                        );
-                    })}
-                  </TagWrapper>
-                </>
+              <TagText
+                color={'primary.500'}
+                mt={4}
+                fontWeight={700}
+                fontSize={36}
+                variant={'cursive'}
+              >
+                Favourites!
+              </TagText>
+
+              {userData.recipe && userData.recipe.length > 0 ? (
+                <TagWrapper>
+                  {userData.recipe.slice(0, 2).map((it) => {
+                    if (it?.tag && it.tag.length > 0)
+                      return (
+                        <Tag
+                          key={it?.tag[0]._id ? it?.tag[0]._id : ''}
+                          bg={'primary.400'}
+                        >
+                          #{it?.tag[0].name}
+                        </Tag>
+                      );
+                    return null;
+                  })}
+                </TagWrapper>
+              ) : (
+                <Text mt={3}>No recipes created yet.</Text>
               )}
             </Box>
           </Box>

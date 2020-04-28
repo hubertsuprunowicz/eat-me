@@ -85,6 +85,8 @@ const RecipeCard: React.FC<Props> = ({
       });
     },
     onCompleted: (_) => {
+      setModalIsOpen(false);
+      onRefetch();
       toast.success('Recipe successfully deleted', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
@@ -98,13 +100,12 @@ const RecipeCard: React.FC<Props> = ({
           id: _id,
         },
       });
-    setModalIsOpen(false);
-    onRefetch();
   };
 
   return (
     <Card
       key={id}
+      boxShadow={'spread'}
       cursor="pointer"
       height={'70vh'}
       mt={'10%'}
@@ -112,11 +113,7 @@ const RecipeCard: React.FC<Props> = ({
     >
       <img src={image || '/img/food-404.jpg'} alt={name} />
       {user && user.name === recipeAuthor?.name && (
-        <DeleteButton
-          type={'button'}
-          p={4}
-          onClick={() => setModalIsOpen(true)}
-        >
+        <DeleteButton type={'button'} onClick={() => setModalIsOpen(true)}>
           Delete
         </DeleteButton>
       )}
@@ -142,8 +139,8 @@ const RecipeCard: React.FC<Props> = ({
             <FontAwesomeIcon icon={faMoneyBill} />
             {totalCost}$
           </Tag>
-          {tag.slice(0, 3).map((it) => (
-            <Tag key={Math.random + it.name} bg={'primary.400'}>
+          {tag.slice(0, 2).map((it) => (
+            <Tag key={it._id ?? ''} bg={'primary.400'}>
               #{it.name}
             </Tag>
           ))}
@@ -161,6 +158,7 @@ const RecipeCard: React.FC<Props> = ({
             id="swipeRight"
             color="secondary.700"
             onClick={loveItHandle}
+            variant={'secondary'}
             width="42px"
             height="42px"
             type="button"
@@ -174,6 +172,7 @@ const RecipeCard: React.FC<Props> = ({
             id="swipeLeft"
             onClick={quitItHandle}
             type="button"
+            variant={'danger'}
             color="danger.900"
             width="42px"
             height="42px"
