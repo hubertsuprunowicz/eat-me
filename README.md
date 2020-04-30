@@ -3,7 +3,7 @@
 ### Configuration
   * Node v10.16.0
   * Npm 6.9.0
-  * Neo4j 1.2.7 - Graph 4.0.2
+  * Neo4j 4.0.3
   
 ### Build and run
 ##### Neo4j
@@ -51,9 +51,6 @@ node app
 
 
  ###### Electron 
-run `eat-me.exe`
-
-or
 ```
 cd electron
 npm install
