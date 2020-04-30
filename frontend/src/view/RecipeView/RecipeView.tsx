@@ -26,11 +26,13 @@ import { toast } from 'react-toastify';
 import LoadingOverlay from 'component/LoadingOverlay/LoadingOverlay';
 import ErrorRedirect from 'component/ErrorRedirect/ErrorRedirect';
 import * as Model from 'model/generated/graphql';
+import { useRecipesDispatch } from 'utils/recipes.context';
 
 const defaultAvatar = 'img/user-solid.svg';
 
 const RecipeView: React.FC = () => {
   const [subscribed, setSubscribed] = useState<boolean>(false);
+  const dispatch = useRecipesDispatch();
   const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState<boolean>(false);
   const [isCommentDialogOpen, setIsCommentDialogOpen] = useState<boolean>(
     false,
@@ -64,7 +66,7 @@ const RecipeView: React.FC = () => {
     },
   });
 
-  const { loading, error, data } = Model.useRecipeQuery({
+  const { loading, error, data, refetch } = Model.useRecipeQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
       id: id ?? '',
@@ -141,6 +143,15 @@ const RecipeView: React.FC = () => {
     });
   };
 
+  const handleLovedList = () => {
+    if (!data?.Recipe?.[0]) return;
+
+    dispatch({
+      type: 'AddLovedRecipe',
+      payload: { recipe: data.Recipe[0] as Model.Recipe },
+    });
+  };
+
   if (error) return <ErrorRedirect error={error} />;
   if (!data || !data.Recipe) return null;
 
@@ -168,7 +179,7 @@ const RecipeView: React.FC = () => {
           pb={4}
           pt={6}
           borderRadius={0}
-          width={'80%'}
+          width={'90%'}
           backgroundColor={'white'}
           display={'flex'}
           justifyContent={'space-around'}
@@ -251,7 +262,7 @@ const RecipeView: React.FC = () => {
               <FontAwesomeIcon size={'lg'} icon={faEye} />
             </IconButton>
           )}
-          <IconButton ml={5} variant={'danger'} onClick={handleSubscribe}>
+          <IconButton ml={5} variant={'danger'} onClick={handleLovedList}>
             <FontAwesomeIcon size={'lg'} icon={faHeart} />
           </IconButton>
           {user && recipe.user.name === user.name && (
@@ -309,7 +320,7 @@ const RecipeView: React.FC = () => {
             <span>
               Your rating of this recipe is{' '}
               <Text fontWeight={700}>
-                {recipe?.comment?.[alreadyVotedData]?.rating as number} / 5.0
+                {recipe?.comment?.[alreadyVotedData]?.rating as number}.0 / 5.0
               </Text>
             </span>
           </Box>
@@ -370,6 +381,7 @@ const RecipeView: React.FC = () => {
             <CommentDialog
               userID={user?._id ?? ''}
               recipe={data.Recipe[0] as Model.Recipe}
+              onRefetch={refetch}
               setIsOpen={setIsCommentDialogOpen}
             />
           </FormModal>

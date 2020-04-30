@@ -36,7 +36,7 @@ export const Card = styled(Box)<CursorProps>`
       transform: translateX(0);
     }
     100% {
-      transform: translateX(1000px);
+      transform: translateX(1200px);
     }
   }
 
@@ -45,7 +45,7 @@ export const Card = styled(Box)<CursorProps>`
       transform: translateX(0);
     }
     100% {
-      transform: translateX(-1000px);
+      transform: translateX(-1200px);
     }
   }
 

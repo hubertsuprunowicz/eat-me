@@ -9,7 +9,7 @@ export const ProfileImage = styled.img`
 export const BackgroundImage = styled.img<{ src: string }>`
   object-fit: cover;
   width: 100%;
-  height: 60%;
+  height: 55%;
   max-height: 400px;
   min-height: 350px;
 `;

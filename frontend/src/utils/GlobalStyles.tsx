@@ -53,8 +53,8 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .toast-size {
-    width: 220px;
-    height: 100px;
+    width: 280px !important;
+    height: 100px !important;
   }
 
   .ReactModal__Overlay {

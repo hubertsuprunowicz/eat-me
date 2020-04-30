@@ -18,10 +18,15 @@ type Props = {
   userID: string;
   recipe: Recipe;
   setIsOpen: (arg: boolean) => void;
+  onRefetch: any;
 };
 
-const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
-  const [, resetComponent] = useState();
+const CommentDialog: React.FC<Props> = ({
+  setIsOpen,
+  recipe,
+  userID,
+  onRefetch,
+}) => {
   const [rating, setRating] = useState<number>(0);
   const { handleSubmit, register, setError, errors, reset } = useForm<
     CommmentForm
@@ -41,7 +46,7 @@ const CommentDialog: React.FC<Props> = ({ setIsOpen, recipe, userID }) => {
       toast.success('Comment has been added', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
-      resetComponent({});
+      onRefetch();
     },
   });
 

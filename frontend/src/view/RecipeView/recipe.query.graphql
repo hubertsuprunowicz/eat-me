@@ -5,6 +5,7 @@ query Recipe($id: ID!) {
 		difficulty
 		time
 		totalCost
+		timestamp
 		description
 		image
 		comment {

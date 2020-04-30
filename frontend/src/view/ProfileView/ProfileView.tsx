@@ -55,10 +55,10 @@ const ProfileView: React.FC = () => {
           />
 
           <Box
-            mt={-130}
+            mt={-160}
             p={8}
             borderRadius={0}
-            width={'80%'}
+            width={'90%'}
             backgroundColor={'white'}
             display={'flex'}
             justifyContent={'space-around'}

@@ -1137,7 +1137,7 @@ export type YourMessagesQuery = (
     & Pick<Message, '_id' | 'message' | 'timestamp'>
     & { sender: (
       { __typename?: 'User' }
-      & Pick<User, '_id' | 'name'>
+      & Pick<User, '_id' | 'name' | 'avatar'>
     ) }
   )>>> }
 );
@@ -1154,7 +1154,7 @@ export type OnMessageRecivedSubscription = (
     & Pick<Message, '_id' | 'message' | 'timestamp'>
     & { sender: (
       { __typename?: 'User' }
-      & Pick<User, '_id' | 'name'>
+      & Pick<User, '_id' | 'name' | 'avatar'>
     ) }
   ) }
 );
@@ -1173,7 +1173,7 @@ export type UpdateUserMutation = (
   { __typename?: 'Mutation' }
   & { updateUser: (
     { __typename?: 'User' }
-    & Pick<User, '_id' | 'name' | 'avatar' | 'email' | 'description'>
+    & Pick<User, '_id' | 'name' | 'avatar' | 'description'>
   ) }
 );
 
@@ -1186,7 +1186,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { User?: Maybe<Array<Maybe<(
     { __typename?: 'User' }
-    & Pick<User, '_id' | 'name' | 'avatar' | 'email' | 'description'>
+    & Pick<User, '_id' | 'name' | 'avatar' | 'description'>
     & { recipe?: Maybe<Array<Maybe<(
       { __typename?: 'Recipe' }
       & { tag: Array<(
@@ -1275,7 +1275,7 @@ export type RecipeQuery = (
   { __typename?: 'Query' }
   & { Recipe?: Maybe<Array<Maybe<(
     { __typename?: 'Recipe' }
-    & Pick<Recipe, '_id' | 'name' | 'difficulty' | 'time' | 'totalCost' | 'description' | 'image'>
+    & Pick<Recipe, '_id' | 'name' | 'difficulty' | 'time' | 'totalCost' | 'timestamp' | 'description' | 'image'>
     & { comment?: Maybe<Array<Maybe<(
       { __typename?: 'Comment' }
       & Pick<Comment, '_id' | 'rating' | 'description' | 'timestamp'>
@@ -1544,6 +1544,7 @@ export const YourMessagesDocument = gql`
     sender {
       _id
       name
+      avatar
     }
   }
 }
@@ -1585,6 +1586,7 @@ export const OnMessageRecivedDocument = gql`
     sender {
       _id
       name
+      avatar
     }
   }
 }
@@ -1617,7 +1619,6 @@ export const UpdateUserDocument = gql`
     _id
     name
     avatar
-    email
     description
   }
 }
@@ -1658,7 +1659,6 @@ export const GetUserDocument = gql`
     _id
     name
     avatar
-    email
     description
     recipe {
       tag {
@@ -1879,6 +1879,7 @@ export const RecipeDocument = gql`
     difficulty
     time
     totalCost
+    timestamp
     description
     image
     comment {
@@ -2157,4 +2158,4 @@ export function useNewRecipeDiscoverSubscription(baseOptions?: ApolloReactHooks.
 export type NewRecipeDiscoverSubscriptionHookResult = ReturnType<typeof useNewRecipeDiscoverSubscription>;
 export type NewRecipeDiscoverSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewRecipeDiscoverSubscription>;
 
-// Generated in 2020-04-28T20:09:57+02:00
+// Generated in 2020-04-30T18:59:21+02:00

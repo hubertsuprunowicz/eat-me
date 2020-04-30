@@ -96,7 +96,7 @@ const resolvers = {
 			const valid = await compare(args.password, userParams.password);
 
 			if (!valid) {
-				throw new Error('Invalid password');
+				throw new Error('Invalid password or username');
 			}
 
 			const token = sign({ userID: userParams._id }, process.env.JWT_SECRET);
@@ -301,7 +301,6 @@ const resolvers = {
 		},
 
 		// TODO: total refactor of this method
-		// proper return
 		// proper query
 		async createRecipe(_, args, context) {
 			const session = await context.driver.session();

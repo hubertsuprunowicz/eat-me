@@ -1,28 +1,30 @@
 query YourMessages($name: String!, $message: String, $offset: Int) {
-  Message(
-    filter: { addressee: { name: $name }, message_contains: $message }
-    orderBy: timestamp_desc
-    first: 10
-    offset: $offset
-  ) {
-    _id
-    message
-    timestamp
-    sender {
-      _id
-      name
-    }
-  }
+	Message(
+		filter: { addressee: { name: $name }, message_contains: $message }
+		orderBy: timestamp_desc
+		first: 10
+		offset: $offset
+	) {
+		_id
+		message
+		timestamp
+		sender {
+			_id
+			name
+			avatar
+		}
+	}
 }
 
 subscription onMessageRecived($id: ID!) {
-  messageRecived(id: $id) {
-    _id
-    message
-    timestamp
-    sender {
-      _id
-      name
-    }
-  }
+	messageRecived(id: $id) {
+		_id
+		message
+		timestamp
+		sender {
+			_id
+			name
+			avatar
+		}
+	}
 }
