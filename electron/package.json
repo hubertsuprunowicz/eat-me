@@ -10,7 +10,6 @@
 		"build:electron": "electron-builder",
 		"build:web": "(cd \"../frontend\" && npm && npm build)",
 		"build:web:post": "shx rm -rf extraResources && shx mkdir extraResources && shx cp -Rf ../frontend/build ./extraResources/web",
-		"clean": "shx rm -rf build && shx rm -rf extraResources",
 		"compile": "tsc -b",
 		"format": "prettier --write '{.,src/**}/*.{js,jsx,ts,tsx}'",
 		"lint": "tslint -p .",
@@ -31,28 +30,16 @@
 			"output": "build"
 		},
 		"win": {
-			"target": [
-				"NSIS",
-				"portable"
-			],
+			"target": [ "NSIS", "portable" ],
 			"requestedExecutionLevel": "highestAvailable",
 			"icon": "build/icon.ico",
-			"files": [
-				"dist/**/*",
-				"package.json",
-				"electron.js",
-				"build",
-				"assets"
-			],
-			"extraResources": [
-				"./extraResources/**"
-			]
+			"files": [ "dist/**/*", "package.json", "electron.js", "build", "assets" ],
+			"extraResources": [ "./extraResources/**" ]
 		}
 	},
 	"author": "Hubert Suprunowicz",
 	"license": "ISC",
 	"dependencies": {
-		"@types/electron": "^1.6.10",
 		"concurrently": "^5.1.0",
 		"cross-env": "^7.0.2",
 		"electron-is-dev": "^1.2.0",
