@@ -51,10 +51,16 @@ node app
 
 
  ###### Electron 
+run `eat-me.exe`
+
+or
 ```
 cd electron
 npm install
-npm run start
+npm run dist
+
+wait...
+
+build/win-unpacked/eat-me.exe
+
 ```
- 
-  
