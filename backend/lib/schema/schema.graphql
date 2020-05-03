@@ -6,6 +6,11 @@ enum Difficulty {
 	HARD
 }
 
+interface DefaultNode {
+	_id: ID!
+	timestamp: Long!
+}
+
 type Subscription {
 	messageRecived(id: ID!): Message!
 	newRecipeDiscover(id: ID!): Recipe!
@@ -107,32 +112,25 @@ type MessageSubscription {
 	messageRecived: Message!
 }
 
-type User {
-	_id: ID!
+type User implements DefaultNode {
 	name: String!
 	email: String
 	password: String!
 	avatar: String
 	description: String
 	comment: [Comment] @relation(name: "COMMENTS", direction: "OUT")
-	friends: [User] @relation(name: "WATCHES", direction: "OUT")
 	recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
-	timestamp: Long!
 }
 
-type Message {
-	_id: ID!
+type Message implements DefaultNode {
 	addressee: User! @relation(name: "SENT_TO", direction: "OUT")
 	sender: User! @relation(name: "SENT_FROM", direction: "OUT")
 	message: String!
-	timestamp: Long!
 }
 
-type Ingredient @isAuthenticated {
-	_id: ID!
+type Ingredient implements DefaultNode {
 	name: String!
 	amount: String!
-	timestamp: Long!
 }
 
 type Credentials {
@@ -140,15 +138,12 @@ type Credentials {
 	user: User!
 }
 
-type Tag {
-	_id: ID!
+type Tag implements DefaultNode {
 	name: String!
 	recipes: [Recipe!]! @relation(name: "HAS_TAG", direction: "IN")
-	timestamp: Long!
 }
 
-type Recipe {
-	_id: ID!
+type Recipe implements DefaultNode {
 	name: String!
 	description: String!
 	difficulty: Difficulty!
@@ -159,18 +154,11 @@ type Recipe {
 	user: User! @relation(name: "POSTS", direction: "IN")
 	ingredient: [Ingredient!]! @relation(name: "HAS_INGREDIENT", direction: "OUT")
 	comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
-	timestamp: Long!
 }
 
-type Comment {
-	_id: ID!
-	timestamp: Long!
+type Comment implements DefaultNode {
 	rating: Int!
 	description: String
 	user: User! @relation(name: "COMMENTS", direction: "IN")
 	recipe: Recipe! @relation(name: "HAS_COMMENT", direction: "OUT")
-}
-
-type Token {
-	token: String!
 }
