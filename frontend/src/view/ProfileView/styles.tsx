@@ -6,7 +6,7 @@ export const ProfileImage = styled.img`
   width: 100%;
 `;
 
-export const BackgroundImage = styled.img<{ src: string }>`
+export const BackgroundImage = styled.img`
   object-fit: cover;
   width: 100%;
   height: 55%;

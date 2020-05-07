@@ -66,7 +66,7 @@ const recipeView = (
 );
 
 const loginView = (
-  <Page>
+  <Page display="flex" alignItems="center">
     <LoginView />
   </Page>
 );

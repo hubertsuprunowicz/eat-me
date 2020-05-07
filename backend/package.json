@@ -8,7 +8,10 @@
 		"serve": "nodemon app.js"
 	},
 	"nodemonConfig": {
-		"ignore": [ "test/*", "docs/*" ],
+		"ignore": [
+			"test/*",
+			"docs/*"
+		],
 		"delay": "3500"
 	},
 	"keywords": [],
@@ -17,6 +20,7 @@
 	"dependencies": {
 		"apollo-server": "^2.9.16",
 		"apollo-server-express": "^2.9.16",
+		"apollo-upload-server": "^7.1.0",
 		"axios": "^0.19.1",
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.19.0",

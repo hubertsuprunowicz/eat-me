@@ -18,7 +18,7 @@ import {
 type RecipeForm = {
   title: string;
   description: string;
-  image: string;
+  image: Blob[];
   time: number;
   difficulty: Difficulty;
   tag: Tag;
@@ -132,19 +132,23 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
   }: RecipeForm) => {
     if (!user) throw new Error('Not authorized exception');
 
-    createRecipe({
-      variables: {
-        name: title,
-        description: description,
-        image: image,
-        time: parseInt(time.toString()),
-        tag: tags,
-        ingredient: ingredients,
-        totalCost: parseFloat(totalCost.toString()),
-        difficulty: difficulty.toUpperCase() as Difficulty,
-        userID: user._id ? user._id : '',
-      },
-    });
+    const reader = new FileReader();
+    reader.readAsDataURL(image[0]);
+    reader.onloadend = ({ currentTarget }) => {
+      createRecipe({
+        variables: {
+          name: title,
+          description: description,
+          image: (currentTarget as any).result,
+          time: parseInt(time.toString()),
+          tag: tags,
+          ingredient: ingredients,
+          totalCost: parseFloat(totalCost.toString()),
+          difficulty: difficulty.toUpperCase() as Difficulty,
+          userID: user._id ? user._id : '',
+        },
+      });
+    };
   };
 
   const removeIngredient = (index: number) => {
@@ -193,16 +197,10 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           <span>Image Link</span>
         </label>
         <input
-          type="text"
-          placeholder="Enter Image Link"
+          type="file"
           name="image"
-          ref={register({
-            required: 'Image link is required',
-            minLength: {
-              value: 5,
-              message: 'Image link needs to be at least 5 characters long',
-            },
-          })}
+          accept="image/*"
+          ref={register({ required: 'Image is required' })}
         />
         <ErrorMessage errors={errors} name={'image'} />
         <label htmlFor="time">

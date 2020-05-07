@@ -103,9 +103,11 @@ input CommentInput {
 	description: String
 }
 
+
 type MessageSubscription {
 	messageRecived: Message!
 }
+
 
 type User {
 	_id: ID!
@@ -118,7 +120,6 @@ type User {
 	comment: [Comment] @relation(name: "COMMENTS", direction: "OUT")
 	friends: [User] @relation(name: "WATCHES", direction: "OUT")
 	recipe: [Recipe] @relation(name: "POSTS", direction: "OUT")
-	timestamp: Long!
 }
 
 type Message {
@@ -127,7 +128,6 @@ type Message {
 	addressee: User! @relation(name: "SENT_TO", direction: "OUT")
 	sender: User! @relation(name: "SENT_FROM", direction: "OUT")
 	message: String!
-	timestamp: Long!
 }
 
 type Ingredient {
@@ -135,7 +135,6 @@ type Ingredient {
 	timestamp: Long!
 	name: String!
 	amount: String!
-	timestamp: Long!
 }
 
 type Credentials {
@@ -148,7 +147,6 @@ type Tag {
 	timestamp: Long!
 	name: String!
 	recipes: [Recipe!]! @relation(name: "HAS_TAG", direction: "IN")
-	timestamp: Long!
 }
 
 type Recipe {
@@ -164,7 +162,6 @@ type Recipe {
 	user: User! @relation(name: "POSTS", direction: "IN")
 	ingredient: [Ingredient!]! @relation(name: "HAS_INGREDIENT", direction: "OUT")
 	comment: [Comment] @relation(name: "HAS_COMMENT", direction: "OUT")
-	timestamp: Long!
 }
 
 type Comment {

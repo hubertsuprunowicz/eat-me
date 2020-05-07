@@ -1,42 +1,42 @@
 query Recipe($id: ID!) {
-	Recipe(_id: $id) {
-		_id
-		name
-		difficulty
-		time
-		totalCost
-		timestamp
-		description
-		image
-		comment {
-			_id
-			rating
-			description
-			timestamp
-			user {
-				_id
-				name
-			}
-		}
-		tag {
-			_id
-			name
-		}
-		ingredient {
-			_id
-			name
-			amount
-		}
-		user {
-			_id
-			name
-			avatar
-		}
-	}
+  Recipe(_id: $id) {
+    _id
+    name
+    difficulty
+    time
+    totalCost
+    timestamp
+    description
+    image
+    comment {
+      _id
+      rating
+      description
+      timestamp
+      user {
+        _id
+        name
+      }
+    }
+    tag {
+      _id
+      name
+    }
+    ingredient {
+      _id
+      name
+      amount
+    }
+    user {
+      _id
+      name
+      avatar
+    }
+  }
 }
 
 query GetWatch($subscribingUser: ID!, $subscribedUser: ID!) {
-	getWatch(subscribingUser: $subscribingUser, subscribedUser: $subscribedUser) {
-		subscribed
-	}
+  getWatch(subscribingUser: $subscribingUser, subscribedUser: $subscribedUser) {
+    subscribed
+  }
 }

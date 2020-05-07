@@ -1,14 +1,14 @@
 query GetUser($name: String!) {
-	User(name: $name) {
-		_id
-		name
-		avatar
-		description
-		recipe {
-			tag {
-				_id
-				name
-			}
-		}
-	}
+  User(name: $name) {
+    _id
+    name
+    avatar
+    description
+    recipe {
+      tag {
+        _id
+        name
+      }
+    }
+  }
 }

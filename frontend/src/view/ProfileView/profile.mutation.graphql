@@ -1,24 +1,24 @@
 mutation UpdateUser(
-	$oldName: String!
-	$name: String
-	$email: String
-	$password: String
-	$avatar: String
-	$description: String
+  $oldName: String!
+  $name: String
+  $email: String
+  $password: String
+  $avatar: String
+  $description: String
 ) {
-	updateUser(
-		user: {
-			oldName: $oldName
-			name: $name
-			email: $email
-			password: $password
-			avatar: $avatar
-			description: $description
-		}
-	) {
-		_id
-		name
-		avatar
-		description
-	}
+  updateUser(
+    user: {
+      oldName: $oldName
+      name: $name
+      email: $email
+      password: $password
+      avatar: $avatar
+      description: $description
+    }
+  ) {
+    _id
+    name
+    avatar
+    description
+  }
 }

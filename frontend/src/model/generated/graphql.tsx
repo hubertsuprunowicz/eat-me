@@ -11,6 +11,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   Long: any;
+  Upload: any;
 };
 
 export type Query = {
@@ -19,6 +20,7 @@ export type Query = {
   watchesRecipes: Array<Recipe>;
   Subscribed?: Maybe<Array<Maybe<Subscribed>>>;
   MessageSubscription?: Maybe<Array<Maybe<MessageSubscription>>>;
+  File?: Maybe<Array<Maybe<File>>>;
   User?: Maybe<Array<Maybe<User>>>;
   Message?: Maybe<Array<Maybe<Message>>>;
   Ingredient?: Maybe<Array<Maybe<Ingredient>>>;
@@ -26,7 +28,6 @@ export type Query = {
   Tag?: Maybe<Array<Maybe<Tag>>>;
   Recipe?: Maybe<Array<Maybe<Recipe>>>;
   Comment?: Maybe<Array<Maybe<Comment>>>;
-  Token?: Maybe<Array<Maybe<Token>>>;
 };
 
 
@@ -65,14 +66,26 @@ export type QueryMessageSubscriptionArgs = {
 };
 
 
+export type QueryFileArgs = {
+  filename?: Maybe<Scalars['String']>;
+  mimetype?: Maybe<Scalars['String']>;
+  encoding?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Array<Maybe<_FileOrdering>>>;
+  filter?: Maybe<_FileFilter>;
+};
+
+
 export type QueryUserArgs = {
   _id?: Maybe<Scalars['ID']>;
+  timestamp?: Maybe<Scalars['Long']>;
   name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   password?: Maybe<Scalars['String']>;
   avatar?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  timestamp?: Maybe<Scalars['Long']>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<Maybe<_UserOrdering>>>;
@@ -82,8 +95,8 @@ export type QueryUserArgs = {
 
 export type QueryMessageArgs = {
   _id?: Maybe<Scalars['ID']>;
-  message?: Maybe<Scalars['String']>;
   timestamp?: Maybe<Scalars['Long']>;
+  message?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<Maybe<_MessageOrdering>>>;
@@ -93,9 +106,9 @@ export type QueryMessageArgs = {
 
 export type QueryIngredientArgs = {
   _id?: Maybe<Scalars['ID']>;
+  timestamp?: Maybe<Scalars['Long']>;
   name?: Maybe<Scalars['String']>;
   amount?: Maybe<Scalars['String']>;
-  timestamp?: Maybe<Scalars['Long']>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<Maybe<_IngredientOrdering>>>;
@@ -115,8 +128,8 @@ export type QueryCredentialsArgs = {
 
 export type QueryTagArgs = {
   _id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
   timestamp?: Maybe<Scalars['Long']>;
+  name?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<Maybe<_TagOrdering>>>;
@@ -126,13 +139,13 @@ export type QueryTagArgs = {
 
 export type QueryRecipeArgs = {
   _id?: Maybe<Scalars['ID']>;
+  timestamp?: Maybe<Scalars['Long']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   difficulty?: Maybe<Difficulty>;
   image?: Maybe<Scalars['String']>;
   totalCost?: Maybe<Scalars['Float']>;
   time?: Maybe<Scalars['Int']>;
-  timestamp?: Maybe<Scalars['Long']>;
   first?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<Array<Maybe<_RecipeOrdering>>>;
@@ -151,16 +164,6 @@ export type QueryCommentArgs = {
   filter?: Maybe<_CommentFilter>;
 };
 
-
-export type QueryTokenArgs = {
-  token?: Maybe<Scalars['String']>;
-  _id?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Array<Maybe<_TokenOrdering>>>;
-  filter?: Maybe<_TokenFilter>;
-};
-
 export type _SubscribedFilter = {
   AND?: Maybe<Array<_SubscribedFilter>>;
   OR?: Maybe<Array<_SubscribedFilter>>;
@@ -177,6 +180,8 @@ export type Subscribed = {
 export enum _RecipeOrdering {
   IdAsc = '_id_asc',
   IdDesc = '_id_desc',
+  TimestampAsc = 'timestamp_asc',
+  TimestampDesc = 'timestamp_desc',
   NameAsc = 'name_asc',
   NameDesc = 'name_desc',
   DescriptionAsc = 'description_asc',
@@ -188,9 +193,7 @@ export enum _RecipeOrdering {
   TotalCostAsc = 'totalCost_asc',
   TotalCostDesc = 'totalCost_desc',
   TimeAsc = 'time_asc',
-  TimeDesc = 'time_desc',
-  TimestampAsc = 'timestamp_asc',
-  TimestampDesc = 'timestamp_desc'
+  TimeDesc = 'time_desc'
 }
 
 export type _RecipeFilter = {
@@ -443,6 +446,7 @@ export type _IngredientFilter = {
 export type Recipe = {
    __typename?: 'Recipe';
   _id?: Maybe<Scalars['String']>;
+  timestamp: Scalars['Long'];
   name: Scalars['String'];
   description: Scalars['String'];
   difficulty: Difficulty;
@@ -453,7 +457,6 @@ export type Recipe = {
   user: User;
   ingredient: Array<Ingredient>;
   comment?: Maybe<Array<Maybe<Comment>>>;
-  timestamp: Scalars['Long'];
 };
 
 
@@ -485,21 +488,22 @@ export type RecipeCommentArgs = {
   filter?: Maybe<_CommentFilter>;
 };
 
+
 export enum _TagOrdering {
   IdAsc = '_id_asc',
   IdDesc = '_id_desc',
-  NameAsc = 'name_asc',
-  NameDesc = 'name_desc',
   TimestampAsc = 'timestamp_asc',
-  TimestampDesc = 'timestamp_desc'
+  TimestampDesc = 'timestamp_desc',
+  NameAsc = 'name_asc',
+  NameDesc = 'name_desc'
 }
 
 export type Tag = {
    __typename?: 'Tag';
   _id?: Maybe<Scalars['String']>;
+  timestamp: Scalars['Long'];
   name: Scalars['String'];
   recipes: Array<Recipe>;
-  timestamp: Scalars['Long'];
 };
 
 
@@ -510,10 +514,10 @@ export type TagRecipesArgs = {
   filter?: Maybe<_RecipeFilter>;
 };
 
-
 export type User = {
    __typename?: 'User';
   _id?: Maybe<Scalars['String']>;
+  timestamp: Scalars['Long'];
   name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   password: Scalars['String'];
@@ -522,7 +526,6 @@ export type User = {
   comment?: Maybe<Array<Maybe<Comment>>>;
   friends?: Maybe<Array<Maybe<User>>>;
   recipe?: Maybe<Array<Maybe<Recipe>>>;
-  timestamp: Scalars['Long'];
 };
 
 
@@ -583,6 +586,8 @@ export type CommentRecipeArgs = {
 export enum _UserOrdering {
   IdAsc = '_id_asc',
   IdDesc = '_id_desc',
+  TimestampAsc = 'timestamp_asc',
+  TimestampDesc = 'timestamp_desc',
   NameAsc = 'name_asc',
   NameDesc = 'name_desc',
   EmailAsc = 'email_asc',
@@ -592,28 +597,26 @@ export enum _UserOrdering {
   AvatarAsc = 'avatar_asc',
   AvatarDesc = 'avatar_desc',
   DescriptionAsc = 'description_asc',
-  DescriptionDesc = 'description_desc',
-  TimestampAsc = 'timestamp_asc',
-  TimestampDesc = 'timestamp_desc'
+  DescriptionDesc = 'description_desc'
 }
 
 export enum _IngredientOrdering {
   IdAsc = '_id_asc',
   IdDesc = '_id_desc',
+  TimestampAsc = 'timestamp_asc',
+  TimestampDesc = 'timestamp_desc',
   NameAsc = 'name_asc',
   NameDesc = 'name_desc',
   AmountAsc = 'amount_asc',
-  AmountDesc = 'amount_desc',
-  TimestampAsc = 'timestamp_asc',
-  TimestampDesc = 'timestamp_desc'
+  AmountDesc = 'amount_desc'
 }
 
 export type Ingredient = {
    __typename?: 'Ingredient';
   _id?: Maybe<Scalars['String']>;
+  timestamp: Scalars['Long'];
   name: Scalars['String'];
   amount: Scalars['String'];
-  timestamp: Scalars['Long'];
 };
 
 export enum _SubscribedOrdering {
@@ -670,10 +673,10 @@ export type _MessageFilter = {
 export type Message = {
    __typename?: 'Message';
   _id?: Maybe<Scalars['String']>;
+  timestamp: Scalars['Long'];
   addressee: User;
   sender: User;
   message: Scalars['String'];
-  timestamp: Scalars['Long'];
 };
 
 
@@ -686,13 +689,67 @@ export type MessageSenderArgs = {
   filter?: Maybe<_UserFilter>;
 };
 
+export enum _FileOrdering {
+  FilenameAsc = 'filename_asc',
+  FilenameDesc = 'filename_desc',
+  MimetypeAsc = 'mimetype_asc',
+  MimetypeDesc = 'mimetype_desc',
+  EncodingAsc = 'encoding_asc',
+  EncodingDesc = 'encoding_desc',
+  IdAsc = '_id_asc',
+  IdDesc = '_id_desc'
+}
+
+export type _FileFilter = {
+  AND?: Maybe<Array<_FileFilter>>;
+  OR?: Maybe<Array<_FileFilter>>;
+  filename?: Maybe<Scalars['String']>;
+  filename_not?: Maybe<Scalars['String']>;
+  filename_in?: Maybe<Array<Scalars['String']>>;
+  filename_not_in?: Maybe<Array<Scalars['String']>>;
+  filename_contains?: Maybe<Scalars['String']>;
+  filename_not_contains?: Maybe<Scalars['String']>;
+  filename_starts_with?: Maybe<Scalars['String']>;
+  filename_not_starts_with?: Maybe<Scalars['String']>;
+  filename_ends_with?: Maybe<Scalars['String']>;
+  filename_not_ends_with?: Maybe<Scalars['String']>;
+  mimetype?: Maybe<Scalars['String']>;
+  mimetype_not?: Maybe<Scalars['String']>;
+  mimetype_in?: Maybe<Array<Scalars['String']>>;
+  mimetype_not_in?: Maybe<Array<Scalars['String']>>;
+  mimetype_contains?: Maybe<Scalars['String']>;
+  mimetype_not_contains?: Maybe<Scalars['String']>;
+  mimetype_starts_with?: Maybe<Scalars['String']>;
+  mimetype_not_starts_with?: Maybe<Scalars['String']>;
+  mimetype_ends_with?: Maybe<Scalars['String']>;
+  mimetype_not_ends_with?: Maybe<Scalars['String']>;
+  encoding?: Maybe<Scalars['String']>;
+  encoding_not?: Maybe<Scalars['String']>;
+  encoding_in?: Maybe<Array<Scalars['String']>>;
+  encoding_not_in?: Maybe<Array<Scalars['String']>>;
+  encoding_contains?: Maybe<Scalars['String']>;
+  encoding_not_contains?: Maybe<Scalars['String']>;
+  encoding_starts_with?: Maybe<Scalars['String']>;
+  encoding_not_starts_with?: Maybe<Scalars['String']>;
+  encoding_ends_with?: Maybe<Scalars['String']>;
+  encoding_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export type File = {
+   __typename?: 'File';
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
+  encoding: Scalars['String'];
+  _id?: Maybe<Scalars['String']>;
+};
+
 export enum _MessageOrdering {
   IdAsc = '_id_asc',
   IdDesc = '_id_desc',
-  MessageAsc = 'message_asc',
-  MessageDesc = 'message_desc',
   TimestampAsc = 'timestamp_asc',
-  TimestampDesc = 'timestamp_desc'
+  TimestampDesc = 'timestamp_desc',
+  MessageAsc = 'message_asc',
+  MessageDesc = 'message_desc'
 }
 
 export enum _CredentialsOrdering {
@@ -727,34 +784,6 @@ export type Credentials = {
 
 export type CredentialsUserArgs = {
   filter?: Maybe<_UserFilter>;
-};
-
-export enum _TokenOrdering {
-  TokenAsc = 'token_asc',
-  TokenDesc = 'token_desc',
-  IdAsc = '_id_asc',
-  IdDesc = '_id_desc'
-}
-
-export type _TokenFilter = {
-  AND?: Maybe<Array<_TokenFilter>>;
-  OR?: Maybe<Array<_TokenFilter>>;
-  token?: Maybe<Scalars['String']>;
-  token_not?: Maybe<Scalars['String']>;
-  token_in?: Maybe<Array<Scalars['String']>>;
-  token_not_in?: Maybe<Array<Scalars['String']>>;
-  token_contains?: Maybe<Scalars['String']>;
-  token_not_contains?: Maybe<Scalars['String']>;
-  token_starts_with?: Maybe<Scalars['String']>;
-  token_not_starts_with?: Maybe<Scalars['String']>;
-  token_ends_with?: Maybe<Scalars['String']>;
-  token_not_ends_with?: Maybe<Scalars['String']>;
-};
-
-export type Token = {
-   __typename?: 'Token';
-  token: Scalars['String'];
-  _id?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -889,6 +918,7 @@ export type SubscriptionMessageRecivedArgs = {
 export type SubscriptionNewRecipeDiscoverArgs = {
   id: Scalars['ID'];
 };
+
 
 export type RecipeFilter = {
   user?: Maybe<UserFilter>;
@@ -2158,4 +2188,4 @@ export function useNewRecipeDiscoverSubscription(baseOptions?: ApolloReactHooks.
 export type NewRecipeDiscoverSubscriptionHookResult = ReturnType<typeof useNewRecipeDiscoverSubscription>;
 export type NewRecipeDiscoverSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewRecipeDiscoverSubscription>;
 
-// Generated in 2020-04-30T18:59:21+02:00
+// Generated in 2020-05-07T22:00:28+02:00

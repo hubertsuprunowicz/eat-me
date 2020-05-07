@@ -10,6 +10,7 @@ import { ApolloClient } from 'apollo-client';
 import { onError } from 'apollo-link-error';
 import { ApolloLink, split, GraphQLRequest } from 'apollo-link';
 import { RetryLink } from 'apollo-link-retry';
+import { createUploadLink } from 'apollo-upload-client';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 
@@ -63,7 +64,24 @@ const prelink = split(
   httpLink,
 );
 
-const link = ApolloLink.from([new RetryLink(), errorLink, authLink, prelink]);
+const uploadLink = createUploadLink({
+  uri: process.env.REACT_APP_GRAPHQL || 'http://localhost:4000/graphql',
+});
+
+const isFile = (value: any) =>
+  (typeof File !== 'undefined' && value instanceof File) ||
+  (typeof Blob !== 'undefined' && value instanceof Blob);
+
+const isUpload = ({ variables }: any) => Object.values(variables).some(isFile);
+
+const terminalLink = split(isUpload, uploadLink, prelink);
+
+const link = ApolloLink.from([
+  new RetryLink(),
+  errorLink,
+  authLink,
+  terminalLink,
+]);
 
 const client = new ApolloClient({
   link: link,

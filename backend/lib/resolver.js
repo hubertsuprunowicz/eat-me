@@ -250,7 +250,6 @@ const resolvers = {
 
 		async updateUser(_, { user }, context) {
 			const session = await context.driver.session();
-
 			const userQuery = 'MATCH (n:User{name: $name}) RETURN n';
 			const isUserExists = await session.run(userQuery, { name: user.name }).then((result) => result.records[0]);
 

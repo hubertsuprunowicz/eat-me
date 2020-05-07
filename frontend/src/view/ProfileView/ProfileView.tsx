@@ -50,7 +50,7 @@ const ProfileView: React.FC = () => {
       {userData && (
         <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
           <BackgroundImage
-            src={userData.avatar ? userData.avatar : defaultAvatar}
+            src={userData?.avatar ?? defaultAvatar}
             alt={userData.name + '_avatar'}
           />
 

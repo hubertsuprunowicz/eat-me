@@ -76,7 +76,7 @@ const LoginView: React.FC = () => {
   });
 
   return (
-    <Card mt={'20%'}>
+    <Card mb={'20%'}>
       <Form onSubmit={onSubmit}>
         <Avatar src={'img/user-solid.svg'} />
         <Box display="flex" flexDirection="column" alignItems="center" p={20}>

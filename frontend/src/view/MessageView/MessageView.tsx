@@ -65,10 +65,7 @@ const Row: React.FC<RowProps> = ({
         width="35px"
         height="35px"
       >
-        <img
-          src={sender.avatar ? sender.avatar : defaultAvatar}
-          alt={sender.name}
-        />
+        <img src={sender?.avatar ?? defaultAvatar} alt={sender.name} />
       </LinkIconButton>
 
       <Box
@@ -171,13 +168,12 @@ const MessageView: React.FC = () => {
       // Needed due to multiple resubscriptions
       if (
         prev.Message.length > 0 &&
-        prev.Message[prev.Message.length - 1]._id ===
-          subscriptionData.data.messageRecived._id
+        prev.Message[0]._id === subscriptionData.data.messageRecived._id
       )
         return prev.Message;
 
       return {
-        Message: [...prev.Message, { ...subscriptionData.data.messageRecived }],
+        Message: [{ ...subscriptionData.data.messageRecived }, ...prev.Message],
       };
     },
   });

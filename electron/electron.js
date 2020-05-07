@@ -3,7 +3,7 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 let mainWindow;
 function createWindow() {
-	mainWindow = new BrowserWindow({ width: 418, height: 752, resizable: false });
+	mainWindow = new BrowserWindow({ width: 418, height: 752, resizable: false, title: "EatMe" });
 	mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL('http://localhost:3000');
 	mainWindow.on('closed', () => (mainWindow = null));

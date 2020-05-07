@@ -309,9 +309,7 @@ const RecipeView: React.FC = () => {
                 More
               </LinkButton>
             </Box>
-            <AuthorImage
-              src={recipe?.user?.avatar ? recipe?.user?.avatar : defaultAvatar}
-            />
+            <AuthorImage src={recipe?.user?.avatar ?? defaultAvatar} />
           </Box>
         </Box>
 

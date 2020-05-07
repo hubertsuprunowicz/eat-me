@@ -22,6 +22,7 @@ export const Card = styled(Box)<CursorProps>`
   align-content: space-between;
   padding: 10px;
   margin-left: 7%;
+  margin-right: 7%;
 
   &.swipe-left {
     animation: swipeLeft 0.4s ease-out forwards;

@@ -1,5 +1,6 @@
 const http = require('http');
 const { ApolloServer } = require('apollo-server-express');
+const { apolloUploadExpress  } = require('apollo-upload-server');
 const express = require('express');
 const neo4j = require('neo4j-driver');
 const dotenv = require('dotenv');
@@ -40,6 +41,7 @@ const checkErrorHeaderMiddleware = async (req, _res, next) => {
 };
 
 const app = express();
+app.use(apolloUploadExpress());
 app.use(bodyParser.json());
 app.use('*', checkErrorHeaderMiddleware);
 app.use(

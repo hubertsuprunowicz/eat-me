@@ -19,7 +19,7 @@ type UpdateRecipeForm = {
   id: number;
   title?: string;
   description?: string;
-  image?: string;
+  image?: Blob[];
   time?: number;
   difficulty?: Difficulty;
   totalCost?: number;
@@ -52,14 +52,13 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
     defaultValues: {
       description: recipe.description,
       difficulty: recipe.difficulty,
-      image: recipe.image,
       title: recipe.name,
       time: recipe.time,
       totalCost: recipe.totalCost,
     },
   });
 
-  const [editUser] = useUpdateRecipeMutation({
+  const [updateRecipe] = useUpdateRecipeMutation({
     onError: (error) => {
       setError(
         'mutationError',
@@ -70,37 +69,68 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
     onCompleted: () => {
       reset();
       setIsOpen(false);
-      toast.success('Message has been sent', {
+      toast.success('Recipe has been updated successfully', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
   });
 
   const onSubmit = (data: UpdateRecipeForm) => {
-    editUser({
-      variables: {
-        id: recipe._id ? recipe._id : '',
-        name: data.title,
-        description: data.description,
-        image: data.image,
-        time: data.time ? parseInt(data.time.toString()) : undefined,
-        tag: tags.map((it) => {
-          return {
-            name: it.name,
-          };
-        }),
-        ingredient: ingredients.map((it) => {
-          return {
-            name: it.name,
-            amount: it.amount,
-          };
-        }),
-        totalCost: data.totalCost
-          ? parseFloat(data.totalCost.toString())
-          : undefined,
-        difficulty: data.difficulty,
-      },
-    });
+    if (data?.image?.[0]) {
+      const reader = new FileReader();
+      reader.readAsDataURL(data?.image?.[0]);
+      reader.onloadend = ({ currentTarget }) => {
+        updateRecipe({
+          variables: {
+            id: recipe._id ? recipe._id : '',
+            name: data.title,
+            description: data.description,
+            image: (currentTarget as any).result,
+            time: data.time ? parseInt(data.time.toString()) : undefined,
+            tag: tags.map((it) => {
+              return {
+                name: it.name,
+              };
+            }),
+            ingredient: ingredients.map((it) => {
+              return {
+                name: it.name,
+                amount: it.amount,
+              };
+            }),
+            totalCost: data.totalCost
+              ? parseFloat(data.totalCost.toString())
+              : undefined,
+            difficulty: data.difficulty,
+          },
+        });
+      };
+    } else {
+      updateRecipe({
+        variables: {
+          id: recipe._id ? recipe._id : '',
+          name: data.title,
+          description: data.description,
+          image: undefined,
+          time: data.time ? parseInt(data.time.toString()) : undefined,
+          tag: tags.map((it) => {
+            return {
+              name: it.name,
+            };
+          }),
+          ingredient: ingredients.map((it) => {
+            return {
+              name: it.name,
+              amount: it.amount,
+            };
+          }),
+          totalCost: data.totalCost
+            ? parseFloat(data.totalCost.toString())
+            : undefined,
+          difficulty: data.difficulty,
+        },
+      });
+    }
   };
 
   const removeIngredient = (index: number) => {
@@ -202,19 +232,9 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
         />
         <ErrorMessage errors={errors} name={'title'} />
         <label htmlFor="image">
-          <span>Image Link</span>
+          <span>Image</span>
         </label>
-        <input
-          type="text"
-          placeholder="Enter Image Link"
-          name="image"
-          ref={register({
-            minLength: {
-              value: 5,
-              message: 'Image link needs to be at least 5 characters long',
-            },
-          })}
-        />
+        <input type="file" name="image" accept="image/*" ref={register} />
         <ErrorMessage errors={errors} name={'image'} />
         <label htmlFor="time">
           <span>Time</span>
@@ -434,16 +454,6 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
             onClick={() => setPaginationForm(2)}
           >
             2
-          </Style.Button>
-          <Style.Button
-            p={5}
-            type="button"
-            boxShadow={
-              paginationForm === 3 ? 'insetNeumorphism' : 'neumorphism'
-            }
-            onClick={() => setPaginationForm(3)}
-          >
-            3
           </Style.Button>
         </Style.Box>
         <Style.Box display="flex" justifyContent="flex-end">

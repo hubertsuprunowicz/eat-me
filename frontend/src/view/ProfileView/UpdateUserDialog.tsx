@@ -8,12 +8,12 @@ import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 import { User, useUpdateUserMutation } from 'model/generated/graphql';
 
 type EditUserForm = {
-  name: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-  avatar: string;
-  description: string;
+  name?: string;
+  password?: string;
+  confirmPassword?: string;
+  email?: string;
+  avatar?: Blob[];
+  description?: string;
   mutationError?: FieldError;
 };
 
@@ -23,9 +23,9 @@ type Props = {
   setIsOpen: (arg: boolean) => void;
 };
 
-function isEmpty(obj: Object) {
+const isEmpty = (obj: Object) => {
   return Object.entries(obj).length === 0 && obj.constructor === Object;
-}
+};
 
 const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
   const [paginationForm, setPaginationForm] = useState<boolean>(true);
@@ -35,7 +35,6 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
     defaultValues: {
       name: user.name || '',
       email: user.email || '',
-      avatar: user.avatar || '',
       description: user.description || '',
       password: '',
       confirmPassword: '',
@@ -77,19 +76,35 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
       );
       return;
     }
-
     if (!isEmpty(errors)) return;
 
-    updateUser({
-      variables: {
-        oldName: user.name,
-        name: name === user.name ? null : name,
-        password: password,
-        email: !email || email === user.email ? null : email,
-        avatar: avatar,
-        description: description,
-      },
-    });
+    if (avatar?.[0]) {
+      const reader = new FileReader();
+      reader.readAsDataURL(avatar[0]);
+      reader.onloadend = ({ currentTarget }) => {
+        updateUser({
+          variables: {
+            oldName: user.name,
+            name: name === user.name ? null : name,
+            password: password,
+            email: !email || email === user.email ? null : email,
+            avatar: (currentTarget as any).result,
+            description: description,
+          },
+        });
+      };
+    } else {
+      updateUser({
+        variables: {
+          oldName: user.name,
+          name: name === user.name ? null : name,
+          password: password,
+          email: !email || email === user.email ? null : email,
+          avatar: undefined,
+          description: description,
+        },
+      });
+    }
   };
 
   return (
@@ -165,20 +180,8 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
         alignItems="center"
         p={20}
       >
-        <label htmlFor="avatar">
-          <span>Avatar</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Enter Avatar Url"
-          name="avatar"
-          ref={register({
-            minLength: {
-              value: 4,
-              message: 'Link to avatar needs to be at least 4 characters long',
-            },
-          })}
-        />
+        <label htmlFor="avatar">Avatar</label>
+        <input type="file" name="avatar" accept="image/*" ref={register} />
         <ErrorMessage errors={errors} name={'avatar'} />
         <label htmlFor="description">
           <span>Description</span>
