@@ -61,3 +61,6 @@ wait...
 build/win-unpacked/eat-me.exe
 
 ```
+
+### License
+This project is licensed under the MIT License - see the[License File](LICENSE) for details
