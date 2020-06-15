@@ -1,6 +1,6 @@
 # eat-me
 
-### Configuration
+### Dependencies
   * Node v10.16.0
   * Npm 6.9.0
   * Neo4j 4.0.3
