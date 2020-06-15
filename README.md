@@ -6,7 +6,7 @@
   * Neo4j 4.0.3
   
 ### Build and run
-##### Neo4j
+#### Neo4j
 1. Open Neo4j Desktop
 1. Add new project
 1. Start Project
@@ -25,8 +25,8 @@
  You have successfuly imported data :)
  Write ``MATCH (n) RETURN n`` for schema details
  
- ##### Terminal
- ###### Backend  
+ #### Terminal things
+ ##### Backend  
 ```
   cd backend
   npm install
@@ -42,7 +42,7 @@ Start server
 node app
 ```
  
- ###### Frontend
+ ##### Frontend
  ```
   cd frontend
   npm install
@@ -50,7 +50,7 @@ node app
  ```
 
 
- ###### Electron 
+ ##### Electron 
 ```
 cd electron
 npm install
