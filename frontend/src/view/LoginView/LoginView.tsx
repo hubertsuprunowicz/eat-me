@@ -31,8 +31,10 @@ const LoginView: React.FC = () => {
   >();
 
   const [login] = useLoginMutation({
-    onError: (error) =>
-      setError('queryError', 'queryError', error.graphQLErrors[0].message),
+    onError: (error) => {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0)
+        setError('queryError', 'queryError', error.graphQLErrors[0].message);
+    },
     onCompleted: (data) => {
       authDispatch({
         type: 'login',
@@ -44,12 +46,14 @@ const LoginView: React.FC = () => {
   });
 
   const [createUser] = useCreateUserMutation({
-    onError: (error) =>
-      setError(
-        'mutationError',
-        'mutationError',
-        error.graphQLErrors[0].message,
-      ),
+    onError: (error) => {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0)
+        setError(
+          'mutationError',
+          'mutationError',
+          error.graphQLErrors[0].message,
+        );
+    },
     onCompleted: (data) => {
       authDispatch({
         type: 'login',

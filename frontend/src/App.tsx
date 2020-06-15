@@ -73,6 +73,12 @@ const loginView = (
 const errorView = <ErrorView />;
 
 const App: React.FC = () => {
+  // Remove auth token on page close/refresh
+  // Window nullability due to electron
+  window?.addEventListener('beforeunload', () => {
+    sessionStorage.removeItem('token');
+  });
+
   return (
     <ThemeProvider theme={theme}>
       <ToastContainer className="toast-size" />

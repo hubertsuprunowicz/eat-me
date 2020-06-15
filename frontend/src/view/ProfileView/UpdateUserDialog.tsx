@@ -3,9 +3,11 @@ import { useForm, FieldError } from 'react-hook-form';
 import { Box, Button } from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
-import { Textarea } from './styles';
+import { Textarea, FileUploadLabel, FileUploadButton } from './styles';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 import { User, useUpdateUserMutation } from 'model/generated/graphql';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFile, faUpload } from '@fortawesome/free-solid-svg-icons';
 
 type EditUserForm = {
   name?: string;
@@ -180,8 +182,18 @@ const UpdateUserDialog: React.FC<Props> = ({ setIsOpen, user, refetch }) => {
         alignItems="center"
         p={20}
       >
-        <label htmlFor="avatar">Avatar</label>
-        <input type="file" name="avatar" accept="image/*" ref={register} />
+        <label>Avatar</label>
+        <FileUploadLabel htmlFor="avatar">
+          <FontAwesomeIcon size={'1x'} icon={faUpload} />
+          Browse for an image
+        </FileUploadLabel>
+        <FileUploadButton
+          id="avatar"
+          name="avatar"
+          type="file"
+          accept="image/*"
+          ref={register}
+        />
         <ErrorMessage errors={errors} name={'avatar'} />
         <label htmlFor="description">
           <span>Description</span>

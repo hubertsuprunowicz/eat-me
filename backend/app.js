@@ -8,6 +8,7 @@ const { makeAugmentedSchema } = require('neo4j-graphql-js');
 const bodyParser = require('body-parser');
 const { IsAuthenticatedDirective, HasScopeDirective } = require('graphql-auth-directives');
 const cors = require('cors');
+const { verify } = require('jsonwebtoken');
 const resolvers = require('./lib/resolver');
 const typeDefs = require('./lib/schema/graphql-schema');
 dotenv.config();
@@ -58,6 +59,10 @@ const server = new ApolloServer({
 		if (connection) {
 			return connection.context;
 		} else {
+			if(req.body.operationName !== "Login" && req.body.operationName !== "CreateUser") {
+				verify(req.headers.authorization, process.env.JWT_SECRET)
+			}
+
 			return {
 				headers: req.headers,
 				driver

@@ -4,8 +4,8 @@ import * as Style from 'style';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input } from './styles';
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { Input, FileUploadLabel, FileUploadButton } from './styles';
+import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons';
 import ErrorMessage from 'component/ErrorMessage/ErrorMessage';
 import {
   useUpdateRecipeMutation,
@@ -231,10 +231,18 @@ const UpdateRecipeDialog: React.FC<Props> = ({ setIsOpen, recipe }) => {
           })}
         />
         <ErrorMessage errors={errors} name={'title'} />
-        <label htmlFor="image">
-          <span>Image</span>
-        </label>
-        <input type="file" name="image" accept="image/*" ref={register} />
+        <label>Image</label>
+        <FileUploadLabel htmlFor="image">
+          <FontAwesomeIcon size={'1x'} icon={faUpload} />
+          Browse for an image
+        </FileUploadLabel>
+        <FileUploadButton
+          id="image"
+          name="image"
+          type="file"
+          accept="image/*"
+          ref={register}
+        />
         <ErrorMessage errors={errors} name={'image'} />
         <label htmlFor="time">
           <span>Time</span>

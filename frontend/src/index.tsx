@@ -22,7 +22,6 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_: GraphQLRequest, { headers }: any) => {
   const token = sessionStorage.getItem('token');
-
   return {
     headers: {
       ...headers,
@@ -33,11 +32,19 @@ const authLink = setContext((_: GraphQLRequest, { headers }: any) => {
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.map(({ message, locations, path }) =>
+    graphQLErrors.map(({ message, locations, path }) => {
+      console.log(message);
+      if (
+        message === 'Context creation failed: jwt must be provided' ||
+        message === 'Context creation failed: invalid token'
+      ) {
+        window?.location.reload(true);
+      }
+
       console.error(
         `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-      ),
-    );
+      );
+    });
   }
 
   if (networkError) {

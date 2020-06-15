@@ -123,7 +123,8 @@ const resolvers = {
 				throw new UserInputError('Existing user with the given name');
 			}
 
-			const query = 'CREATE (n:User{name:$name, password:$password, timestamp: $timestamp}) RETURN n';
+			const query = `CREATE (n:User{name:$name, password:$password, timestamp: $timestamp})
+						   RETURN n`;
 
 			const user = await session
 				.run(query, { name: args.name, password: password, timestamp: Date.now() })
@@ -314,9 +315,9 @@ const resolvers = {
 			if (!user) throw new Exception('Something went wrong. Please come back later');
 
 			const recipeQuery = `
-          MATCH (b:User) WHERE ID(b) = ${userID}
+          MATCH (b:User) WHERE ID(b) = $userID
           CREATE (a:Recipe{name:$name, description:$description, difficulty:$difficulty, 
-          image:$image, time:$time, totalCost:$totalCost, timestamp: ${Date.now()}})<-[:POSTS]-(b)
+          image:$image, time:$time, totalCost:$totalCost, timestamp: $timestamp})<-[:POSTS]-(b)
           RETURN a, b
           `;
 
@@ -413,6 +414,8 @@ const resolvers = {
 			const ingredientsClean = JSON.parse(JSON.stringify(args.ingredient));
 			const ingredientRemove = `MATCH (a:Recipe)-[:HAS_INGREDIENT]->(b:Ingredient) WHERE ID(a) = ${args.id}
 									DETACH DELETE b`;
+									const tagRemove = `MATCH (a:Recipe)-[:HAS_TAG]->(b:Tag) WHERE ID(a) = ${args.id}
+									DETACH DELETE b`;
 			const ingredientQuery = `MATCH (a:Recipe) WHERE ID(a) = ${args.id}
 									WITH $ingredients AS payload, a
 									UNWIND payload AS ingredient
@@ -431,8 +434,7 @@ const resolvers = {
 			});
 
 			const tagsClean = JSON.parse(JSON.stringify(args.tag));
-			const tagRemove = `MATCH (a:Recipe)-[:HAS_TAG]->(b:Tag) WHERE ID(a) = ${args.id}
-									DETACH DELETE b`;
+			
 			const tagQuery = `MATCH (a:Recipe) WHERE ID(a) = ${args.id}
 							WITH $tags AS payload, a
 							UNWIND payload AS tag

@@ -1,8 +1,8 @@
 import React, { useState, memo } from 'react';
 import * as Styled from 'style';
-import { Input } from './styles';
+import { Input, FileUploadLabel, FileUploadButton } from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons';
 import Form from 'component/Form/Form';
 import { toast } from 'react-toastify';
 import { useAuthState } from 'utils/auth';
@@ -193,12 +193,15 @@ const AddRecipeForm: React.FC<Props> = ({ setIsOpen }) => {
           })}
         />
         <ErrorMessage errors={errors} name={'title'} />
-        <label htmlFor="image">
-          <span>Image Link</span>
-        </label>
-        <input
-          type="file"
+        <label>Image</label>
+        <FileUploadLabel htmlFor="image">
+          <FontAwesomeIcon size={'1x'} icon={faUpload} />
+          Browse for an image
+        </FileUploadLabel>
+        <FileUploadButton
+          id="image"
           name="image"
+          type="file"
           accept="image/*"
           ref={register({ required: 'Image is required' })}
         />
