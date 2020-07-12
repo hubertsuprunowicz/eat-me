@@ -7,6 +7,8 @@ which would be the answer to a rushing society where no doubt
 Tinder was the inspiration - but the idea was not people-to-people contacts,
 but rather gastronomy, where you can quickly and easily choose your favorite dishes and share yours.
 
+![Neo4j Graph](/demo/dbgraph.png)
+
 ### Dependencies
   * Node v10.16.0 (with JS)
   * Npm 6.9.0
