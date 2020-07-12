@@ -44,7 +44,7 @@ but rather gastronomy, where you can quickly and easily choose your favorite dis
  You have successfuly imported data :)
  Write ``MATCH (n) RETURN n`` for schema details
  
- <img src="demo/dbgraph.PNG" alt="neo4j_graph" width="240"/>
+ <img src="demo/dbgraph.png" alt="neo4j_graph" width="300"/>
 
  
  #### Terminal things
