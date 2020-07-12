@@ -8,9 +8,12 @@ Tinder was the inspiration - but the idea was not people-to-people contacts,
 but rather gastronomy, where you can quickly and easily choose your favorite dishes and share yours.
 
 ### Dependencies
-  * Node v10.16.0
+  * Node v10.16.0 (with JS)
   * Npm 6.9.0
   * Neo4j 4.0.3
+  * React (with TS 3.7)
+  * Apollo
+  * GraphQL
   
 ### Build and run
 #### Neo4j
