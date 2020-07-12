@@ -1,5 +1,12 @@
 # eat-me
 
+### About
+One of the goals of the work is to develop an interactive web application that works
+using the GraphQL query language. The personal assumption was to create software,
+which would be the answer to a rushing society where no doubt
+Tinder was the inspiration - but the idea was not people-to-people contacts,
+but rather gastronomy, where you can quickly and easily choose your favorite dishes and share yours.
+
 ### Dependencies
   * Node v10.16.0
   * Npm 6.9.0
