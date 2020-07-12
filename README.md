@@ -7,7 +7,14 @@ which would be the answer to a rushing society where no doubt
 Tinder was the inspiration - but the idea was not people-to-people contacts,
 but rather gastronomy, where you can quickly and easily choose your favorite dishes and share yours.
 
-![Neo4j Graph](/demo/dbgraph.png)
+<div>
+<img src="demo/recipes.PNG" alt="recipes" width="240"/>
+<img src="demo/register.PNG" alt="register" width="240"/>
+<img src="demo/profile.PNG" alt="profile" width="240"/>
+<img src="demo/messages.PNG" alt="messages" width="240"/>
+<img src="demo/create-recipe-1.PNG" alt="create-recipe" width="240"/>
+ <img src="demo/watches.PNG" alt="watches" width="240"/>
+</div>
 
 ### Dependencies
   * Node v10.16.0 (with JS)
