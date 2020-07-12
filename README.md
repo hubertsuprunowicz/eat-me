@@ -13,7 +13,7 @@ but rather gastronomy, where you can quickly and easily choose your favorite dis
 <img src="demo/profile.PNG" alt="profile" width="240"/>
 <img src="demo/messages.PNG" alt="messages" width="240"/>
 <img src="demo/create-recipe-1.PNG" alt="create-recipe" width="240"/>
- <img src="demo/watches.PNG" alt="watches" width="240"/>
+<img src="demo/watches.PNG" alt="watches" width="240"/>
 </div>
 
 ### Dependencies
@@ -43,6 +43,9 @@ but rather gastronomy, where you can quickly and easily choose your favorite dis
  
  You have successfuly imported data :)
  Write ``MATCH (n) RETURN n`` for schema details
+ 
+ <img src="demo/dbgraph.PNG" alt="neo4j_graph" width="240"/>
+
  
  #### Terminal things
  ##### Backend  
