@@ -18,7 +18,7 @@
 	"author": "Hubert Suprunowicz",
 	"license": "ISC",
 	"dependencies": {
-		"apollo-server": "^2.9.16",
+		"apollo-server": "^2.25.3",
 		"apollo-server-express": "^2.9.16",
 		"apollo-upload-server": "^7.1.0",
 		"axios": "^0.19.1",
