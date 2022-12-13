@@ -32,7 +32,7 @@
 		"electron": "^8.0.0",
 		"electron-builder": "^22.3.2",
 		"electron-is-dev": "^1.1.0",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"faker": "^4.1.0",
 		"graphql-auth-directives": "^2.1.0",
 		"graphql-scalars": "^1.0.6",
